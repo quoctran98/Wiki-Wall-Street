@@ -1,0 +1,25 @@
+.img-card-top {
+  width: 100%;
+  height: 15vw;
+  object-fit: cover;
+}
+
+.horiz-scrolling-wrapper {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+  .card {
+    display: inline-block;
+  }
+}
+
+.vert-scrolling-wrapper {
+  overflow-x: clip;
+  overflow-y: scroll;
+  white-space: nowrap;
+
+  /* .card {
+    display: inline-block;
+  } */
+}

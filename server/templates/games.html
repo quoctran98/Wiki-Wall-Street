@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+    Welcome, {{ current_user.name }}!
+</h1>
+
+<h2 class="subtitle">
+    Here are your active games:
+</h2>
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="card-deck" id="grid-of-games"></div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+<script src="{{url_for('static', filename='js/load-game-cards.js')}}"></script>
+    
+<p>
+    {% for game_id in current_user.joined_games %}
+        <li> <a href="{{ url_for('game.play', game_id=game_id) }}"> {{ game_id }} </a> </li>
+    {% endfor %}
+</p>
+
+<h2 class="subtitle">
+    Start a new game!
+</h2>
+
+<p>
+    <form action="{{ url_for('game.create_game') }}" method="post">
+        <input type="hidden" name="user_id" value="{{ current_user.id }}">
+        <input type="text" name="game_name" value="New Game">
+        <input type="number" name="starting_cash" value="100000">
+        <input type="submit" value="Create Game">
+    </form>
+</p>
+
+<h2 class="subtitle">
+    Join a game!
+</h2>
+
+<p>
+    <form action="{{ url_for('game.join_game') }}" method="post">
+        <input type="hidden" name="user_id" value="{{ current_user.id }}">
+        <input type="text" name="game_id" value="Game ID">
+        <input type="submit" value="Join Game">
+    </form>
+
+{% endblock %}

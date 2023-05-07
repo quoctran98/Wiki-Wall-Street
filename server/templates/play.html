@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <h1 class="title">
+        Welcome to {{ game.name }}!
+    </h1>
+    <br>
+    <h2>
+        Players:
+        {{ game.players }}
+    </h2>
+    <br>
+    <p>
+        {{ game.game_id }}
+    </p>
+</div>
+
+<hr>
+
+<!-- TOP BANNER FOR PORTFOLIO SUMMARY -->
+<div class="row" id="portfolio-summary">
+
+    <div class="col-md-4">
+        <h3>CASH! <span id="portfolio-cash"></span></h3>
+        <h3>VALUE! <span id="portfolio-value"></span></h3>
+    </div> 
+
+    <div class="col-md-8">
+        <div class="horiz-scrolling-wrapper" id="portfolio-card-deck"></div>
+    </div>
+
+</div>
+
+<hr>
+
+<div class="row">
+
+    <!-- LEFT COLUMN FOR TRENDING ARTICLES -->
+    <div class="col-md-2">
+        <h3>TRENDING!</h3>
+        <div class="vert-scrolling-wrapper" id="trending-articles" height="200px" ></div>
+    </div>
+
+    <!-- MIDDLE COLUMN FOR GRAPH -->
+    <div class="col-md-7">
+        <h3 id="graph-title"></h3>
+        <h5 id="graph-desc">&nbsp;</h5>
+        <hr>
+        <div class="row">
+            <h6>Timeframe: </h6>
+            <button id="graph-week-button" onclick="graph_time('week')">Weekly</button>
+            <button id="graph-month-button" onclick="graph_time('month')">Monthly</button>
+            <button id="graph-year-button" onclick="graph_time('year')">Yearly</button>
+            <button id="graph-all-button" onclick="graph_time('all')">All</button>
+        </div>
+        <div id="transaction-graph"></div>
+    </div>
+
+    <!-- RIGHT COLUMN FOR SEARCH AND TX INFO -->
+    <div class="col-md-3">
+
+            <h3>SEARCH!</h3>
+            <input list="search-datalist" id="search-input" placeholder="">
+            <datalist id="search-datalist"></datalist>
+            <button onclick="search_main()">Search</button>
+
+        <hr>
+
+            <h3>BUY!</h3>
+            <button id="buy-1-button" onclick="buy_article(1)">Buy 1</button>
+            <button id="buy-5-button" onclick="buy_article(5)">Buy 5</button>
+            <input type="number" id="custom-buy-input" min="1" value="10"></input>
+            <button id="buy-custom-button" onclick="buy_article(document.getElementById('custom-buy-input').value)">Buy</button>
+
+        <hr>
+
+        <div id="sell-div">
+            <h3>SELL!</h3>
+            <p><span id="num-owned"></span></p>
+            <p><span id="avg-price"></span></p>
+
+            <button id="sell-1-button" onclick="sell_article(1)">Sell 1</button>
+            <input type="number" id="custom-sell-input" min="1" value="10"></input>
+            <button id="sell-custom-button" onclick="sell_article(document.getElementById('custom-sell-input').value)">Sell</button>
+        </div>
+
+    </div>
+</div>
+
+<script src="{{url_for('static', filename='js/plotly-2.20.0.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/portfolio-summary.js')}}"></script>
+<script src="{{url_for('static', filename='js/transaction-navigator.js')}}"></script>
+<script src="{{url_for('static', filename='js/play-trending-articles.js')}}"></script>
+
+{% endblock %}
