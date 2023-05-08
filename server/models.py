@@ -260,14 +260,23 @@ class Transaction():
         # Calculate the new average price
         new_quantity = current_quantity + quantity
         current_avg = player.avg_price[article] if article in player.avg_price else 0
+
+        # oh! don't multiple price by quantity since price isn't per unit :)
         if new_quantity == 0:
             new_avg_price = 0 # hopefully this math is okay for if they rebuy?
         elif quantity > 0: # buying
-            new_avg_price = ((current_quantity * current_avg) + (quantity * price * -1 )) / new_quantity
+            new_avg_price = ((current_quantity * current_avg) + (price * -1 )) / new_quantity
         elif quantity < 0: # selling
-            new_avg_price = ((current_quantity * current_avg) - (quantity * price * -1 )) / new_quantity
+            new_avg_price = ((current_quantity * current_avg) - (price)) / new_quantity
         else:
             new_avg_price = current_avg
+
+        print(f"current_quantity: {current_quantity}")
+        print(f"current_avg: {current_avg}")
+        print(f"new_quantity: {new_quantity}")
+        print(f"price: {price}")
+        print(f"quantity: {quantity}")
+        print(f"new_avg_price: {new_avg_price}")
 
         # Updating the game's transactions
         # Use this rather than Game.update_game() to avoid concurrency issues
