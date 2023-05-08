@@ -1,3 +1,4 @@
 .env
 **/.DS_Store
 **/__pycache__/
+api_testing.ipynb
