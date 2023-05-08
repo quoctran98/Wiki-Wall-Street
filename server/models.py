@@ -263,9 +263,9 @@ class Transaction():
         if new_quantity == 0:
             new_avg_price = 0 # hopefully this math is okay for if they rebuy?
         elif quantity > 0: # buying
-            new_avg_price = (current_quantity * current_avg) + (quantity * price * -1 ) / new_quantity
+            new_avg_price = ((current_quantity * current_avg) + (quantity * price * -1 )) / new_quantity
         elif quantity < 0: # selling
-            new_avg_price = (current_quantity * current_avg) - (quantity * price *1 ) / new_quantity
+            new_avg_price = ((current_quantity * current_avg) - (quantity * price * -1 )) / new_quantity
         else:
             new_avg_price = current_avg
 
