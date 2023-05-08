@@ -59,7 +59,8 @@ class User(UserMixin):
             active_users_coll.insert_one({
                 "email": email,
                 "name": name,
-                "password": generate_password_hash(password, method="scrypt"),
+                "password": generate_password_hash(password, method="sha256"),
+                # scrypt breaks on DigitalOcean?
                 "signup_time": datetime.datetime.now(),
                 "joined_games": [],
                 "user_id": user_id
