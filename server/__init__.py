@@ -43,4 +43,10 @@ def create_app():
     from .routes.wiki import wiki as wiki_blueprint
     app.register_blueprint(wiki_blueprint)
 
+    # Make sure the app is running with the correct settings
+    print("Routes registered!")
+    print("Connected to MongoDB databases: " + str(settings.USERS_DB_NAME) + " and " + str(settings.GAME_DB_NAME))
+    print("Game set up with average project views of " + str(settings.EN_WIKI_AVERAGE_DAILY_PROJECT_VIEWS))
+
+
     return(app)
