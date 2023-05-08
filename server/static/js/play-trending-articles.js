@@ -19,7 +19,7 @@ async function update_trending_articles() {
         const last_week_v = article.last_week_views;
         const weekly_change = Math.round((today_v - last_week_v) / last_week_v * 100);
         let card_html = `
-            <div class="card" style="width: 100%;">
+            <div class="card" style="style="width: 150px; height: 100px; background-color: #f8f9fa;">
                 <div class="card-body">
                     <div id="trending-graph-${i}"></div>
                     <h5 class="card-title">

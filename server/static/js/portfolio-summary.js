@@ -16,29 +16,21 @@ function format_price(p) {
 }
 
 function generate_card(article_name, n_owned, avg_buy_price) {
-    let card = document.createElement("div");
-    card.classList.add("card");
-    card.classList.add("mb-3");
-    card.classList.add("portfolio-card");    
 
-    let card_body = document.createElement("div");
-    card_body.classList.add("card-body");
-
-    let card_title = document.createElement("h6");
-    card_title.classList.add("card-title");
-    card_title.innerHTML = `<a href="javascript:load_into_search('${article_name}')">${article_name} (${n_owned})</a>`
-
-    let card_text = document.createElement("p");
-    card_text.classList.add("card-text");
-    card_text.innerHTML =  `
-        <span class="portfolio-card-avg-price">Avg Price: ${format_price(avg_buy_price)}</span>
+    card_html = `
+        <div class="card mb-3 portfolio-card">
+            <div class="card-body" style="width: 150px; height: 100px; background-color: #f8f9fa;">
+                <h6 class="card-title"> 
+                    <a href="javascript:load_into_search('${article_name}')">${article_name} (${n_owned})</a>
+                </h6>
+                <p class="card-text">
+                    <span class="portfolio-card-avg-price">Avg Price: ${format_price(avg_buy_price)}</span>
+                </p>
+            </div>
+        </div>
     `;
 
-    card_body.appendChild(card_title);
-    card_body.appendChild(card_text);
-    card.appendChild(card_body);
-
-    return(card);
+    return(card_html);
 }
 
 async function cash_and_value(game, player) {
@@ -73,7 +65,7 @@ async function initialize_portfolio_summary(game_id) {
         let n_owned = PORTFOLIO_PLAYER["articles"][article_name];
         if (n_owned > 0) {
             let card = generate_card(article_name, n_owned, avg_buy_price);
-            document.getElementById(PORTFOLIO_CARD_DECK).appendChild(card);
+            document.getElementById(PORTFOLIO_CARD_DECK).insertAdjacentHTML("beforeend", card);
         }
     }
 }

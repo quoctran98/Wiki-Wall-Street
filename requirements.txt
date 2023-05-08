@@ -1,0 +1,26 @@
+brotlipy==0.7.0
+cachelib @ file:///Users/ec2-user/ci_py311/cachelib_1678390552452/work
+certifi @ file:///Users/ec2-user/ci_py311/certifi_1678321191472/work/certifi
+cffi @ file:///Users/ec2-user/ci_py311/cffi_1678315312775/work
+charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
+click @ file:///Users/ec2-user/ci_py311/click_1678318124837/work
+cryptography @ file:///Users/ec2-user/ci_py311_2/cryptography_1679335457662/work
+dnspython==2.3.0
+Flask @ file:///Users/ec2-user/ci_py311/flask_1678380788105/work
+Flask-Caching @ file:///Users/ec2-user/ci_py311/flask-caching_1678411814383/work
+Flask-Login @ file:///Users/ec2-user/ci_py311/flask-login_1678391198827/work
+gunicorn==20.1.0
+idna @ file:///Users/ec2-user/ci_py311/idna_1678315819133/work
+itsdangerous @ file:///tmp/build/80754af9/itsdangerous_1621432558163/work
+Jinja2 @ file:///Users/ec2-user/ci_py311/jinja2_1678317138271/work
+MarkupSafe @ file:///Users/ec2-user/ci_py311/markupsafe_1678316973889/work
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pydantic @ file:///Users/ec2-user/ci_py311/pydantic_1678382895330/work
+pymongo==3.12.0
+pyOpenSSL @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_19gfn1ib_u/croot/pyopenssl_1678965300171/work
+PySocks @ file:///Users/ec2-user/ci_py311/pysocks_1678315868424/work
+python-dotenv==1.0.0
+requests @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_ec2sxfa_zk/croot/requests_1682607519671/work
+typing_extensions @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_cazhnzmri4/croot/typing_extensions_1681939520610/work
+urllib3 @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_61c6ppfd7m/croot/urllib3_1680254700568/work
+Werkzeug @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_fegt3z60s3/croot/werkzeug_1679489762631/work

@@ -316,7 +316,13 @@ def normalized_views(article,
                                          access=access,
                                          agent=agent,
                                          granularity="daily")
-        for i in range(len(pageviews_list)):
+        # print("🤪", article)
+        # print(len(pageviews_list))
+        # print(len(projectviews_list))
+        # print(pageviews_list[-1]["timestamp"])
+        # print(projectviews_list[-1]["timestamp"])
+        # SOMETIMES THE PAGEVIEWS LIST IS SHORTER THAN THE PROJECTVIEWS LIST OR SOMETHING
+        for i in range(len(pageviews_list)): 
             norm_factor = average_project_views / projectviews_list[i]["views"]
             pageviews_list[i]["views"] = pageviews_list[i]["views"] * norm_factor
         return(pageviews_list)

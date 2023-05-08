@@ -20,15 +20,17 @@
 <hr>
 
 <!-- TOP BANNER FOR PORTFOLIO SUMMARY -->
-<div class="row" id="portfolio-summary">
+<div class="row" id="portfolio-summary" style="max-height: 200px; overflow-x: clip;">
 
-    <div class="col-md-4">
+    <div class="col-md-3">
         <h3>CASH! <span id="portfolio-cash"></span></h3>
         <h3>VALUE! <span id="portfolio-value"></span></h3>
     </div> 
 
-    <div class="col-md-8">
-        <div class="horiz-scrolling-wrapper" id="portfolio-card-deck"></div>
+    <div class="col-md-9" style="overflow-x: scroll;">
+        <div class="container-fluid py-2 overflow-scrolling">
+            <div class="d-flex flex-row flex-nowrap" id="portfolio-card-deck" height="10px"></div>
+        </div>
     </div>
 
 </div>
@@ -40,7 +42,7 @@
     <!-- LEFT COLUMN FOR TRENDING ARTICLES -->
     <div class="col-md-2">
         <h3>TRENDING!</h3>
-        <div class="vert-scrolling-wrapper" id="trending-articles" height="200px" ></div>
+        <div id="trending-articles" style="max-height: 50vh; overflow-x: scroll;"></div>
     </div>
 
     <!-- MIDDLE COLUMN FOR GRAPH -->
