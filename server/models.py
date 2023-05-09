@@ -69,7 +69,7 @@ class User(UserMixin):
         return(False)
 
 class Game():
-    def __init__(self, game_id, name, owner_id, user_ids, settings, players, transactions):
+    def __init__(self, game_id, name, owner_id, user_ids, settings, players, transactions, public=False):
         self.game_id = game_id
         self.name = name
         self.owner_id = owner_id
@@ -77,6 +77,7 @@ class Game():
         self.settings = settings
         self.players = players
         self.transactions = transactions
+        self.public = public # Default is False in __init__ for backwards compatibility
 
     def update_game(self):
         """Update the game in the MongoDB."""
@@ -100,7 +101,7 @@ class Game():
             return cls(**data)
     
     @classmethod
-    def create_game(cls, name, owner_id, settings):
+    def create_game(cls, name, owner_id, settings, public):
         game_id = "game_" + uuid.uuid4().hex
 
         # Create a new collection in the transactions database
@@ -116,6 +117,7 @@ class Game():
             "settings": settings,
             "players": [],
             "transactions": [],
+            "public": public,
         })
         return(game_id)
     
@@ -261,7 +263,7 @@ class Transaction():
         new_quantity = current_quantity + quantity
         current_avg = player.avg_price[article] if article in player.avg_price else 0
 
-        # oh! don't multiple price by quantity since price isn't per unit :)
+        # oh! don't multiply price by quantity since price isn't per unit :)
         if new_quantity == 0:
             new_avg_price = 0 # hopefully this math is okay for if they rebuy?
         elif quantity > 0: # buying
@@ -270,13 +272,6 @@ class Transaction():
             new_avg_price = ((current_quantity * current_avg) - (price)) / new_quantity
         else:
             new_avg_price = current_avg
-
-        print(f"current_quantity: {current_quantity}")
-        print(f"current_avg: {current_avg}")
-        print(f"new_quantity: {new_quantity}")
-        print(f"price: {price}")
-        print(f"quantity: {quantity}")
-        print(f"new_avg_price: {new_avg_price}")
 
         # Updating the game's transactions
         # Use this rather than Game.update_game() to avoid concurrency issues

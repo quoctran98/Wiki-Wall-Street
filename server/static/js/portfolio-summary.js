@@ -18,16 +18,16 @@ function format_price(p) {
 function generate_card(article_name, n_owned, avg_buy_price) {
 
     card_html = `
-        <div class="card mb-3 portfolio-card">
-            <div class="card-body" style="width: 150px; height: 100px; background-color: #f8f9fa;">
-                <h6 class="card-title"> 
-                    <a href="javascript:load_into_search('${article_name}')">${article_name} (${n_owned})</a>
-                </h6>
-                <p class="card-text">
-                    <span class="portfolio-card-avg-price">Avg Price: ${format_price(avg_buy_price)}</span>
-                </p>
-            </div>
+    <a href="javascript:load_into_search('${article_name}')">
+        <div class="card portfolio-card">
+            <h6 class="card-title"> 
+                ${article_name} (${n_owned})
+            </h6>
+            <p class="card-text">
+                <span class="portfolio-card-avg-price">Avg Price: ${format_price(avg_buy_price)}</span>
+            </p>
         </div>
+    </a>
     `;
 
     return(card_html);

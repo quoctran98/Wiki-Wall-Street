@@ -4,17 +4,10 @@ from flask import Flask, request, Blueprint, render_template, flash, redirect, u
 from flask_login import login_required, current_user
 from pymongo import MongoClient
 
-from server.helper import settings, cache
+from server.helper import settings, cache, active_games_coll
 from server.models import User, Game, Player, Transaction
 
-# Functions for the actual game -- we don't really need these in other pages
 import server.WikiAPI as WikiAPI
-
-# Connect to MongoDB users database
-# I'm doing this for each blueprint because I don't know how to do it in __init__.py
-client = MongoClient(settings.MONGODB_CONNECTION_STRING)
-users_db = client[settings.USERS_DB_NAME]
-active_users_coll = users_db.active_users
 
 game = Blueprint("game", __name__)
 
@@ -40,9 +33,16 @@ def play():
 @login_required
 def create_game():
     game_settings = {
-        "starting_cash": float(request.form["starting_cash"]),
+        # if elses just in case (backwards compatibility? probably not)
+        "starting_cash": float(request.form["starting_cash"]) if "starting_cash" in request.form else 100000,
+        "show_cash": True if "show_cash" in request.form else False,
+        "show_articles": True if "show_articles" in request.form else False,
+        "show_number": True if "show_number" in request.form else False,
     }
-    new_game_id = Game.create_game(request.form["game_name"], current_user.user_id, game_settings)
+    new_game_id = Game.create_game(request.form["game_name"], 
+                                   current_user.user_id, 
+                                   game_settings,
+                                   True if "public_game" in request.form else False)
     game = Game.get_by_game_id(new_game_id)
     new_player_id = Player.join_game(current_user.user_id, game.game_id)
     player = Player.get_by_player_id(new_game_id, new_player_id)
@@ -87,7 +87,7 @@ def new_transaction():
                     "player": this_player.get_public_dict()}))
     
 
-@game.route("/api/get_games", methods=["POST"])
+@game.route("/api/get_games")
 @login_required
 def get_games():
     games = []
@@ -95,7 +95,17 @@ def get_games():
         this_game = Game.get_by_game_id(game_id)
         if not this_game is None:
             games.append(this_game.get_public_dict())
-    return(games)
+    return(jsonify({"games": games}))
+
+@game.route("/api/get_public_games")
+@login_required
+def get_public_games():
+    games = []
+    for pub_game in active_games_coll.find({"public": True}):
+        this_game = Game.get_by_game_id(pub_game["game_id"])
+        if not this_game is None:
+            games.append(this_game.get_public_dict())
+    return(jsonify({"games": games}))
 
 @game.route("/api/get_play_info", methods=["POST"])
 @login_required

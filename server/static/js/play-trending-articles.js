@@ -19,18 +19,17 @@ async function update_trending_articles() {
         const last_week_v = article.last_week_views;
         const weekly_change = Math.round((today_v - last_week_v) / last_week_v * 100);
         let card_html = `
-            <div class="card" style="style="width: 150px; height: 100px; background-color: #f8f9fa;">
-                <div class="card-body">
-                    <div id="trending-graph-${i}"></div>
-                    <h5 class="card-title">
-                        <a href="javascript:load_into_search('${article.article}', 'week')">${article.article}</a>
-                    </h5>
-                    <p class="card-text">${Math.round(article.today_views/1000)}k 
-                    (${(weekly_change > 0)? "📈" : "📉"} ${weekly_change}%)
-                    </p>
-
-                </div>
+        <a href="javascript:load_into_search('${article.article}', 'week')">
+            <div class="card trending-card">
+                <div id="trending-graph-${i}"></div>
+                <h5 class="card-title">
+                    ${article.article}
+                </h5>
+                <p class="card-text">${Math.round(article.today_views/1000)}k 
+                (${(weekly_change > 0)? "📈" : "📉"} ${weekly_change}%)
+                </p>
             </div>
+        </a>
         `
         trending_html += card_html;
     }
@@ -61,14 +60,13 @@ async function update_trending_articles() {
             type: "line",
         }];
         let plot_layout = {
-            height: 100,
-            width: 100,
+            height: 70,
             margin:{t: 0, b: 0, l: 0, r: 1},
             xaxis: {type: "date",},
             yaxis: {title: "",}
         };
         
-        Plotly.newPlot(graph_div, plot_data, plot_layout, {staticPlot: true});
+        Plotly.newPlot(graph_div, plot_data, plot_layout, {staticPlot: true, responsive: true});
     }
 }
 
