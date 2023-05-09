@@ -1,15 +1,15 @@
 .game-card {
-  width: 100%;
-  height: 100%;
+  width: 12em;
+  height: 12em;
   background-color: #f8f9fa;
 
-  
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
 
-  border-radius: 1em;
-  padding: 1em;
+  border-radius: 0.5em;
+  padding: 0.5em;
+  margin: 0.5em;
 
   display: flex;
 }
@@ -19,22 +19,23 @@
   height: 90%;
   background-color: #f8f9fa;
 
-  border-radius: 1em;
+  border-radius: 0.5em;
   padding: 0.5em;
   margin: 0.5em;
 
 }
 
 .trending-card {
-  width: 100%;
+  width: 90%;
   height: 12em;
   background-color: white;
 
   overflow-x: clip;
   overflow-y: clip;
 
-  border-radius: 1em;
-  padding: 1em;
+  border-radius: 0.5em;
+  padding: 0.5em;
+  margin: 0.5em;
 
   display: flex;
 }

@@ -95,16 +95,16 @@
 
     <!-- MODAL BODY -->
     <div class="modal-body">
-        <form action="{{ url_for('game.create_game') }}" method="POST" id="join-game-modal-form">
+        <form action="{{ url_for('game.join_game') }}" method="POST" id="join-game-modal-form">
             <input type="hidden" name="user_id" value="{{ current_user.id }}">
-            <input type="text" name="game_id" placeholder="Game ID">
+            <input type="text" name="game_id" id="join-game-modal-game-id" placeholder="Game ID">
     </form>
     </div>
     
     <!-- MODAL FOOTER -->
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" id="join-game-modal-cancel">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="join-game-modal-create" form="join-game-modal-form" disabled="true">Create</button>
+        <button type="submit" class="btn btn-primary" id="join-game-modal-join" form="join-game-modal-form" disabled="true">Join</button>
     </div>
 
     </div>
@@ -114,7 +114,8 @@
 <!-- GRID OF GAME CARDS -->
 <div class="row">
     <div class="col-md-1"></div>
-    <div class="col-md-10" id="game-cards-grid">
+    <div class="col-md-10">
+        <div class="row" id="game-cards-grid"></div>
     </div>
     <div class="col-md-1"></div>
 </div>

@@ -19,6 +19,8 @@ const NEW_GAME_MODAL_CREATE_ID = "new-game-modal-create";
 const JOIN_GAME_BUTTON_ID = "join-game-button";
 const JOIN_GAME_MODAL_ID = "join-game-modal";
 
+const JOIN_GAME_MODAL_GAME_ID = "join-game-modal-game-id";
+
 const JOIN_GAME_MODAL_CLOSE_ID = "join-game-modal-close";
 const JOIN_GAME_MODAL_CANCEL_ID = "join-game-modal-cancel";
 const JOIN_GAME_MODAL_JOIN_ID = "join-game-modal-join";
@@ -68,7 +70,15 @@ function add_join_game_event_listeners() {
     document.getElementById(JOIN_GAME_MODAL_CANCEL_ID).onclick = (() => {
         document.getElementById(JOIN_GAME_MODAL_ID).style.display = "none";
     });
-    
+
+    // disable join button if no game id
+    document.getElementById(JOIN_GAME_MODAL_GAME_ID).addEventListener("input", function() {
+        if (this.value) {
+            document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = false;
+        } else {
+            document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = true;
+        }
+    });
 }
 
 async function load_game_cards() {
@@ -83,19 +93,19 @@ async function load_game_cards() {
     joined_games = joined_games.games
 
     // make 3 columns for game cards + 2
-    const num_columns = 4;
-    const num_rows = Math.ceil((joined_games.length + 2) / num_columns);
-    for (let i = 0; i < num_rows; i++) {
-        const row = document.createElement("div");
-        row.classList.add("row");
-        game_card_container.appendChild(row);
-        for (let j = 0; j < num_columns; j++) {
-            const col = document.createElement("div");
-            col.classList.add(`col-${12 / num_columns}`);
-            row.appendChild(col);
-            col.setAttribute("id", "game-card-" + (i * num_columns + j));
-        }
-    }
+    // const num_columns = 4;
+    // const num_rows = Math.ceil((joined_games.length + 2) / num_columns);
+    // for (let i = 0; i < num_rows; i++) {
+    //     const row = document.createElement("div");
+    //     row.classList.add("row");
+    //     game_card_container.appendChild(row);
+    //     for (let j = 0; j < num_columns; j++) {
+    //         const col = document.createElement("div");
+    //         col.classList.add(`col-${12 / num_columns}`);
+    //         row.appendChild(col);
+    //         col.setAttribute("id", "game-card-" + (i * num_columns + j));
+    //     }
+    // }
 
     // create game cards
     for (let i = 0; i < joined_games.length; i++) {
@@ -115,7 +125,8 @@ async function load_game_cards() {
             </div>
         </div>
         `;
-        document.getElementById("game-card-" + i).insertAdjacentHTML("beforeend", game_card_html);
+        //document.getElementById("game-card-" + i).insertAdjacentHTML("beforeend", game_card_html);
+        game_card_container.insertAdjacentHTML("beforeend", game_card_html);
     }
 
     // create new game card
@@ -126,8 +137,9 @@ async function load_game_cards() {
             </div>
         </div>
     `;
-    let card_pos = joined_games.length;
-    document.getElementById("game-card-" + card_pos).insertAdjacentHTML("beforeend", create_game_html);
+    // let card_pos = joined_games.length;
+    // document.getElementById("game-card-" + card_pos).insertAdjacentHTML("beforeend", create_game_html);
+    game_card_container.insertAdjacentHTML("beforeend", create_game_html);
 
     // join game card
     const join_game_html = `
@@ -137,8 +149,9 @@ async function load_game_cards() {
             </div>
         </div>
     `;
-    card_pos += 1;
-    document.getElementById("game-card-" + card_pos).insertAdjacentHTML("beforeend", join_game_html);
+    // card_pos += 1;
+    // document.getElementById("game-card-" + card_pos).insertAdjacentHTML("beforeend", join_game_html);
+    game_card_container.insertAdjacentHTML("beforeend", join_game_html);
 }
 
 async function load_public_game_cards() {
