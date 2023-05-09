@@ -103,7 +103,7 @@ def get_public_games():
     games = []
     for pub_game in active_games_coll.find({"public": True}):
         this_game = Game.get_by_game_id(pub_game["game_id"])
-        if not this_game is None:
+        if not this_game is None and not current_user.user_id in this_game.user_ids:
             games.append(this_game.get_public_dict())
     return(jsonify({"games": games}))
 

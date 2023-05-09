@@ -1,6 +1,4 @@
-const GAME_CARDS_DECK_ID = "game-cards-grid";
-
-const PUBLIC_GAME_GRID_ID = "public-game-cards-grid";
+const GAME_CARDS_DIV_ID = "game-cards-grid";
 
 // NEW GAME IDS
 const NEW_GAME_BUTTON_ID = "new-game-button";
@@ -82,7 +80,7 @@ function add_join_game_event_listeners() {
 }
 
 async function load_game_cards() {
-    const game_card_container = document.getElementById(GAME_CARDS_DECK_ID);
+    const game_card_container = document.getElementById(GAME_CARDS_DIV_ID);
 
     // get game data from server
     const res = await fetch("/api/get_games", {method: "GET"});
@@ -91,21 +89,6 @@ async function load_game_cards() {
     }
     let joined_games = await res.json();
     joined_games = joined_games.games
-
-    // make 3 columns for game cards + 2
-    // const num_columns = 4;
-    // const num_rows = Math.ceil((joined_games.length + 2) / num_columns);
-    // for (let i = 0; i < num_rows; i++) {
-    //     const row = document.createElement("div");
-    //     row.classList.add("row");
-    //     game_card_container.appendChild(row);
-    //     for (let j = 0; j < num_columns; j++) {
-    //         const col = document.createElement("div");
-    //         col.classList.add(`col-${12 / num_columns}`);
-    //         row.appendChild(col);
-    //         col.setAttribute("id", "game-card-" + (i * num_columns + j));
-    //     }
-    // }
 
     // create game cards
     for (let i = 0; i < joined_games.length; i++) {
@@ -125,7 +108,6 @@ async function load_game_cards() {
             </div>
         </div>
         `;
-        //document.getElementById("game-card-" + i).insertAdjacentHTML("beforeend", game_card_html);
         game_card_container.insertAdjacentHTML("beforeend", game_card_html);
     }
 
@@ -137,8 +119,6 @@ async function load_game_cards() {
             </div>
         </div>
     `;
-    // let card_pos = joined_games.length;
-    // document.getElementById("game-card-" + card_pos).insertAdjacentHTML("beforeend", create_game_html);
     game_card_container.insertAdjacentHTML("beforeend", create_game_html);
 
     // join game card
@@ -149,13 +129,17 @@ async function load_game_cards() {
             </div>
         </div>
     `;
-    // card_pos += 1;
-    // document.getElementById("game-card-" + card_pos).insertAdjacentHTML("beforeend", join_game_html);
     game_card_container.insertAdjacentHTML("beforeend", join_game_html);
 }
 
+// open modal and preload game id
+function join_game(game_id) {
+    document.getElementById(JOIN_GAME_MODAL_ID).style.display = "block";
+    document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = game_id;
+    document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = false;
+}
+
 async function load_public_game_cards() {
-    const public_grid = document.getElementById(PUBLIC_GAME_GRID_ID);
     const res = await fetch("/api/get_public_games", {method:"GET"});
     if (res.status !== 200) {
         return(false);
@@ -163,16 +147,25 @@ async function load_public_game_cards() {
     let public_games = await res.json();
     public_games = public_games.games
 
-    public_grid.innerHTML = public_games.map((game) => {
-        const game_id = game.game_id;
-        return(`
-            <div class="card game-card">
-                <div class="card-body">
-                    <a href="/join_game?game_id=${game_id}">${game_id}</a>
-                </div>
+    for (let i = 0; i < public_games.length; i++) {
+        const game_id = public_games[i].game_id;
+        const game_name = public_games[i].name;
+        const players = public_games[i].players;
+
+        const players_string = players.join(", ");
+        const join_js = `javascript:join_game('${game_id}');`;
+        
+        const join_card_html = `
+        <div class="card game-card">
+            <div class="card-body">
+                <h5 class="card-title">${game_name}</h5>
+                <p class="card-text" style="white-space: wrap; overflow-x: scroll;">Players: ${players_string}</p>
+                <a href="${join_js}" class="btn btn-primary">Join!</a>
             </div>
-        `);
-    });
+        </div>
+        `;
+        document.getElementById(GAME_CARDS_DIV_ID).insertAdjacentHTML("beforeend", join_card_html);
+    }
 }
 
 load_game_cards().then((res) => {
