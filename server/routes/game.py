@@ -76,7 +76,7 @@ def new_transaction():
                                          int(tx_data["quantity"]))
     
     # return success message and no content
-    return(jsonify({"transaction": vars(new_tx)}))
+    return(jsonify({"success": True}))
     
 
 @game.route("/api/get_games")

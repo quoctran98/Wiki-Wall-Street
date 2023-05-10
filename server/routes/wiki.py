@@ -67,7 +67,7 @@ def article_description():
 @wiki.route("/api/trending_articles")
 @cache.cached(timeout=0)
 def trending_articles():
-    articles = WikiAPI.top_articles()["articles"][:50]
+    articles = WikiAPI.top_articles()["articles"][:100]
     trending = []
     for a in articles:
         name = a["article"]
