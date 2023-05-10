@@ -316,15 +316,18 @@ def normalized_views(article,
                                          access=access,
                                          agent=agent,
                                          granularity="daily")
-        # print("🤪", article)
-        # print(len(pageviews_list))
-        # print(len(projectviews_list))
-        # print(pageviews_list[-1]["timestamp"])
-        # print(projectviews_list[-1]["timestamp"])
+        
         # SOMETIMES THE PAGEVIEWS LIST IS SHORTER THAN THE PROJECTVIEWS LIST OR SOMETHING
-        for i in range(len(pageviews_list)): 
-            norm_factor = average_project_views / projectviews_list[i]["views"]
-            pageviews_list[i]["views"] = pageviews_list[i]["views"] * norm_factor
+        # We're prioritizing returning as much of the pageviews list as possible
+        project_timestamps = [x["timestamp"] for x in projectviews_list]
+        for i in range(len(pageviews_list)):
+           timestamp = pageviews_list[i]["timestamp"]
+           if timestamp not in project_timestamps:
+               pageviews_list.pop(i) # remove the pageviews entry if it doesn't have a corresponding timestamp in the projectviews list
+           else:
+                norm_factor = average_project_views / projectviews_list[i]["views"]
+                pageviews_list[i]["views"] *= norm_factor
+
         return(pageviews_list)
 
 def article_description(article, project="en.wikipedia"):
