@@ -35,6 +35,7 @@ def create_game():
     game_settings = {
         # if elses just in case (backwards compatibility? probably not)
         "starting_cash": float(request.form["starting_cash"]) if "starting_cash" in request.form else 100000,
+        "views_limit": int(request.form["views_limit"]) if "views_limit" in request.form else 10,
         "show_cash": True if "show_cash" in request.form else False,
         "show_articles": True if "show_articles" in request.form else False,
         "show_number": True if "show_number" in request.form else False,
@@ -64,9 +65,19 @@ def join_game():
 def new_transaction():
     tx_data = request.data.decode("utf-8")
     tx_data = json.loads(tx_data)
+    this_game = Game.get_by_game_id(tx_data["game_id"])
 
     # Verifying that transaction details are correct
-    
+    # Make sure the price is right
+    real_price = WikiAPI.normalized_views(tx_data["article"])[-1]["views"]
+    if abs(abs(real_price) - abs(float(tx_data["price"]))) > 1: # Just because of rounding errors (I should fix it)
+        flash("Price is incorrect. It's either a bug or you're trying to cheat.")
+        return(jsonify({"success": False}))
+    # Make sure the article is allowed to be bought
+    # I guess that you should be allowed to sell anything just in case it dips after you buy it
+    if not this_game.allowed_article(tx_data["article"]) and tx_data["quantity"] > 0:
+        flash("You can't buy this article.")
+        return(jsonify({"success": False}))
 
     # Transaction method will verify that user can make this transaction
     new_tx = Transaction.new_transaction(tx_data["game_id"], 
@@ -75,9 +86,19 @@ def new_transaction():
                                          float(tx_data["price"]),
                                          int(tx_data["quantity"]))
     
-    # return success message and no content
-    return(jsonify({"success": True}))
+    if new_tx == False:
+        flash("You can't make this transaction.")
+        return(jsonify({"success": False}))
+    else:
+        return(jsonify({"success": True}))
     
+@game.route("/api/allowed_article")
+@login_required
+def allowed_article():
+    game_id = request.args.get("game_id")
+    article = request.args.get("article")
+    this_game = Game.get_by_game_id(game_id)
+    return(jsonify({"allowed": this_game.allowed_article(article)}))
 
 @game.route("/api/get_games")
 @login_required

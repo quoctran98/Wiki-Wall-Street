@@ -92,6 +92,13 @@ class Game():
             "settings": self.settings,
             "players": self.players,
         })
+    
+    def allowed_article(self, article_name):
+        if "views_limit" in self.settings:
+            lowest_this_month = min([x["views"] for x in WikiAPI.normalized_views(article_name)])
+            return(self.settings["views_limit"] < lowest_this_month)
+        return(True)
+
 
     @classmethod
     def get_by_game_id(cls, game_id):
@@ -122,7 +129,7 @@ class Game():
         return(game_id)
     
 class Player():
-    def __init__(self, player_id, user_id, game_id, name, cash, articles, avg_price, transactions):
+    def __init__(self, player_id, user_id, game_id, name, cash, articles, avg_price, transactions, value_history):
         self.player_id = player_id
         self.user_id = user_id
         self.game_id = game_id
@@ -131,6 +138,7 @@ class Player():
         self.articles = articles
         self.avg_price = avg_price
         self.transactions = transactions
+        self.value_history = value_history
 
     def update_player(self):
         """Update the player in the MongoDB."""
@@ -146,6 +154,7 @@ class Player():
             "name": self.name,
 
             "value": self.portfolio_value,
+            "value_history": self.value_history,
         }
 
         # some games don't have these attributes though (ugh!)
@@ -161,7 +170,13 @@ class Player():
             if game_settings["show_number"]:
                 public_dict["articles"] = self.articles # Overwrite the above if show_number is True
         return(public_dict)
-
+    
+    def update_value_history(self):
+        """Update the player's value history in the MongoDB."""
+        players_db[self.game_id].update_one({"player_id": self.player_id}, 
+                                            {"$push": {
+                                                "timestamp": datetime.datetime.now(),
+                                                "value": self.portfolio_value}})
 
     @property
     def portfolio_value(self):
@@ -221,10 +236,12 @@ class Player():
             "articles": {},
             "avg_price": {},
             "transactions": [],
+            "value_history": [
+                {"timestamp": datetime.datetime.now(), "value": game.settings["starting_cash"]}
+            ]
         })
         return(player_id)
             
-
 class Transaction():
     def __init__(self, tx_id, game_id, player_id, article_id, price, quantity, timestamp):
         self.tx_id = tx_id

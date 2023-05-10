@@ -19,7 +19,7 @@ async function update_trending_articles() {
         const last_week_v = article.last_week_views;
         const weekly_change = Math.round((today_v - last_week_v) / last_week_v * 100);
         let card_html = `
-        <a href="javascript:load_into_search('${article.article}', 'week')">
+        <a href="javascript:load_into_search('${article.article}','week')">
             <div class="card trending-card">
                 <div id="trending-graph-${i}"></div>
                 <h5 class="card-title">
@@ -72,8 +72,8 @@ async function update_trending_articles() {
 
 function load_into_search(article, timespan=null) {
     if (timespan) {
-        document.getElementById(SEARCH_ID).value = `${article} ${timespan}`;
-    } // otherwise it's the same :)
+        current_timespan = timespan;
+    }
     document.getElementById(SEARCH_ID).value = article;
     // SEARCH_ID is defined in server/static/js/transaction-navigator.js
     search_main(); // defined in server/static/js/transaction-navigator.js

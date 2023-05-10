@@ -128,7 +128,7 @@ async function graph_time(timespan) {
 
 async function update_tx_navigator(article, timespan="month") {
     
-    // disale the button that was clicked
+    // disbale the button that was clicked
     for (let i = 0; i < GRAPH_TIME_BUTTON_IDS.length; i++) {
         this_button_id = GRAPH_TIME_BUTTON_IDS[i];
         if (this_button_id.includes(timespan)) {
@@ -136,7 +136,6 @@ async function update_tx_navigator(article, timespan="month") {
         } else {
             document.getElementById(this_button_id).removeAttribute("disabled");
         }
-        
     }
 
     // get monthly view data from server
@@ -177,18 +176,33 @@ async function update_tx_navigator(article, timespan="month") {
     graph_div = document.getElementById(GRAPH_DIV_ID);
     Plotly.newPlot(graph_div, plot_data, plot_layout, {staticPlot: true});
 
+    // check if article is allowed (if not, disable buy buttons)
+    url = "/api/allowed_article?game_id=" + GAME.game_id;
+    url += "&article=" + article;
+    let res_allowed = await fetch(url, {method: 'GET'})
+    if (res_allowed.status !== 200) {
+        return(false);
+    }
+    res_allowed = await res_allowed.json()
+    if (res_allowed.allowed == false) {
+        document.getElementById(BUY_1_BUTTON_ID).setAttribute("disabled", true);
+        document.getElementById(BUY_5_BUTTON_ID).setAttribute("disabled", true);
+        document.getElementById(BUY_CUSTOM_BUTTON_ID).setAttribute("disabled", true);
+    }
+
     // price info for transaction form and graph title
     const price_info = {
         article: article,
         monthly_change: monthly_change,
         current_price: views[views.length-1], 
+        allowed: res_allowed.allowed,
         // should use the current_price api but hopefully this is fine
         // we'll double check on the server side and if it doesn't match a lot i'll fix it
     }
     return(price_info);
 }
 
-async function set_title(article, monthly_change, current_price) {
+async function set_title(article, monthly_change, current_price, allowed) {
 
     // get article id for wikipedia link
     url = "/api/article_id?article=" + article;
@@ -207,6 +221,9 @@ async function set_title(article, monthly_change, current_price) {
     let wikipedia_url = `http://en.wikipedia.org/wiki?curid=${data_id.article_id}`;
     let plot_title = `<a href="${wikipedia_url}" target="_blank" rel="noopener noreferrer">${article}</a>:`
     plot_title += ` ${current_price} (${(monthly_change > 0)? "📈" : "📉"} ${monthly_change}%)`;
+    if (allowed == false) {
+        plot_title = `<s>${plot_title}</s>`;
+    }
     document.getElementById(GRAPH_TITLE_ID).innerHTML = plot_title;
 
     // get short description
@@ -215,8 +232,13 @@ async function set_title(article, monthly_change, current_price) {
     if (res_desc.status !== 200) {
         return(false);
     }
-    const data_desc = await res_desc.json()
-    document.getElementById(GRAPH_DESC_ID).innerHTML = data_desc.description;
+    let data_desc = await res_desc.json()
+    data_desc = data_desc.description;
+    if (allowed == false) {
+        data_desc = `<s>${data_desc}</s>`;
+        data_desc += "<br><p style='color:Tomato'>Article is not allowed in this game!</p>"
+    }
+    document.getElementById(GRAPH_DESC_ID).innerHTML = data_desc;
 }
 
 async function search_main() {
@@ -228,7 +250,7 @@ async function search_main() {
         // keep timespan the same :)
         
         // use price info from update_tx_navigator to set title and other info for transaction form
-        set_title(price_info.article, price_info.monthly_change, price_info.current_price);
+        set_title(price_info.article, price_info.monthly_change, price_info.current_price, price_info.allowed);
         current_article = price_info.article;
         current_price = price_info.current_price;
 
@@ -241,7 +263,7 @@ async function search_main() {
         }
 
         // update tx buttons
-        update_tx_info();
+        update_tx_info(price_info.allowed);
     }
 }
 
@@ -268,7 +290,7 @@ async function player_article_info(article, player) {
     }
 }
 
-async function update_tx_info() {
+async function update_tx_info(allowed) {
     let custom_buy = document.getElementById(CUSTOM_BUY_INPUT_ID).value;
 
     // update buy buttons
@@ -317,6 +339,14 @@ async function update_tx_info() {
     } else {
         document.getElementById(SELL_DIV_ID).style.display = "none"; // hide sell div
     }
+
+    // disable buy buttons if article is not allowed
+    // probably be a better way to do this but it's fine with copilot
+    if (allowed == false) {
+        document.getElementById(BUY_1_BUTTON_ID).setAttribute("disabled", true);
+        document.getElementById(BUY_5_BUTTON_ID).setAttribute("disabled", true);
+        document.getElementById(BUY_CUSTOM_BUTTON_ID).setAttribute("disabled", true);
+    }
 }
 
 async function initialize() {
@@ -350,10 +380,6 @@ async function initialize() {
         document.getElementById(SEARCH_ID).value = "Minecraft";
     }
     search_main()
-    .then(() => { // we have to wait for global vars to be updated
-        update_tx_info();
-    });
-
 }
 
 initialize();
