@@ -8,9 +8,10 @@
 
 from flask import Flask
 from flask_login import LoginManager
+from datetime import datetime
 
-from server.helper import settings, cache_config, cache
-from server.models import User
+from server.helper import settings, cache_config, cache, scheduler, active_games_coll, players_db
+from server.models import User, Player
 
 def create_app():
     app = Flask(__name__)
@@ -26,6 +27,25 @@ def create_app():
     
     # Set up cache
     cache.init_app(app, config=cache_config)
+
+    # Run Player.update_value_history() for every player in every active game
+    def update_all_portfolio_vals():
+        n_games = 0
+        n_players = 0
+        for game in active_games_coll.find():
+            n_games += 1
+            for player in players_db[game["game_id"]].find():
+                this_player = Player.get_by_player_id(game["game_id"], player["player_id"])
+                this_player.update_value_history()
+                n_players += 1
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"Updated value history for {n_players} players in {n_games} games at {timestamp} ⏰")
+
+    # Set up scheduler
+    scheduler.init_app(app)
+    scheduler.start()
+    # Run update_all_portfolio_vals() every hour (should only change once a day, but this will make it easy to search!)
+    scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="interval", hours=1)
 
     # Blueprint for auth routes from server/auth.py
     from .routes.auth import auth as auth_blueprint

@@ -2,6 +2,7 @@ name: WikiWallStreet
 channels:
   - defaults
 dependencies:
+  - apscheduler=3.9.0=py311hecd8cb5_0
   - brotlipy=0.7.0=py311h6c40b1e_1002
   - bzip2=1.0.8=h1de35cc_0
   - ca-certificates=2023.01.10=hecd8cb5_0
@@ -12,6 +13,7 @@ dependencies:
   - click=8.0.4=py311hecd8cb5_0
   - cryptography=39.0.1=py311hf6deb26_0
   - flask=2.2.2=py311hecd8cb5_0
+  - flask-apscheduler=1.12.4=py311hecd8cb5_0
   - flask-caching=2.0.1=py311hecd8cb5_0
   - flask-login=0.6.2=py311hecd8cb5_0
   - idna=3.4=py311hecd8cb5_0
@@ -29,14 +31,18 @@ dependencies:
   - pyopenssl=23.0.0=py311hecd8cb5_0
   - pysocks=1.7.1=py311hecd8cb5_0
   - python=3.11.3=h1fd4e5f_0
+  - python-dateutil=2.8.2=pyhd3eb1b0_0
+  - pytz=2022.7=py311hecd8cb5_0
   - readline=8.2=hca72f7f_0
   - requests=2.29.0=py311hecd8cb5_0
   - setuptools=66.0.0=py311hecd8cb5_0
+  - six=1.16.0=pyhd3eb1b0_1
   - sqlite=3.41.2=h6c40b1e_0
   - tk=8.6.12=h5d9f67b_0
   - typing-extensions=4.5.0=py311hecd8cb5_0
   - typing_extensions=4.5.0=py311hecd8cb5_0
   - tzdata=2023c=h04d1e81_0
+  - tzlocal=2.1=py311hecd8cb5_1
   - urllib3=1.26.15=py311hecd8cb5_0
   - werkzeug=2.2.3=py311hecd8cb5_0
   - wheel=0.38.4=py311hecd8cb5_0

@@ -159,7 +159,6 @@ class Player():
 
         # some games don't have these attributes though (ugh!)
         # check if they exist first
-
         if "show_cash" in game_settings:
             if game_settings["show_cash"]:
                 public_dict["cash"] = self.cash
@@ -173,13 +172,15 @@ class Player():
     
     def update_value_history(self):
         """Update the player's value history in the MongoDB."""
-        players_db[self.game_id].update_one({"player_id": self.player_id}, 
-                                            {"$push": {
-                                                "timestamp": datetime.datetime.now(),
-                                                "value": self.portfolio_value}})
+        this_value = {
+            "timestamp": datetime.datetime.now(),
+            "value": self.portfolio_value
+        }
+        players_db[self.game_id].update_one({"player_id": self.player_id}, {"$push": {"value_history": this_value}})    
 
     @property
     def portfolio_value(self):
+        """Return the value of the player's portfolio (cash + articles)."""
         value = self.cash
         for article, amount in self.articles.items():
             res = WikiAPI.normalized_views(article)

@@ -1,6 +1,7 @@
 from pydantic import BaseSettings
 from pymongo import MongoClient
 from flask_caching import Cache
+from flask_apscheduler import APScheduler
 
 # Load settings from .env file
 class Settings(BaseSettings):
@@ -46,3 +47,6 @@ cache_config = {
     "CACHE_DEFAULT_TIMEOUT": 1800
 }
 cache = Cache()
+
+# Scheduler for later use
+scheduler = APScheduler()
