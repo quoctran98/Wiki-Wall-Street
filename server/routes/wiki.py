@@ -12,14 +12,14 @@ import server.WikiAPI as WikiAPI
 wiki = Blueprint("wiki", __name__)
 
 @wiki.route("/api/article_id")
-@cache.cached(timeout=0, query_string=True)
+@cache.cached(timeout=86400, query_string=True)
 def article_id():
     article = request.args.get("article")
     article_id = WikiAPI.article_id(article)
     return(jsonify(article_id=article_id))
 
 @wiki.route("/api/search_article")
-@cache.cached(timeout=0, query_string=True)
+@cache.cached(timeout=86400, query_string=True)
 def search_article():
     query = request.args.get("query")
     if len(query) > 0:
@@ -58,14 +58,14 @@ def monthly_views():
     return(jsonify(timestamps=timestamps, views=views))
 
 @wiki.route("/api/article_description")
-@cache.cached(timeout=0, query_string=True)
+@cache.cached(timeout=86400, query_string=True) # This should never change (maybe)
 def article_description():
     article = request.args.get("article")
     description = WikiAPI.article_description(article)
     return(jsonify(description=description))
 
 @wiki.route("/api/trending_articles")
-@cache.cached(timeout=0)
+@cache.cached(timeout=3600) # This maybe changes once a day?
 def trending_articles():
     articles = WikiAPI.top_articles()["articles"][:100]
     trending = []
