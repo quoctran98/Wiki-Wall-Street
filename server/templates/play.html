@@ -19,7 +19,23 @@
 
 <hr>
 
-<!-- TOP BANNER FOR PORTFOLIO SUMMARY -->
+<!-- LEADERBOARD BANNER -->
+<div class="row" id="leaderboard-banner" style="height: 7em;">
+
+    <!-- I don't get why I have to enforce height 100% for these columns but not for portfolio summary -->
+    <div class="col-md-3" style="height: 100%">
+        <h3>LEADERBOARD!</h3>
+    </div> 
+
+    <div class="col-md-9" style="height: 100%">
+        <div style="overflow-x: scroll; height: 100%;">
+            <div style="display: inline-flex; height: 100%;" id="leaderboard-card-deck"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- BANNER FOR PORTFOLIO SUMMARY -->
 <div class="row" id="portfolio-summary" style="height: 7em;">
 
     <div class="col-md-3">
@@ -96,6 +112,7 @@
 <script src="{{url_for('static', filename='js/plotly-2.20.0.min.js')}}"></script>
 <script src="{{url_for('static', filename='js/portfolio-summary.js')}}"></script>
 <script src="{{url_for('static', filename='js/transaction-navigator.js')}}"></script>
+<script src="{{url_for('static', filename='js/game-leaderboard.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-trending-articles.js')}}"></script>
 
 {% endblock %}

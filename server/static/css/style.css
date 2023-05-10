@@ -39,3 +39,16 @@
 
   display: flex;
 }
+
+.leaderboard-card {
+  width: 10em;
+  height: 90%;
+  background-color: #f8f9fa;
+
+  border-radius: 0.5em;
+  padding: 0.5em;
+  margin: 0.5em;
+
+  overflow-y: scroll;
+
+}

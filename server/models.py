@@ -137,30 +137,40 @@ class Player():
         players_db[self.game_id].update_one({"player_id": self.player_id}, {"$set": self.__dict__})
 
     def get_public_dict(self):
-        """Return a dictionary with only the public (all) information about the player."""
-        return({
+        """Return a dictionary with only the public information about the player."""
+        game_settings = Game.get_by_game_id(self.game_id).settings
+        public_dict = {
             "player_id": self.player_id,
             "user_id": self.user_id,
             "game_id": self.game_id,
             "name": self.name,
-            "cash": self.cash,
-            "articles": self.articles,
-            "avg_price": self.avg_price,
-            "transactions": self.transactions,
-        })
+
+            "value": self.portfolio_value,
+        }
+
+        # some games don't have these attributes though (ugh!)
+        # check if they exist first
+
+        if "show_cash" in game_settings:
+            if game_settings["show_cash"]:
+                public_dict["cash"] = self.cash
+        if "show_articles" in game_settings:
+            if game_settings["show_articles"]:
+                public_dict["articles"] = {article: True for article in self.articles if self.articles[article] > 0}
+        if "show_number" in game_settings:
+            if game_settings["show_number"]:
+                public_dict["articles"] = self.articles # Overwrite the above if show_number is True
+        return(public_dict)
+
 
     @property
     def portfolio_value(self):
         value = self.cash
         for article, amount in self.articles.items():
-            res = WikiAPI.pageviews(article, 
-                                    start=datetime.date.today(),
-                                    end=datetime.date.today(),
-                                    granularity="daily")
-            views = res[0]["views"]
-            project = res[0]["project"]
-            norm_views = WikiAPI.normalize(views, project=project)
-            value += norm_views * self.articles[article]
+            res = WikiAPI.normalized_views(article)
+            if res is not None:
+                this_price = res[-1]["views"]
+                value += this_price * amount
         return(value)
     
     @classmethod

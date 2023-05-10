@@ -24,7 +24,7 @@ function generate_card(article_name, n_owned, avg_buy_price) {
                 ${article_name} (${n_owned})
             </h6>
             <p class="card-text">
-                <span class="portfolio-card-avg-price">Avg Price: ${format_price(avg_buy_price)}</span>
+                <span>Avg Price: ${format_price(avg_buy_price)}</span>
             </p>
         </div>
     </a>
@@ -49,7 +49,7 @@ async function initialize_portfolio_summary(game_id) {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-            "game_id": GAME_ID
+            "game_id": game_id
         })
     });
     play_info = await play_info.json();
@@ -71,3 +71,4 @@ async function initialize_portfolio_summary(game_id) {
 }
 
 initialize_portfolio_summary(GAME_ID);
+

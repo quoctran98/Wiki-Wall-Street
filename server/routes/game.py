@@ -64,8 +64,6 @@ def join_game():
 def new_transaction():
     tx_data = request.data.decode("utf-8")
     tx_data = json.loads(tx_data)
-    this_game = Game.get_by_game_id(tx_data["game_id"])
-    this_player = Player.get_by_player_id(tx_data["game_id"], tx_data["player_id"])
 
     # Verifying that transaction details are correct
     
@@ -77,14 +75,8 @@ def new_transaction():
                                          float(tx_data["price"]),
                                          int(tx_data["quantity"]))
     
-    # We need to update this_game and this_player -- this way sucks!
-    # Do I need to do this at all?
-    this_game = Game.get_by_game_id(tx_data["game_id"])
-    this_player = Player.get_by_player_id(tx_data["game_id"], tx_data["player_id"])
-    
-    # I'm not sure what we're returning here!
-    return(jsonify({"game": this_game.get_public_dict(),
-                    "player": this_player.get_public_dict()}))
+    # return success message and no content
+    return(jsonify({"transaction": vars(new_tx)}))
     
 
 @game.route("/api/get_games")
@@ -94,7 +86,7 @@ def get_games():
     for game_id in current_user.joined_games:
         this_game = Game.get_by_game_id(game_id)
         if not this_game is None:
-            games.append(this_game.get_public_dict())
+            games.append(vars(this_game))
     return(jsonify({"games": games}))
 
 @game.route("/api/get_public_games")
@@ -104,19 +96,20 @@ def get_public_games():
     for pub_game in active_games_coll.find({"public": True}):
         this_game = Game.get_by_game_id(pub_game["game_id"])
         if not this_game is None and not current_user.user_id in this_game.user_ids:
-            games.append(this_game.get_public_dict())
+            games.append(vars(this_game))
     return(jsonify({"games": games}))
 
 @game.route("/api/get_play_info", methods=["POST"])
 @login_required
 def get_play_info():
+    # This should only be called by the player themselves
     game_id = request.json["game_id"]
     this_game = Game.get_by_game_id(game_id)
     this_player = Player.get_by_user_id(game_id, current_user.user_id)
     if this_game is None:
         return(jsonify({"error": "Game not found."}))
-    return(jsonify({"game": this_game.get_public_dict(),
-                    "player": this_player.get_public_dict()}))
+    return(jsonify({"game": vars(this_game),
+                    "player": vars(this_player)}))
 
 @game.route("/api/portfolio_value")
 @login_required
@@ -125,9 +118,18 @@ def portfolio_value():
     game_id = request.args.get("game_id")
     player_id = request.args.get("player_id")
     this_player = Player.get_by_player_id(game_id, player_id)
-    value = this_player.cash
-    for name, quantity in this_player.articles.items():
-        normalized_views = WikiAPI.normalized_views(name)
-        current_price = normalized_views[-1]["views"] # I should implement a current_price function
-        value += quantity * current_price
-    return(jsonify({"value": value}))
+    return(jsonify({"value": this_player.portfolio_value}))
+
+@game.route("/api/leaderboard")
+@login_required
+@cache.cached(timeout=300, query_string=True) # this should only change once a day
+def leaderboard():
+    game_id = request.args.get("game_id")
+    game = Game.get_by_game_id(game_id)
+
+    players = []
+    for user_id in game.user_ids:
+        player = Player.get_by_user_id(game_id, user_id)
+        players.append(player.get_public_dict())
+    players.sort(key=lambda x: x["value"], reverse=True)
+    return(jsonify({"players": players}))
