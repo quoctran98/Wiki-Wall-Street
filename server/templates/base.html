@@ -7,70 +7,80 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}"" />
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}"" />
 
-    <title>Wikipedia Game 📖📈</title>
+    <title>Wiki Wall Street 📖📈</title>
 </head>
 
 <body>
 
+    <!-- PADDING ROW -->
+    <div class="row"><div class="col-md-12"><br></div></div>
+
     <!-- NAVBAR -->
     <div class="row">
-        <div class="col-md-4">
-                </div>
-        <div class="col-md-8"> 
-        <nav class="navbar navbar-toggleable-lg navbar-expand-lg rounded" aria-label="Eleventh navbar example">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ url_for('main.index') }}" class="navbar-item">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ url_for('main.about') }}" class="navbar-item">About</a>
-                </li>
-                {% if current_user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ url_for('game.games') }}" class="navbar-item">Games</a>
-                </li>
-                {% endif %}
-                {% if current_user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ url_for('main.profile') }}" class="navbar-item">Profile</a>
-                </li>
-                {% endif %}
-                {% if not current_user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ url_for('auth.login') }}" class="navbar-item">Login</a>
-                </li>
-                {% endif %}
-                {% if not current_user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ url_for('auth.signup') }}" class="navbar-item">Sign Up</a>
-                </li>
-                {% endif %}
-                {% if current_user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ url_for('auth.logout') }}" class="navbar-item">Logout</a>
-                </li>
-                {% endif %}
-            </ul>
-            <form role="search">
-                <input class="form-control" type="search" placeholder="Search" aria-label="Search">
-            </form>
+        
+        <div class="col-md-2"></div>
+
+        <div class="col-md-8">
+            <a href="{{ url_for('main.index') }}" style="all: unset;">
+                <!-- <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Wiki Wall Street Logo" class="img-fluid"> -->
+                <h1 class="title" style="float: left;">
+                    Wiki Wall Street 📖📈
+                </h1>
+            </a>
+
+            <nav class="navbar navbar-toggleable-lg navbar-expand-lg rounded" style="float: right;">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}" class="navbar-item">Home</a>
+                    </li>
+    <!--                 {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('game.games') }}" class="navbar-item">Games</a>
+                    </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.profile') }}" class="navbar-item">Profile</a>
+                    </li>
+                    {% endif %} -->
+                    {% if not current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}" class="navbar-item">Login</a>
+                    </li>
+                    {% endif %}
+                    {% if not current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.signup') }}" class="navbar-item">Sign Up</a>
+                    </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}" class="navbar-item">Logout</a>
+                    </li>
+                    {% endif %}
+                </ul>
         </nav>
         </div>
-        </div>
+
+        <div class="col-md-2"></div>
+     </div>
     </div>
 
     <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     {% for m in messages %}
+        <div class="col-md-2"></div>
         <div class="col-md-4">
             <div class="alert alert-primary" role="alert">
                 {{ m }}
             </div>
         </div>
+        <div class="col-md-6"></div>
     {% endfor %}
     {% endif %}
     {% endwith %}

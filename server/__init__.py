@@ -65,7 +65,7 @@ def create_app():
 
     # Make sure the app is running with the correct settings
     print("Routes registered! 🌐")
-    print(f"Connected to MongoDB at {settings.MONGODB_CONNECTION_STRING} 💾")
+    # print(f"Connected to MongoDB at {settings.MONGODB_CONNECTION_STRING} 💾")
     print(f"Game set up with average en.wikipedia project views of {settings.EN_WIKI_AVERAGE_DAILY_PROJECT_VIEWS} 📈")
 
     return(app)

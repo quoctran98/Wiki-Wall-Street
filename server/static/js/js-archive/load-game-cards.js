@@ -1,7 +1,7 @@
 const GAME_CARDS_DIV_ID = "game-cards-grid";
 
 // NEW GAME IDS
-const NEW_GAME_BUTTON_ID = "new-game-button";
+const NEW_GAME_BUTTON_ID = "new-game-button"; // button to open modal
 const NEW_GAME_MODAL_ID = "new-game-modal";
 
 const NEW_GAME_NAME_ID = "new-game-modal-game-name";
@@ -11,17 +11,17 @@ const NEW_GAME_SHOW_ARTICLES_LABEL_ID = "new-game-show-number-label";
 
 const NEW_GAME_MODAL_CLOSE_ID = "new-game-modal-close";
 const NEW_GAME_MODAL_CANCEL_ID = "new-game-modal-cancel";
-const NEW_GAME_MODAL_CREATE_ID = "new-game-modal-create";
+const NEW_GAME_MODAL_CREATE_ID = "new-game-modal-create"; // button to actually create game
 
 // JOIN GAME IDS
-const JOIN_GAME_BUTTON_ID = "join-game-button";
+const JOIN_GAME_BUTTON_ID = "join-game-button"; // button to open modal
 const JOIN_GAME_MODAL_ID = "join-game-modal";
 
 const JOIN_GAME_MODAL_GAME_ID = "join-game-modal-game-id";
 
 const JOIN_GAME_MODAL_CLOSE_ID = "join-game-modal-close";
 const JOIN_GAME_MODAL_CANCEL_ID = "join-game-modal-cancel";
-const JOIN_GAME_MODAL_JOIN_ID = "join-game-modal-join";
+const JOIN_GAME_MODAL_JOIN_ID = "join-game-modal-join"; // button to actually join game
 
 function add_new_game_event_listeners() {
     // modal open/close

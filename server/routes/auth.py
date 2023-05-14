@@ -24,7 +24,7 @@ def login_post():
     # Use the method from User class to check the password
     if user is not None and user.check_password(password):
         login_user(user, remember=remember)
-        return(redirect(url_for("main.profile")))
+        return(redirect(url_for("main.index")))
     else:
         flash("Please check your login details and try again.")
         return(redirect(url_for("auth.login")))
