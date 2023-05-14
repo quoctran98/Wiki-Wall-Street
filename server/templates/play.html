@@ -4,7 +4,14 @@
 
 <div class="row">
     <h2>
-        Welcome to {{ game.name }}!
+        Welcome<span id=game-name></span>!
+    </h2>
+
+    <!-- LEADERBOARD BANNER -->
+    <div style="overflow-x: scroll; height: 100%;">
+        <div style="display: inline-flex; height: 100%;" id="leaderboard-banner"></div>
+    </div>
+
 </div>
 
 <hr>
@@ -60,17 +67,6 @@
 
     </div>
     </div>
-</div>
-
-
-<!-- LEADERBOARD BANNER -->
-<div class="row" id="leaderboard-banner" style="height: 7em;">
-
-    <!-- I don't get why I have to enforce height 100% for these columns but not for portfolio summary -->
-    <div style="overflow-x: scroll; height: 100%;">
-        <div style="display: inline-flex; height: 100%;" id="leaderboard-card-deck"></div>
-    </div>
-
 </div>
 
 <!-- BANNER FOR PORTFOLIO SUMMARY -->
@@ -149,11 +145,15 @@
 
 <script src="{{url_for('static', filename='js/plotly-2.20.0.min.js')}}"></script>
 
+<!-- JS FILES TO DEFINE FUNCITONS FOR VARIOUS ELEMENTS (refer to comment at the top of play-page-main.js) -->
+<!-- NOTHING REALLY RUNS IN THESE -->
 <script src="{{url_for('static', filename='js/play-page-inputs.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-tx-nav.js')}}"></script>
+<script src="{{url_for('static', filename='js/play-page-portfolio.js')}}"></script>
+<script src="{{url_for('static', filename='js/play-page-leaderboard.js')}}"></script>
+<script src="{{url_for('static', filename='js/play-page-trending.js')}}"></script>
 
-<script src="{{url_for('static', filename='js/portfolio-summary.js')}}"></script>
-<script src="{{url_for('static', filename='js/game-leaderboard.js')}}"></script>
-<script src="{{url_for('static', filename='js/play-trending-articles.js')}}"></script>
+<!-- THIS IS THE MAIN JS FILE FOR THE PLAY PAGE -->
+<script src="{{url_for('static', filename='js/play-page-main.js')}}"></script>
 
 {% endblock %}

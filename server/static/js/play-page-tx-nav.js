@@ -1,8 +1,6 @@
 // This script manages the graph, search bar, and buy/sell buttons on the play page.
 // This is called by static/js/play-page-inputs.js for many different events.
 
-// But also this script NEEDS to be run first -- it declares all the global variables!
-
 // IDS FOR HTML ELEMENTS
 
 const NAVIGATOR_DIV_ID = "transaction-navigator";
@@ -35,40 +33,6 @@ const SELL_CUSTOM_BUTTON_ID = "sell-custom-button";
 const CUSTOM_SELL_INPUT_ID = "custom-sell-input";
 const ALL_SELL_BUTTONS = [SELL_1_BUTTON_ID, SELL_CUSTOM_BUTTON_ID];
 const ALL_TX_BUTTONS = ALL_BUY_BUTTONS.concat(ALL_SELL_BUTTONS);
-
-// Porfolio summary banner elements
-// const PORTFOLIO_SUMMARY_ID = "portfolio-summary"
-// const PORTFOLIO_CASH_ID = "portfolio-cash"
-// const PORTFOLIO_VALUE_ID = "portfolio-value"
-// const PORTFOLIO_CARD_DECK = "portfolio-card-deck"
-
-// Leaderboard elements
-// const LEADERBOARD_CARD_DECK = "leaderboard-card-deck";
-
-// Global variables for the current game and loaded article
-let GAME_ID = window.location.search.split("=")[1].split("&")[0];
-let GAME_OBJECT;
-let THIS_PLAYER;
-
-let CURRENT_ARTICLE = "Minecraft";
-let CURRENT_PRICE;
-let ARTICLE_DATA_OBJECT;
-let PAGEVIEWS_DATA_OBJECT;
-
-let CURRENT_TIMESPAN = "month";
-let PRICE_CHANGE;
-
-let ARTICLE_ALLOWED = true;
-
-function format_price(p) {
-    // Round the price to the nearest integer or at least 3 significant figures
-    if (p < 1000) {
-        p = Math.round(p);
-    } else {
-        p = Math.round(p / 100) * 100;
-    }
-    return(p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
-}
 
 // Update the buy/sell buttons! And the information about the player buying the article!
 function update_trade_buttons(article=CURRENT_ARTICLE, price=CURRENT_PRICE, player=THIS_PLAYER, allowed=ARTICLE_ALLOWED) {
@@ -212,74 +176,53 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
 // It also updates the global variables based on the inputs and API calls :)
 async function load_article (article_name=null) {
 
-   // Do all the API calls up top (maybe not the most efficient, but it works for now)
-   // We're down to only three!
-
     // Get the article name from the search bar if it's not passed as an argument
     if (article_name == null) {
         article_name = document.getElementById(SEARCH_ID).value;
         CURRENT_ARTICLE = article_name;
     }
 
-    // Check if article is allowed in this game
-    allowed_url = "/api/allowed_article?game_id=" + GAME_OBJECT.game_id;
-    allowed_url += "&article=" + article_name;
-    let res_allowed = await fetch(allowed_url, {method: 'GET'})
-    if (res_allowed.status !== 200) {
-        alert("Something went wrong calling api/allowed_article!");
-        return(false);
-    }
-    res_allowed = await res_allowed.json()
-    ARTICLE_ALLOWED = res_allowed.allowed;
+   // Do all the API calls up top, then update the page at the end
+   Promise.all([
+        fetch(`/api/allowed_article?game_id=${GAME_OBJECT.game_id}&article=${article_name}`),
+        fetch(`/api/article_price?article=${article_name}&timespan=${CURRENT_TIMESPAN}`),
+        fetch(`/api/article_information?article=${article_name}`)
+    ]).then(async function (responses) {
+        // Get a JSON object from each of the responses
+        const allowed_res = await responses[0].json();
+        const price_res = await responses[1].json();
+        const article_res = await responses[2].json();
 
-    // Get price/pageviews data for article
-    price_url = "/api/article_price?article=" + article_name;
-    price_url += "&timespan=" + CURRENT_TIMESPAN;
-    let res_price = await fetch(price_url, {method: 'GET'})
-    if (res_price.status !== 200) {
-        alert("Something went wrong calling api/article_price!");
-        return(false);
-    }
-    res_price = await res_price.json()
-    PAGEVIEWS_DATA_OBJECT = res_price;
-    CURRENT_PRICE = res_price.views[res_price.views.length-1];
-    PRICE_CHANGE = Math.round(((res_price.views[res_price.views.length-1] - res_price.views[0]) / res_price.views[0]) * 1000) / 10;
+        // Update the global variables
+        ARTICLE_ALLOWED = allowed_res.allowed;
+        PAGEVIEWS_DATA_OBJECT = price_res;
+        CURRENT_PRICE = price_res.views[price_res.views.length-1]; // DON'T ROUND THIS! It's used for calculations!
+        PRICE_CHANGE = Math.round(((price_res.views[price_res.views.length-1] - price_res.views[0]) / price_res.views[0]) * 1000) / 10;
+        ARTICLE_DATA_OBJECT = article_res;
 
-    // Get article information
-    article_url = "/api/article_information?article=" + article_name;
-    let res_article = await fetch(article_url, {method: 'GET'})
-    if (res_article.status !== 200) {
-        alert("Something went wrong calling api/article_info!");
-        return(false);
-    }
-    res_article = await res_article.json()
-    ARTICLE_DATA_OBJECT = res_article;
+        // Set custom sell input to how many articles the player owns
+        // We can't do that in update_trade_buttons() because that's called when the input changes
+        if (article_name in THIS_PLAYER.articles) {
+            document.getElementById(CUSTOM_SELL_INPUT_ID).value = THIS_PLAYER.articles[article_name];
+        } // Don't need to catch any issues because the whole div is hidden usually :)
 
-    // Set custom sell input to how many articles the player owns
-    // We can't do that in update_trade_buttons() because that's called when the input changes
-    if (article_name in THIS_PLAYER.articles) {
-        document.getElementById(CUSTOM_SELL_INPUT_ID).value = THIS_PLAYER.articles[article_name];
-    } // Don't need to catch any issues because the whole div is hidden usually :)
+        // Update the page with the new article
+        update_article_info(ARTICLE_DATA_OBJECT, PAGEVIEWS_DATA_OBJECT, ARTICLE_ALLOWED);
+        update_graph(PAGEVIEWS_DATA_OBJECT, CURRENT_TIMESPAN);
+        update_trade_buttons(CURRENT_ARTICLE, CURRENT_PRICE, THIS_PLAYER, ARTICLE_ALLOWED);
 
-    // Update the page with the new article
-    update_article_info(ARTICLE_DATA_OBJECT, PAGEVIEWS_DATA_OBJECT, ARTICLE_ALLOWED);
-    update_graph(PAGEVIEWS_DATA_OBJECT, CURRENT_TIMESPAN);
-    update_trade_buttons(CURRENT_ARTICLE, CURRENT_PRICE, THIS_PLAYER, ARTICLE_ALLOWED);
+    }).catch(function (error) {
+        console.log(error);
+    });
 }
 
 // Let's bind all the event listeners!
-// And load an article into the search!
-async function initialize() {
+// And load an article into the search -- called by play-page-main.js
+// This requires GAME_OBJECT and THIS_PLAYER to have been defined already (from play-page-main.js)
+async function init_tx_nav() {
 
     // Load the current article into the search bar when the page loads
     document.getElementById(SEARCH_ID).value = CURRENT_ARTICLE;
-    
-    // GET game and player objects from server
-    const init_url = "/api/get_play_info?game_id=" + GAME_ID;
-    let init_info = await fetch(init_url, {method: 'GET'})
-    init_info = await init_info.json();
-    GAME_OBJECT = init_info.game;
-    THIS_PLAYER = init_info.player;
 
     // Add event listeners to the search bar
     // The search button also calls load_article() when clicked (see HTML)
@@ -313,6 +256,3 @@ async function initialize() {
     load_article();
 }
 
-// Run the initialize function when the page loads
-// This is the first script that should load (maybe packages and stuff)
-window.onload = initialize;

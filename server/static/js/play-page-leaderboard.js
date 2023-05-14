@@ -1,11 +1,12 @@
-// This script manages the leaderboard at the top of the play page and the player information modal
-// Should be pretty independent of the rest of the page, but should still run after play-page-tx-nav.js
-// Uses the global variable GAME_ID and maybe GAME_OBJECT?
+/* 
+    This script has the functions to load in the leaderboard at the top of the play page 
+    And also to load in the player information modal
+*/
 
 // IDS FOR HTML ELEMENTS
 
 // Leaderboard banner and player information modal elements
-const LEADERBOARD_CARD_DECK = "leaderboard-card-deck";
+const LEADERBOARD_BANNER = "leaderboard-banner";
 const PLAYER_INFO_MODAL = "player-leaderboard-modal";
 const PLAYER_INFO_MODAL_TITLE = "player-leaderboard-modal-title";
 const PLAYER_INFO_MODAL_RANK = "player-leaderboard-modal-rank";
@@ -16,12 +17,10 @@ const PLAYER_INFO_MODAL_ARTICLES = "player-leaderboard-modal-articles";
 const PLAYER_INFO_MODAL_CLOSE_SYMBOL = "player-leaderboard-modal-close-symbol";
 const PLAYER_INFO_MODAL_CLOSE_BUTTON = "player-leaderboard-modal-close-button";
 
-// Global variable to store all the player objects -- this is set when the leaderboard is loaded
-let ALL_PLAYERS = [];
-
 // This is called when a player's name is clicked on the leaderboard
 function show_player_info_modal(player_id) {
 
+    // Find the player object and their rank
     const this_player = ALL_PLAYERS.find(p => p.player_id === player_id);
     const rank = ALL_PLAYERS.indexOf(this_player) + 1;
 
@@ -59,10 +58,14 @@ function show_player_info_modal(player_id) {
     document.getElementById(PLAYER_INFO_MODAL).style.display = "block";
 }
 
+// Generates HTML for a single player's card on the leaderboard
 function leaderboard_card (player) {
+
+    // Calculate the daily change from public player data sent :)
     let daily_change = (player.value - player.yesterday_value) / player.yesterday_value;
     daily_change = Math.round(daily_change * 10000) / 100;
 
+    // Generate the HTML for the card
     let card_html = `
         <a href="#" onclick="show_player_info_modal('${player.player_id}');return(false);">
         <div class="card leaderboard-card">
@@ -87,7 +90,9 @@ document.getElementById(PLAYER_INFO_MODAL_CLOSE_BUTTON).onclick = (() => {
     document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
 });
 
-async function load_leaderboard() {
+
+// Load the leaderboard onto the page -- called by play-page-main.js
+async function init_leaderboard() {
 
     // Make a request to the server to get the leaderboard
     const lboard_url = "/api/leaderboard?game_id=" + GAME_ID;
@@ -100,9 +105,7 @@ async function load_leaderboard() {
     for (let i = 0; i < ALL_PLAYERS.length; i++) {
         const player = ALL_PLAYERS[i];
         const card = leaderboard_card(player);
-        document.getElementById(LEADERBOARD_CARD_DECK).insertAdjacentHTML("beforeend", card);
+        document.getElementById(LEADERBOARD_BANNER).insertAdjacentHTML("beforeend", card);
     }
 
 } 
-
-load_leaderboard();

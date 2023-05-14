@@ -1,32 +1,31 @@
 /* 
+    This page defines functions that are called by the play page HTML elements.
 
-This page defines functions that are called by the play page HTML elements.
+    This doesn't doesn't include any of the logic that happens when a search is made --
+    it only interfaces the user inputs with that logic! And the server!
 
-This doesn't doesn't include any of the logic that happens when a search is made --
-it only interfaces the user inputs with that logic! And the server
+    Examples of when functions are called:
 
-THIS RELIES ON GLOBAL VARIABLES DEFINED IN server/static/js/play-page-tx-nav.js
-THAT SCRIPT MUST BE RUN BEFORE THIS ONE!
+    - When the user clicks the "Buy" button, the buy_article() function is called.
+        This function sends a request to the server to make a new transaction.
 
-Examples of when functions are called:
+    - When the user clicks the "Search" button (or does anything else), the search_article() function is called.
+        This initiates the logic in server/static/js/play-page-tx-nav.js
 
-- When the user clicks the "Buy" button, the buy_article() function is called.
-    This function sends a request to the server to make a new transaction.
-
-- When the user clicks the "Search" button (or does anything else), the search_article() function is called.
-    This initiates the logic in server/static/js/play-page-tx-nav.js
-
-- When the user clicks any of the article names in the trending articles section or modals, etc.,
-    the load_into_search() function is called. This function loads the article name into the search bar.
-
+    - When the user clicks any of the article names in the trending articles section or modals, etc.,
+        the load_into_search() function is called. This function loads the article name into the search bar.
 */
 
+// Used when any buy and sell buttons are clicked
 async function new_tx(n, tx_type) {
+    
     // Disable all the buy and sell buttons
     for (let i = 0; i < ALL_TX_BUTTONS.length; i++) {
         document.getElementById(ALL_TX_BUTTONS[i]).setAttribute("disabled", true);
     }
 
+    // The server takes the price and quantity, so we need to calculate those
+    // Price (total) xor quantity can be negative
     if (tx_type === "buy") {
         price = CURRENT_PRICE * n * -1;
         quantity = n;
@@ -38,6 +37,7 @@ async function new_tx(n, tx_type) {
         return(false);
     }
 
+    // Send the POST request to the server
     const tx_url = "/api/new_transaction";
     const tx_res = await fetch(tx_url, {
         method: "POST",
@@ -62,11 +62,14 @@ async function new_tx(n, tx_type) {
     window.location.href = reload_url;
 }
 
+// Used when the timespan buttons above the graph are clicked
 async function graph_time(timespan) {
+
+    // Set the timespan and then run the search logic
     CURRENT_TIMESPAN = timespan;
     load_article(CURRENT_ARTICLE);
     
-    // disable the button that was clicked
+    // Disable the button that was clicked
     for (let i = 0; i < GRAPH_TIME_BUTTON_IDS.length; i++) {
         this_button_id = GRAPH_TIME_BUTTON_IDS[i];
         if (this_button_id.includes(CURRENT_TIMESPAN)) {
@@ -74,14 +77,14 @@ async function graph_time(timespan) {
         } else {
             document.getElementById(this_button_id).removeAttribute("disabled");
         }
-        
     }
         
 }
 
+// Used when the search bar is being used -- udpates the datalist
 async function search_article() {
-    // This function updates the datalist with suggestions from the server
-    // Uses the globals: SEARCH_ID and SEARCH_DATALIST_ID (DOM element IDs)
+
+    // Should add in a little rate-limit of some sort here!
 
     // Get search suggestions from the server
     const search_input = document.getElementById(SEARCH_ID).value;
@@ -99,12 +102,14 @@ async function search_article() {
     document.getElementById(SEARCH_DATALIST_ID).innerHTML = datalist_html;
 }
 
+// Used when the user presses a button that loads an article into the tx-nav
 function load_into_search(article, timespan=CURRENT_TIMESPAN) {
+    
     // Set global variables! This is important!
     CURRENT_ARTICLE = article;
     CURRENT_TIMESPAN = timespan; 
 
+    // Run search logic
     document.getElementById(SEARCH_ID).value = article;
     load_article(article); 
-    // This initates the logic in server/static/js/play-page-tx-nav.js
 }

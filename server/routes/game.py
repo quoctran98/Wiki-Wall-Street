@@ -21,13 +21,11 @@ def games():
 def play():
     game_id = request.args.get("game_id")
     this_game = Game.get_by_game_id(game_id)
-    this_player = Player.get_by_user_id(game_id, current_user.user_id)
     if this_game is None:
         flash("Game not found.")
         return(redirect(url_for("main.index")))
-    return(render_template("play.html", 
-                           game=this_game.get_public_dict(),
-                           player=this_player.get_public_dict()))
+    # Don't send any objects yet -- they'll be requested by the client (current_user)
+    return(render_template("play.html"))
 
 @game.route("/api/create_game", methods=["POST"])
 @login_required
@@ -130,22 +128,14 @@ def get_play_info():
     game_id = request.args.get("game_id")
     this_game = Game.get_by_game_id(game_id)
     this_player = Player.get_by_user_id(game_id, current_user.user_id)
+    this_player_props = vars(this_player)
+    # (@property not included in vars(), so I have to do this)
+    this_player_props["today_value"] = this_player.portfolio_value
+    this_player_props["yesterday_value"] = this_player.yesterday_value
     if this_game is None:
         return(jsonify({"error": "Game not found."}))
     return(jsonify({"game": vars(this_game),
-                    "player": vars(this_player),
-                    # For the joined games table (@property not included in vars())
-                    "today_value": this_player.portfolio_value,
-                    "yesterday_value": this_player.yesterday_value}))
-
-@game.route("/api/portfolio_value")
-@login_required
-@cache.cached(timeout=300, query_string=True) # this should only change once a day
-def portfolio_value():
-    game_id = request.args.get("game_id")
-    player_id = request.args.get("player_id")
-    this_player = Player.get_by_player_id(game_id, player_id)
-    return(jsonify({"value": this_player.portfolio_value}))
+                    "player": this_player_props}))
 
 @game.route("/api/leaderboard")
 @login_required
