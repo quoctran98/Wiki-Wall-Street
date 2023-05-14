@@ -11,13 +11,6 @@ import server.WikiAPI as WikiAPI
 
 wiki = Blueprint("wiki", __name__)
 
-@wiki.route("/api/article_id")
-@cache.cached(timeout=86400, query_string=True)
-def article_id():
-    article = request.args.get("article")
-    article_id = WikiAPI.article_id(article)
-    return(jsonify(article_id=article_id))
-
 @wiki.route("/api/search_article")
 @cache.cached(timeout=86400, query_string=True)
 def search_article():
@@ -36,7 +29,7 @@ def current_price():
     price = normalized_views[-1]["views"]
     return(jsonify(price=price))
 
-@wiki.route("/api/pageviews")
+@wiki.route("/api/article_price")
 @cache.cached(timeout=300, query_string=True)
 def monthly_views():
     article = request.args.get("article")
@@ -52,17 +45,17 @@ def monthly_views():
     else:
         start = date.today() - timedelta(days=30)
     normalized_views = WikiAPI.normalized_views(article, start=start)
-    # return in a format to graph in js
+    # Return in a format to graph in JavaScript
     timestamps = [x["timestamp"] for x in normalized_views]
     views = [x["views"] for x in normalized_views]
     return(jsonify(timestamps=timestamps, views=views))
 
-@wiki.route("/api/article_description")
+@wiki.route("/api/article_information")
 @cache.cached(timeout=86400, query_string=True) # This should never change (maybe)
 def article_description():
     article = request.args.get("article")
-    description = WikiAPI.article_description(article)
-    return(jsonify(description=description))
+    info = WikiAPI.article_information(article)
+    return(jsonify(title=info["title"], pageid=info["pageid"], short_desc=info["short_desc"], categories=info["categories"]))
 
 @wiki.route("/api/trending_articles")
 @cache.cached(timeout=3600) # This maybe changes once a day?

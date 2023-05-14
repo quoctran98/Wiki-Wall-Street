@@ -157,8 +157,8 @@ class Player():
             "value_history": self.value_history,
         }
 
-        # some games don't have these attributes though (ugh!)
-        # check if they exist first
+        # Some games don't have these attributes (ugh!), so check if they exist first
+        # Remove 0s from the articles dictionary (previously owned articles)
         if "show_cash" in game_settings:
             if game_settings["show_cash"]:
                 public_dict["cash"] = self.cash
@@ -167,7 +167,9 @@ class Player():
                 public_dict["articles"] = {article: True for article in self.articles if self.articles[article] > 0}
         if "show_number" in game_settings:
             if game_settings["show_number"]:
-                public_dict["articles"] = self.articles # Overwrite the above if show_number is True
+                # Overwrite the above if show_number is True
+                # Remove 0s from the articles dictionary (previously owned articles)
+                public_dict["articles"] = {article: amount for article, amount in self.articles.items() if amount > 0} 
         return(public_dict)
     
     def update_value_history(self):

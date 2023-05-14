@@ -4,7 +4,7 @@ const PORTFOLIO_VALUE_ID = "portfolio-value"
 const PORTFOLIO_CARD_DECK = "portfolio-card-deck"
 
 // get game id from url query string
-let GAME_ID = window.location.search.split("=")[1].split("&")[0];
+GAME_ID = window.location.search.split("=")[1].split("&")[0];
 
 // there's another glboal variable called GAME ugh!
 let PORTFOLIO_GAME; 
@@ -45,13 +45,8 @@ async function cash_and_value(game, player) {
 
 async function initialize_portfolio_summary(game_id) {
     // get game and player objects from server
-    play_info = await fetch("/api/get_play_info", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            "game_id": game_id
-        })
-    });
+    const play_info_url = `/api/get_play_info?game_id=${game_id}`;
+    let play_info = await fetch(play_info_url, { method: "GET" });
     play_info = await play_info.json();
     PORTFOLIO_PLAYER = play_info["player"];
     PORTFOLIO_GAME = play_info["game"];

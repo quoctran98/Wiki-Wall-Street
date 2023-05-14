@@ -70,13 +70,4 @@ async function update_trending_articles() {
     }
 }
 
-function load_into_search(article, timespan=null) {
-    if (timespan) {
-        current_timespan = timespan;
-    }
-    document.getElementById(SEARCH_ID).value = article;
-    // SEARCH_ID is defined in server/static/js/transaction-navigator.js
-    search_main(); // defined in server/static/js/transaction-navigator.js
-}
-
 update_trending_articles();

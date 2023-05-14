@@ -68,8 +68,8 @@ def new_transaction():
     this_game = Game.get_by_game_id(tx_data["game_id"])
 
     # Verifying that transaction details are correct
-    # Make sure the price is right
-    real_price = WikiAPI.normalized_views(tx_data["article"])[-1]["views"]
+    # Make sure the price is right (I didn't multiply by quantity before, but it didn't break??)
+    real_price = WikiAPI.normalized_views(tx_data["article"])[-1]["views"] * float(tx_data["quantity"])
     if abs(abs(real_price) - abs(float(tx_data["price"]))) > 1: # Just because of rounding errors (I should fix it)
         flash("Price is incorrect. It's either a bug or you're trying to cheat.")
         return(jsonify({"success": False}))
@@ -100,7 +100,7 @@ def allowed_article():
     this_game = Game.get_by_game_id(game_id)
     return(jsonify({"allowed": this_game.allowed_article(article)}))
 
-@game.route("/api/get_games")
+@game.route("/api/get_joined_games")
 @login_required
 def get_games():
     games = []
@@ -120,11 +120,11 @@ def get_public_games():
             games.append(vars(this_game))
     return(jsonify({"games": games}))
 
-@game.route("/api/get_play_info", methods=["POST"])
+@game.route("/api/get_play_info")
 @login_required
 def get_play_info():
     # This should only be called by the player themselves
-    game_id = request.json["game_id"]
+    game_id = request.args.get("game_id")
     this_game = Game.get_by_game_id(game_id)
     this_player = Player.get_by_user_id(game_id, current_user.user_id)
     if this_game is None:

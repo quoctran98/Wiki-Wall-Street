@@ -83,7 +83,7 @@ async function load_game_cards() {
     const game_card_container = document.getElementById(GAME_CARDS_DIV_ID);
 
     // get game data from server
-    const res = await fetch("/api/get_games", {method: "GET"});
+    const res = await fetch("/api/get_joined_games", {method: "GET"});
     if (res.status !== 200) {
         return(false);
     }

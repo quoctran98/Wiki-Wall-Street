@@ -19,6 +19,60 @@
 
 <hr>
 
+<!-- LEADERBOARD MODAL -->
+<!-- CONTENT WILL BE UPDATED ON A PER PLAYER BASIS -->
+<div class="modal" id="player-leaderboard-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h5 id="player-leaderboard-modal-title"></h5>
+
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" id="player-leaderboard-modal-close-symbol" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- MODAL BODY -->
+    <div class="modal-body">
+        
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <div class="row">
+                    <h6>RANK! <p id="player-leaderboard-modal-rank"></p></h6>
+                </div>
+        
+                <div class="row">
+                    <h6>PROTFOLIO VALUE! <p id="player-leaderboard-modal-value"></p></h6>
+                </div>
+        
+                <div class="row">
+                    <h6 id="player-leaderboard-modal-cash"></h6>
+                </div>
+        
+                <!-- LIST OF ARTICLES -->
+                <div class="row" id="player-leaderboard-modal-articles">
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="player-leaderboard-modal-close-button">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>
+
+
 <!-- LEADERBOARD BANNER -->
 <div class="row" id="leaderboard-banner" style="height: 7em;">
 
@@ -84,15 +138,15 @@
             <h3>SEARCH!</h3>
             <input list="search-datalist" id="search-input" placeholder="">
             <datalist id="search-datalist"></datalist>
-            <button onclick="search_main()">Search</button>
+            <button onclick="load_article()"" id="search-button">Search</button>
 
         <hr>
 
             <h3>BUY!</h3>
-            <button id="buy-1-button" onclick="buy_article(1)">Buy 1</button>
-            <button id="buy-5-button" onclick="buy_article(5)">Buy 5</button>
+            <button id="buy-1-button" onclick="new_tx(1,'buy')">Buy 1</button>
+            <button id="buy-5-button" onclick="new_tx(5,'buy')">Buy 5</button>
             <input type="number" id="custom-buy-input" min="1" value="10"></input>
-            <button id="buy-custom-button" onclick="buy_article(document.getElementById('custom-buy-input').value)">Buy</button>
+            <button id="buy-custom-button" onclick="new_tx(document.getElementById('custom-buy-input').value,'buy')">Buy</button>
 
         <hr>
 
@@ -101,17 +155,20 @@
             <p><span id="num-owned"></span></p>
             <p><span id="avg-price"></span></p>
 
-            <button id="sell-1-button" onclick="sell_article(1)">Sell 1</button>
+            <button id="sell-1-button" onclick="new_tx(1,'sell')">Sell 1</button>
             <input type="number" id="custom-sell-input" min="1" value="10"></input>
-            <button id="sell-custom-button" onclick="sell_article(document.getElementById('custom-sell-input').value)">Sell</button>
+            <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')">Sell</button>
         </div>
 
     </div>
 </div>
 
 <script src="{{url_for('static', filename='js/plotly-2.20.0.min.js')}}"></script>
+
+<script src="{{url_for('static', filename='js/play-page-inputs.js')}}"></script>
+<script src="{{url_for('static', filename='js/play-page-tx-nav.js')}}"></script>
+
 <script src="{{url_for('static', filename='js/portfolio-summary.js')}}"></script>
-<script src="{{url_for('static', filename='js/transaction-navigator.js')}}"></script>
 <script src="{{url_for('static', filename='js/game-leaderboard.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-trending-articles.js')}}"></script>
 

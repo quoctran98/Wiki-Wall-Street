@@ -194,44 +194,6 @@ def search_article(query, project="en.wikipedia", namespace=0, limit=None):
     else:
         print(f"Error: {response.status_code}")
         return(json.loads(response.content))
-    
-def article_id(article, project="en.wikipedia"):
-    """
-    Returns the article ID for a given article using the Wikimedia query API
-
-    Parameters
-    ----------
-    article : str
-        The name of the article to get the ID for -- make sure this is the exact name of the article
-    project : str
-        The Wikimedia project to get the article ID for (e.g. "en.wikipedia")
-    
-    Returns
-    -------
-    str
-        The article ID for the given article
-    """
-    baseurl = f"https://{project}.org/w/api.php?action=query"
-    endpoint = f"&prop=pageprops&ppprop=wikibase_item&redirects=1&titles={article}&format=json"
-    url = baseurl + endpoint
-    
-    headers = requests.utils.default_headers()
-    headers.update({"User-Agent": settings.WIKI_API_USER_AGENT})
-
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        res = response.json()
-        article_id = list(res["query"]["pages"].keys())
-        if len(article_id) > 1:
-            print("Warning: Multiple article IDs found, returning first result")
-        elif article_id[0] == "-1":
-            print("Error: No article ID found")
-            return(None)
-        return(article_id[0])
-    else:
-        print(f"Error: {response.status_code}")
-        return(json.loads(response.content))
 
 def verify_article(article_name, project="en.wikipedia", namespace=0, suggest=False):
     """
@@ -330,9 +292,9 @@ def normalized_views(article,
 
         return(pageviews_list)
 
-def article_description(article, project="en.wikipedia"):
+def article_information(article, project="en.wikipedia"):
     """
-    Returns the short description of a given article using the Wikimedia query call
+    Returns the information about the given article using the Wikimedia query call
 
     Parameters
     ----------
@@ -343,25 +305,43 @@ def article_description(article, project="en.wikipedia"):
     
     Returns
     -------
-    str
-        The summary of the given article
-        Returns None if no summary is found
+    dict
+        A dictionary containing the "title", "pageid", "short_desc", and "categories" keys
     """
     baseurl = f"https://{project}.org/w/api.php?action=query"
     endpoint = f"&format=json&prop=revisions&titles={article}&formatversion=2&rvprop=content&rvslots=*"
     url = baseurl + endpoint
     
     headers = requests.utils.default_headers()
-    headers.update({"User-Agent": "quoc"})
+    headers.update({"User-Agent": settings.WIKI_API_USER_AGENT})
+
+    info_dict = {}
 
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
-        text = response.json()["query"]["pages"][0]["revisions"][0]["slots"]["main"]["content"]
+
+        # Get the title
+        info_dict["title"] = response.json()["query"]["pages"][0]["title"]
+
+        # Get the pageid
+        info_dict["pageid"] = response.json()["query"]["pages"][0]["pageid"]
+
+        # Get the short description
+        content = response.json()["query"]["pages"][0]["revisions"][0]["slots"]["main"]["content"]
         try: 
-            short_desc = text.split("{{Short description|")[1].split("}}")[0]
-            return(short_desc)
+            info_dict["short_desc"] = content.split("{{Short description|")[1].split("}}")[0]
         except IndexError:
-            return(None)
+            info_dict["short_desc"] = None
+
+        # Get the categories
+        categories = []
+        for line in content.split("\n"):
+            if line.startswith("[[Category:"):
+                categories.append(line.split("[[Category:")[1].split("]]")[0])
+                # I love copilot!
+        info_dict["categories"] = categories
+
+        return(info_dict)
     else:
         print(f"Error: {response.status_code}")
         return(json.loads(response.content))
