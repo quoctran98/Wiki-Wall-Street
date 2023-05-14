@@ -80,15 +80,12 @@
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     {% for m in messages %}
-        <div class="col-md-2"></div>
-        <div class="col-md-4">
-            <div class="alert alert-primary" role="alert">
+        <div class="container has-text-centered">
+            <div class="alert alert-danger" role="alert">
                 {{ m }}
             </div>
         </div>
-        <div class="col-md-6"></div>
     {% endfor %}
-    <hr>
     {% endif %}
     {% endwith %}
 
