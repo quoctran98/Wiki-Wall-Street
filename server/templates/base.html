@@ -11,7 +11,11 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}"" />
 
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png')}}" />
+
     <title>Wiki Wall Street 📖📈</title>
+
 </head>
 
 <body>
@@ -70,6 +74,8 @@
      </div>
     </div>
 
+    <hr>
+
     <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -82,6 +88,7 @@
         </div>
         <div class="col-md-6"></div>
     {% endfor %}
+    <hr>
     {% endif %}
     {% endwith %}
 
@@ -96,7 +103,16 @@
 <footer>
     <div class="row">
         <div class="col-md-12">
-            <p class="text-center">QUO© 2023</p>
+            <p class="text-center" style="font-size:medium;">
+                <br>
+                Game source code at 
+                <a href="https://github.com/quoctran98/WikiWallStreet"><img class="inline-image" src="{{ url_for('static', filename='img/GitHub-Mark-32px.png')}}"></img> quoctran98/GPT-who</a>
+                <br>
+                Follow me on Twitter 
+                <a href="https://twitter.com/quoctran98"><img class="inline-image" src="{{ url_for('static', filename='img/Twitter-Icon.png')}}"></img> quoctran98</a>
+                <br>
+                QUO© 2023
+            </p>
         </div>
     </div>
 </footer>

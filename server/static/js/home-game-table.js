@@ -18,14 +18,23 @@ async function populate_joined_games() {
     // Populate the table with the joined games
     for (let i = 0; i < joined_games.length; i++) {
         this_game = joined_games[i];
+
+        const play_info_url = `/api/get_play_info?game_id=${this_game.game_id}`;
+        let play_info_res = await fetch(play_info_url);
+        play_info_res = await play_info_res.json();
+        let daily_change = (play_info_res.today_value - play_info_res.yesterday_value) / play_info_res.yesterday_value;
+        daily_change = Math.round(daily_change * 10000) / 100;
+
         let row = joined_games_table.insertRow(-1);
         let name_cell = row.insertCell(0);
         let players_cell = row.insertCell(1);
-        let id_cell = row.insertCell(2);
-        let action_cell = row.insertCell(3);
+        let change_cell = row.insertCell(2);
+        let id_cell = row.insertCell(3);
+        let action_cell = row.insertCell(4);
 
         name_cell.innerHTML = this_game.name;
         players_cell.innerHTML = this_game.players.join(", ");
+        change_cell.innerHTML = `${(daily_change > 0)? "📈" : "📉"} ${daily_change}%`
         id_cell.innerHTML = this_game.game_id;
         action_cell.innerHTML = `<button class="btn btn-primary" 
             onclick="window.location.href='/play?game_id=${this_game.game_id}'">Play</button>`;

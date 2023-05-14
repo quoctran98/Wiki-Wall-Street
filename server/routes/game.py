@@ -94,6 +94,7 @@ def new_transaction():
     
 @game.route("/api/allowed_article")
 @login_required
+@cache.cached(timeout=300, query_string=True)
 def allowed_article():
     game_id = request.args.get("game_id")
     article = request.args.get("article")
@@ -122,6 +123,8 @@ def get_public_games():
 
 @game.route("/api/get_play_info")
 @login_required
+@cache.cached(timeout=300, query_string=True)
+# Mainly caching between index and play pages
 def get_play_info():
     # This should only be called by the player themselves
     game_id = request.args.get("game_id")
@@ -130,7 +133,10 @@ def get_play_info():
     if this_game is None:
         return(jsonify({"error": "Game not found."}))
     return(jsonify({"game": vars(this_game),
-                    "player": vars(this_player)}))
+                    "player": vars(this_player),
+                    # For the joined games table (@property not included in vars())
+                    "today_value": this_player.portfolio_value,
+                    "yesterday_value": this_player.yesterday_value}))
 
 @game.route("/api/portfolio_value")
 @login_required

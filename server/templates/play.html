@@ -3,18 +3,8 @@
 {% block content %}
 
 <div class="row">
-    <h1 class="title">
-        Welcome to {{ game.name }}!
-    </h1>
-    <br>
     <h2>
-        Players:
-        {{ game.players }}
-    </h2>
-    <br>
-    <p>
-        {{ game.game_id }}
-    </p>
+        Welcome to {{ game.name }}!
 </div>
 
 <hr>
@@ -77,14 +67,8 @@
 <div class="row" id="leaderboard-banner" style="height: 7em;">
 
     <!-- I don't get why I have to enforce height 100% for these columns but not for portfolio summary -->
-    <div class="col-md-3" style="height: 100%">
-        <h3>LEADERBOARD!</h3>
-    </div> 
-
-    <div class="col-md-9" style="height: 100%">
-        <div style="overflow-x: scroll; height: 100%;">
-            <div style="display: inline-flex; height: 100%;" id="leaderboard-card-deck"></div>
-        </div>
+    <div style="overflow-x: scroll; height: 100%;">
+        <div style="display: inline-flex; height: 100%;" id="leaderboard-card-deck"></div>
     </div>
 
 </div>

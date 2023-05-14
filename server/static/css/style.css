@@ -1,17 +1,5 @@
-.game-card {
-  width: 12em;
-  height: 12em;
-  background-color: #f8f9fa;
-
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-
-  border-radius: 0.5em;
-  padding: 0.5em;
-  margin: 0.5em;
-
-  display: flex;
+.inline-image {
+    height: 1em;
 }
 
 .portfolio-card {
@@ -48,7 +36,5 @@
   border-radius: 0.5em;
   padding: 0.5em;
   margin: 0.5em;
-
-  overflow-y: scroll;
 
 }

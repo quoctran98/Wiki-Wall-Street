@@ -154,10 +154,24 @@ class Player():
             "name": self.name,
 
             "value": self.portfolio_value,
-            "value_history": self.value_history,
+            # Don't send full value history -- it's a lot
         }
 
-        # Some games don't have these attributes (ugh!), so check if they exist first
+        # Add daily and weekly values to the public dictionary
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        last_week = datetime.datetime.now() - datetime.timedelta(days=7)
+        yesterday_value = None
+        last_week_value = None
+        for value in self.value_history: # Going through from oldest to newest
+            if value["timestamp"] > last_week and last_week_value is None:
+                last_week_value = value["value"]
+            if value["timestamp"] > yesterday:
+                yesterday_value = value["value"]
+                break
+        public_dict["yesterday_value"] = yesterday_value
+        public_dict["last_week_value"] = last_week_value
+
+        # Some games don't have these visibility (ugh!), so check if they exist first
         # Remove 0s from the articles dictionary (previously owned articles)
         if "show_cash" in game_settings:
             if game_settings["show_cash"]:
@@ -178,7 +192,21 @@ class Player():
             "timestamp": datetime.datetime.now(),
             "value": self.portfolio_value
         }
-        players_db[self.game_id].update_one({"player_id": self.player_id}, {"$push": {"value_history": this_value}})    
+
+        # Insert a new value into the value history if it's different from the last one or it's been 24 hours
+        last_value = self.value_history[-1]["value"] if len(self.value_history) > 0 else None
+        last_timestamp = self.value_history[-1]["timestamp"] if len(self.value_history) > 0 else None
+        if (last_value is None) or (last_value != this_value["value"]) or (last_timestamp is None) or (this_value["timestamp"] - last_timestamp > datetime.timedelta(hours=24)):
+            players_db[self.game_id].update_one({"player_id": self.player_id}, {"$push": {"value_history": this_value}})    
+
+    @property
+    def yesterday_value(self):
+        """Return the value of the player's portfolio yesterday."""
+        # This is only used by game.get_play_info route (should roll this into public_dict)
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        for value in self.value_history:
+            if value["timestamp"] > yesterday:
+                return(value["value"])
 
     @property
     def portfolio_value(self):

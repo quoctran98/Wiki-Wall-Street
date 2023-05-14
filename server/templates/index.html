@@ -2,9 +2,7 @@
 
 {% block content %}
 
-<hr>
-
-<!-- GAME EXPLAINATION -->
+<!-- GAME EXPLANATION -->
 <h2>What is this game?</h2>
 
 <p>
@@ -46,10 +44,14 @@
   {% else %}
 
   <div>
+
+    <hr>
+
     <h2>Your Games!</h2>
     <table class="table table-striped" id="joined-games-table">
       <th>Game Name</th>
       <th>Players</th>
+      <th>Daily Change</th>
       <th>Game ID</th>
       <th></th>
     </table>
@@ -65,7 +67,7 @@
   {% endif %}
 
   <div>
-    <h2>Public Games</h2>
+    <h2>Public Games!</h2>
     <table class="table table-striped" id="public-games-table">
       <tr>
         <th>Game Name</th>
