@@ -101,7 +101,7 @@ def allowed_article():
 
 @game.route("/api/get_joined_games")
 @login_required
-def get_games():
+def get_joined_games():
     games = []
     for game_id in current_user.joined_games:
         this_game = Game.get_by_game_id(game_id)
@@ -121,8 +121,7 @@ def get_public_games():
 
 @game.route("/api/get_play_info")
 @login_required
-@cache.cached(timeout=300, query_string=True)
-# Mainly caching between index and play pages
+# Don't cache! It'll make transactions not update :)
 def get_play_info():
     # This should only be called by the player themselves
     game_id = request.args.get("game_id")
