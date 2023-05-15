@@ -108,6 +108,9 @@ async function init_leaderboard() {
     lboard_res = await lboard_res.json();
     ALL_PLAYERS = lboard_res.players;
 
+    // Remove the loading spinner
+    document.getElementById(LEADERBOARD_BANNER).innerHTML = "";
+
     // Set the title rank
     const rank = ALL_PLAYERS.indexOf(ALL_PLAYERS.find(p => p.player_id === THIS_PLAYER.player_id)) + 1;
     document.getElementById(TITLE_RANK_SPAN).innerHTML = `You are in 

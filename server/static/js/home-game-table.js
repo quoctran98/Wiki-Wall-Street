@@ -4,6 +4,7 @@
 
 // Joined and public game table elements
 const JOINED_GAMES_TABLE_ID = "joined-games-table";
+const JOINED_GAMES_LOADING_ID = "joined-games-loading";
 const PUBLIC_GAMES_TABLE_ID = "public-games-table";
 
 // This function adds a row to the joined games table
@@ -17,6 +18,9 @@ async function add_game_row (game_id, joined_games_table) {
     const player = play_info_res.player;
     let daily_change = (player.today_value - player.yesterday_value) / player.yesterday_value;
     daily_change = Math.round(daily_change * 10000) / 100;
+
+    // Remove loading div row!
+    document.getElementById(JOINED_GAMES_LOADING_ID).remove();
 
     // Add the row and cells for this game
     let row = joined_games_table.insertRow(-1);
@@ -61,6 +65,19 @@ async function populate_public_games() {
     let public_res = await fetch(public_url);
     public_res = await public_res.json();
     const public_games = public_res.games;
+
+    // If there are no public games, say so!
+    if (public_games.length == 0) {
+        let row = public_games_table.insertRow(-1);
+        let name_cell = row.insertCell(0);
+        let players_cell = row.insertCell(1);
+        let action_cell = row.insertCell(2);
+
+        name_cell.innerHTML = "No public games at the moment :(";
+        players_cell.innerHTML = "";
+        action_cell.innerHTML = "";
+    } 
+
 
     // Populate the table with the public games
     // We don't have to wrap this in an async function because it's not making any server calls

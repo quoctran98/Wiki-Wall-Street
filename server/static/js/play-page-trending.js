@@ -16,12 +16,10 @@ function generate_trending_card(article, index) {
 
     // Make the card
     let card_html = `
-    <a href="javascript:load_into_search('${article.article}','week')">
+    <a href="#" onclick="load_into_search('${article.article}','week');return(false);">
         <div class="card trending-card">
-            <div id="${graph_div_id}"></div>
-            <h5 class="card-title">
-                ${article.article}
-            </h5>
+            <div id="${graph_div_id}" style="width: 100%; height: 3em;"></div>
+            <h5 class="card-title">${article.article}</h5>
             <p class="card-text">${Math.round(article.today_views/1000)}k 
             (${(weekly_change > 0)? "📈" : "📉"} ${weekly_change}%)
             </p>
@@ -51,7 +49,8 @@ function add_graph(graph_div_id, article) {
     // Call Plotly to make the graph
     let plot_data = [{x: timestamps, y: views, type: "line"}];
     let plot_layout = {
-        height: 70,
+        autosize: true,
+        // height: 70,
         margin:{t: 0, b: 0, l: 0, r: 1},
         xaxis: {type: "date",},
         yaxis: {title: "",}
@@ -73,6 +72,9 @@ async function init_trending() {
     }
     trending_res = await trending_res.json()
     const trending = trending_res.trending
+
+    // Remove loading spinner
+    document.getElementById(TRENDING_DECK).innerHTML = "";
 
     // Make cards for each trending article
     for (let i = 0; i < trending.length; i++) {

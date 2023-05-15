@@ -1,3 +1,9 @@
+.loading-image {
+  width: 5em;
+  height: 5em;
+  text-align: center;
+}
+
 .inline-image {
     height: 1em;
 }
@@ -40,6 +46,20 @@
   white-space: nowrap;
 }
 
+.trending-card {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin: 0.5rem;
+  border: 1px solid;
+  border-radius: 0.25rem;
+
+  border-color: #000000;
+  color: #000000;
+  background-color: #ffffff;
+
+  white-space: nowrap;
+}
+
 .alert {
   position: relative;
   padding: 0.75rem 1.25rem;
@@ -63,20 +83,5 @@
 .alert-danger {
   color: #721c24;
   background-color: #f8d7da;
-  border-color: #f5c6cb;
-}
-
-.trending-card {
-  width: 90%;
-  height: 12em;
-  background-color: white;
-
-  overflow-x: clip;
-  overflow-y: clip;
-
-  border-radius: 0.5em;
-  padding: 0.5em;
-  margin: 0.5em;
-
-  display: flex;
+  border-color: #ffffff;
 }

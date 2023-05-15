@@ -13,7 +13,9 @@
 <!-- LEADERBOARD BANNER -->
 <div class="row">
     <div style="overflow-x: scroll; height: 100%;">
-        <div style="display: inline-flex; height: 100%;" id="leaderboard-banner"></div>
+        <div style="display: inline-flex; height: 100%;" id="leaderboard-banner">
+            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
+        </div>
     </div>
 </div>
 
@@ -69,7 +71,9 @@
 <!-- it's bascially a long inline-flex div inside one with a scroll overflow :) -->
 <div class="row">
     <div style="overflow-x: scroll; height: 100%;">
-        <div style="display: inline-flex; height: 100%;" id="portfolio-banner"></div>
+        <div style="display: inline-flex; height: 100%;" id="portfolio-banner">
+            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
+        </div>
     </div>
 </div>
 
@@ -118,13 +122,17 @@
             <button id="graph-year-button" onclick="graph_time('year')">Yearly</button>
             <button id="graph-all-button" onclick="graph_time('all')">All</button>
         </div>
-        <div id="transaction-graph"></div>
+        <div id="transaction-graph">
+            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
+        </div>
     </div>
 
     <!-- RIGHT COLUMN FOR TRENDING ARTICLES -->
     <div class="col-md-2">
         <h3>TRENDING!</h3>
-        <div id="trending-articles" style="max-height: 70vh; overflow-y: scroll;"></div>
+        <div id="trending-articles" style="max-height: 70vh; overflow-y: scroll;">
+            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
+        </div>
     </div>
 
 </div>

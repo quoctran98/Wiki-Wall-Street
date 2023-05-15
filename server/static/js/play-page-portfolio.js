@@ -29,6 +29,9 @@ async function init_portfolio(game=GAME_OBJECT , player=THIS_PLAYER) {
     let cash_html = `You have <ins>${format_price(player["cash"])}</ins> in cash.`;
     document.getElementById(PORTFOLIO_CASH_ID).innerHTML = cash_html;
 
+    // Remove loading spinner
+    document.getElementById(PORTFOLIO_BANNER).innerHTML = "";
+
     // Load the cards for each article into the HTML
     for (let article_name in player["articles"]) {
         let avg_buy_price = player["avg_price"][article_name];

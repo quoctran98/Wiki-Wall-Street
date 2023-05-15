@@ -143,6 +143,9 @@ function update_graph(pageviews_data=PAGEVIEWS_DATA_OBJECT, timespan="month") {
     const plot_data = [{x: timestamps, y: views, type: "scatter"}];
     const plot_layout = {margin:{t: 10},xaxis: {type: "date",},yaxis: {title: "Page Views",},};
     const graph_div = document.getElementById(GRAPH_DIV_ID);
+
+    // Clear the div (of loading gif) and plot the graph
+    graph_div.innerHTML = "";
     Plotly.newPlot(graph_div, plot_data, plot_layout, {staticPlot: true});
 }
 
