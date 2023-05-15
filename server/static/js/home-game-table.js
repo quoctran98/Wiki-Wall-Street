@@ -91,8 +91,14 @@ async function populate_public_games() {
         name_cell.innerHTML = this_game.name;
         players_cell.innerHTML = this_game.players.join(", ");
         action_cell.innerHTML = `<button class="btn btn-primary"
-            onclick="window.location.href='/play?game_id=${this_game.game_id}'">Play</button>`;
+            onclick="open_join_game_modal('${this_game.game_id}');">Join</button>`;
     }
+}
+
+function open_join_game_modal(game_id) {
+    document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = game_id;
+    document.getElementById(JOIN_GAME_MODAL_ID).style.display = "block";
+    document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = false;
 }
 
 populate_joined_games();
