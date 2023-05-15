@@ -3,11 +3,18 @@
 {% block content %}
 
 <div class="row">
-    <h2>
-        Welcome<span id=game-name></span>! 
-        <span id="title-cash"></span>
-        <span id="title-rank"></span>
-    </h2>
+    <div class="col-md-10">
+        <h2>
+            Welcome<span id=game-name></span>! 
+        </h2>
+        <h4>
+            <span id="title-cash"></span>
+            <span id="title-rank"></span>
+        </h4>
+    </div>
+    <div class="col-md-2"> <!-- I don't like this column-based solution, but it's fine :) -->
+        <button class="btn btn-secondary float-right" onclick="show_game_settings_modal();" id="game-settings-open-button" disabled="true">Settings</button>
+    </div> 
 </div>
 
 <!-- LEADERBOARD BANNER -->
@@ -20,52 +27,6 @@
 </div>
 
 <hr>
-
-<!-- LEADERBOARD MODAL -->
-<!-- CONTENT WILL BE UPDATED ON A PER PLAYER BASIS -->
-<div class="modal" id="player-leaderboard-modal">
-    <div class="modal-dialog" role="document">
-    <div class="modal-content">
-
-    <!-- MODAL HEADER -->
-    <div class="modal-header">
-        <h5 id="player-leaderboard-modal-title"></h5>
-
-        <!-- CLOSE BUTTON -->
-        <button type="button" class="close" id="player-leaderboard-modal-close-symbol" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-
-    <!-- MODAL BODY -->
-    <div class="modal-body">
-        
-        <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
-
-                <div class="row">
-                    <h6 id="player-leaderboard-modal-sentence"></h6>
-                </div>
-        
-                <!-- LIST OF ARTICLES -->
-                <div class="row" id="player-leaderboard-modal-articles">
-                </div>
-            </div>
-            <div class="col-md-2"></div>
-        </div>
-        
-
-    </div>
-    
-    <!-- MODAL FOOTER -->
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="player-leaderboard-modal-close-button">Close</button>
-    </div>
-
-    </div>
-    </div>
-</div>
 
 <!-- SCROLLABLE PORTFOLIO BANNER! I FINALLY FIGURED IT OUT -->
 <!-- it's bascially a long inline-flex div inside one with a scroll overflow :) -->
@@ -134,8 +95,142 @@
         <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')">Sell</button>
     </div>
 
+    </div>
+
 </div>
 
+<!-- SETTINGS MODAL -->
+<div class="modal" id="game-settings-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h5 id="game-settings-modal-title">
+            GAME SETTINGS :)
+        </h5>
+
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" id="game-settings-modal-close-symbol" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- MODAL BODY -->
+    <div class="modal-body">
+
+        <!-- Mimic the new game form with some things disabled :) -->
+        <!-- DISABLED FIELDS AREN'T BEING SENT! -->
+        <form action="{{ url_for('game.change_settings') }}" method="POST" id="settings-form">
+            <input type="hidden" name="user_id" value="{{ current_user.user_id }}">
+            
+            <label for="settings-game-id">Game ID</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                <input name="game_id" id="settings-game-id" readonly="true" value="">
+            </div>
+  
+            <label for="settings-game-name">Game Name</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                <input class="form-control" type="text" name="game_name" placeholder="New Game" autofocus="" id="settings-game-name" readonly="true">
+            </div>
+            
+            <label for="settings-starting-cash">Starting Cash</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <input class="form-control" type="number" name="starting_cash" id="settings-starting-cash" readonly="true" value="">
+            </div>
+  
+            <label for="settings-views-limits">Pageviews Lower Limit</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <input class="form-control" type="number" name="views_limits" id="settings-views-limits" min="1" readonly="true" value="">
+            </div>
+  
+            <hr>
+            
+            <h6> Show Other Players':</h6>
+  
+            <div class="checkbox">
+                <label><input type="checkbox" name="settings_show_cash" id="settings-show-cash" readonly="true"> Cash</label>
+            </div>
+  
+            <div class="checkbox">
+                <label><input type="checkbox" name="show_articles" id="settings-show-articles" readonly="true"> Articles Owned</label>
+            </div>
+  
+            <div class="checkbox">
+                <label >
+                    <input type="checkbox" name="show_number" id="settings-show-number" readonly="true">
+                    <span style="color: #E5E5E5;" id="settings-show-number-label"> Number of Each Article</span>
+                </label>
+            </div>
+  
+            <hr>
+  
+            <div class="checkbox">
+                <label><input type="checkbox" name="settings_public_game" id="settings-public-game" readonly="true"> Make Game Public</label>
+            </div>
+        </form>
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="game-settings-modal-close-button">Close</button>
+        <button type="submit" class="btn btn-primary" id="game-settings-modal-save-button" form="settings-form" disabled="true">Save Changes</button>
+    </div>
+
+    </div>
+    </div>
+</div>
+
+
+<!-- LEADERBOARD MODAL -->
+<!-- CONTENT WILL BE UPDATED ON A PER PLAYER BASIS -->
+<div class="modal" id="player-leaderboard-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h5 id="player-leaderboard-modal-title"></h5>
+
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" id="player-leaderboard-modal-close-symbol" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- MODAL BODY -->
+    <div class="modal-body">
+        
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+
+                <div class="row">
+                    <h6 id="player-leaderboard-modal-sentence"></h6>
+                </div>
+        
+                <!-- LIST OF ARTICLES -->
+                <div class="row" id="player-leaderboard-modal-articles">
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="player-leaderboard-modal-close-button">Close</button>
+    </div>
+
+    </div>
+    </div>
 </div>
 
 <script src="{{url_for('static', filename='js/plotly-2.20.0.min.js')}}"></script>
@@ -143,6 +238,7 @@
 <!-- JS FILES TO DEFINE FUNCITONS FOR VARIOUS ELEMENTS (refer to comment at the top of play-page-main.js) -->
 <!-- NOTHING REALLY RUNS IN THESE -->
 <script src="{{url_for('static', filename='js/play-page-inputs.js')}}"></script>
+<script src="{{url_for('static', filename='js/play-page-settings.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-tx-nav.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-portfolio.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-leaderboard.js')}}"></script>

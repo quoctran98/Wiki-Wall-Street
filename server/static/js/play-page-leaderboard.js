@@ -17,6 +17,14 @@ const PLAYER_INFO_MODAL_CLOSE_BUTTON = "player-leaderboard-modal-close-button";
 
 const TITLE_RANK_SPAN = "title-rank";
 
+// Add event listener to close symbol and button :)
+document.getElementById(PLAYER_INFO_MODAL_CLOSE_SYMBOL).onclick = (() => {
+    document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
+});
+document.getElementById(PLAYER_INFO_MODAL_CLOSE_BUTTON).onclick = (() => {
+    document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
+});
+
 // Returns the suffix for a number (e.g. 1st, 2nd, 3rd, 4th, etc.)
 function get_rank_suffix(rank) {
     if (rank === 1) {
@@ -90,14 +98,6 @@ function leaderboard_card (player) {
 
     return(card_html);
 }
-
-// Add event listener to close symbol and button :)
-document.getElementById(PLAYER_INFO_MODAL_CLOSE_SYMBOL).onclick = (() => {
-    document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
-});
-document.getElementById(PLAYER_INFO_MODAL_CLOSE_BUTTON).onclick = (() => {
-    document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
-});
 
 // Load the leaderboard onto the page -- called by play-page-main.js
 async function init_leaderboard() {

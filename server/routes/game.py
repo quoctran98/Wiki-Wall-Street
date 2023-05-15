@@ -1,4 +1,3 @@
-import requests
 import json
 from flask import Flask, request, Blueprint, render_template, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
@@ -24,14 +23,18 @@ def play():
     if this_game is None:
         flash("Game not found.")
         return(redirect(url_for("main.index")))
+    if not current_user.user_id in this_game.user_ids:
+        flash("You're not in this game. You must join it first.")
+        return(redirect(url_for("main.index")))
     # Don't send any objects yet -- they'll be requested by the client (current_user)
     return(render_template("play.html"))
 
 @game.route("/api/create_game", methods=["POST"])
 @login_required
 def create_game():
+    # I should have GameSettings a class :)
     game_settings = {
-        # if elses just in case (backwards compatibility? probably not)
+        # if-elses just in case (backwards compatibility? probably not)
         "starting_cash": float(request.form["starting_cash"]) if "starting_cash" in request.form else 100000,
         "views_limit": int(request.form["views_limit"]) if "views_limit" in request.form else 10,
         "show_cash": True if "show_cash" in request.form else False,
@@ -43,20 +46,49 @@ def create_game():
                                    game_settings,
                                    True if "public_game" in request.form else False)
     game = Game.get_by_game_id(new_game_id)
-    new_player_id = Player.join_game(current_user.user_id, game.game_id)
-    player = Player.get_by_player_id(new_game_id, new_player_id)
-
+    # Add the owner to the game
+    Player.join_game(current_user.user_id, game.game_id)
     # Authentication will be handled by the Game class
     if game:
-        return(redirect(url_for("game.play", 
-                                game_id=new_game_id)))
+        return(redirect(url_for("game.play", game_id=new_game_id)))
+    else:
+        flash("Could not create game.")
+        return(redirect(url_for("main.index")))
+    
+@game.route("/api/change_settings", methods=["POST"])
+@login_required
+def change_settings():
+    print(request.form)
+    # Make sure the user is the owner of the game
+    game_id = request.form["game_id"]
+    this_game = Game.get_by_game_id(game_id)
+    print(this_game.settings)
+    if this_game.owner_id != current_user.user_id:
+        flash("You can't change the settings of this game.")
+        return(redirect(url_for("game.play", game_id=game_id)))
+    else:
+        # I hate that I have to hardcode these settings -- probably a work around, but this is fine for now
+        new_game_settings = {
+            # if-elses just in case (backwards compatibility? probably not) (required for checkboxes)
+            # Can't change the game name (outside of game_settings dict) or starting_cash
+            "views_limit": int(request.form["views_limit"]) if "views_limit" in request.form else this_game.settings["views_limit"],
+            "show_cash": True if "show_cash" in request.form else this_game.settings["show_cash"],
+            "show_articles": True if "show_articles" in request.form else this_game.settings["show_articles"],
+            "show_number": True if "show_number" in request.form else this_game.settings["show_number"],
+        }
+        this_game.change_settings(new_game_settings)
+        print(this_game.settings)
+        return(redirect(url_for("game.play", game_id=game_id)))
     
 @game.route("/api/join_game", methods=["POST"])
 @login_required
 def join_game():
-    Player.join_game(current_user.user_id, request.form["game_id"])
-    return(redirect(url_for("game.play", 
-                            game_id=request.form["game_id"])))
+    success = Player.join_game(current_user.user_id, request.form["game_id"])
+    if success:
+        return(redirect(url_for("game.play", game_id=request.form["game_id"])))
+    else:
+        flash("Could not join game.")
+        return(redirect(url_for("main.index")))
 
 @game.route("/api/new_transaction", methods=["POST"])
 @login_required
@@ -121,20 +153,22 @@ def get_public_games():
 
 @game.route("/api/get_play_info")
 @login_required
-# Don't cache! It'll make transactions not update :)
+# Don't cache! This is used for a lot of things that should be real-time-ish
+# Kind of a monolith of a route, but it's fine :)
 def get_play_info():
     # This should only be called by the player themselves
     game_id = request.args.get("game_id")
     this_game = Game.get_by_game_id(game_id)
     this_player = Player.get_by_user_id(game_id, current_user.user_id)
-    this_player_props = vars(this_player)
-    # (@property not included in vars(), so I have to do this)
-    this_player_props["today_value"] = this_player.portfolio_value
-    this_player_props["yesterday_value"] = this_player.yesterday_value
-    if this_game is None:
-        return(jsonify({"error": "Game not found."}))
-    return(jsonify({"game": vars(this_game),
-                    "player": this_player_props}))
+    if this_game is None or this_player is None:
+        flash("Error in /api/get_play_info")
+        return(jsonify({"error": True}))
+    else:
+        this_player_props = vars(this_player)
+        # (@property not included in vars(), so I have to do this)
+        this_player_props["today_value"] = this_player.portfolio_value
+        this_player_props["yesterday_value"] = this_player.yesterday_value
+        return(jsonify({"game": vars(this_game), "player": this_player_props}))
 
 @game.route("/api/leaderboard")
 @login_required
@@ -142,10 +176,10 @@ def get_play_info():
 def leaderboard():
     game_id = request.args.get("game_id")
     game = Game.get_by_game_id(game_id)
-
     players = []
     for user_id in game.user_ids:
         player = Player.get_by_user_id(game_id, user_id)
         players.append(player.get_public_dict())
+    # Sort by value so leaderboard is in order for JS
     players.sort(key=lambda x: x["value"], reverse=True)
     return(jsonify({"players": players}))

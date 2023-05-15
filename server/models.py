@@ -99,6 +99,14 @@ class Game():
             return(self.settings["views_limit"] < lowest_this_month)
         return(True)
 
+    def change_settings(self, new_settings):
+        """Change the settings of the game."""
+        print(new_settings)
+        # new_settings MUST contain all the same fields as self.settings
+        # Update the settings in the MongoDB
+        active_games_coll.update_one({"game_id": self.game_id}, {"$set": {"settings": new_settings}})
+        # Update the current game object
+        self.settings = new_settings
 
     @classmethod
     def get_by_game_id(cls, game_id):

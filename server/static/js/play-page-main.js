@@ -49,10 +49,12 @@ fetch("/api/get_play_info?game_id=" + GAME_ID, {method: 'GET'})
 
     // Initialize the page with functions from other scripts
     // Run all of these async!
+    init_settings(); // defined in play-page-settings.js
     init_tx_nav(); // defined in play-page-tx-nav.js
     init_leaderboard(); // defined in play-page-leaderboard.js
     init_portfolio(); // defined in play-page-portfolio.js
     init_trending(); // defined in play-page-trending.js
+
     // There's nothing in play-page-inputs.js to run :)
 });
 
