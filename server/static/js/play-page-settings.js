@@ -19,11 +19,12 @@ const SETTINGS_FORM = "settings-form";
 const SETTING_GAME_ID = "settings-game-id";
 const SETTINGS_GAME_NAME = "settings-game-name";
 const SETTINGS_STARTING_CASH = "settings-starting-cash";
-const SETTINGS_VIEWS_LIMITS = "settings-views-limits";
+const SETTINGS_VIEWS_LIMIT = "settings-views-limit";
 const SETTINGS_SHOW_CASH = "settings-show-cash";
 const SETTINGS_SHOW_ARTICLES = "settings-show-articles";
 const SETTINGS_SHOW_NUMBER_LABEL = "settings-show-number-label";
 const SETTINGS_SHOW_NUMBER = "settings-show-number";
+const SETTINGS_PUBLIC_GAME = "settings-public-game";
 
 // Add event listener to close symbol and button :)
 document.getElementById(GAME_SETTINGS_MODAL_CLOSE_SYMBOL).onclick = (() => {
@@ -72,11 +73,14 @@ function init_settings(game=GAME_OBJECT) {
 
     // Fill out the form with the current game settings
     document.getElementById(SETTINGS_GAME_NAME).value = game.name;
+    
     document.getElementById(SETTINGS_STARTING_CASH).value = game.settings.starting_cash;
-    document.getElementById(SETTINGS_VIEWS_LIMITS).value = game.settings.views_limit;
+    document.getElementById(SETTINGS_VIEWS_LIMIT).value = game.settings.views_limit;
     document.getElementById(SETTINGS_SHOW_CASH).checked = game.settings.show_cash;
     document.getElementById(SETTINGS_SHOW_ARTICLES).checked = game.settings.show_articles;
     document.getElementById(SETTINGS_SHOW_NUMBER).checked = game.settings.show_number;
+
+    document.getElementById(SETTINGS_PUBLIC_GAME).checked = game.public_game;
 
     // Enable form elements if the user is the game creator
     // USE READONLY ATTRIUUTE INSTEAD OF DISABLED (disabled elements don't get sent in the form!)
@@ -84,7 +88,7 @@ function init_settings(game=GAME_OBJECT) {
     if (THIS_PLAYER.user_id === game.owner_id) {
         // document.getElementById(SETTINGS_GAME_NAME).readonly = false;
         // Should we let the user change the game name? I don't think so.
-        document.getElementById(SETTINGS_VIEWS_LIMITS).removeAttribute("readonly");
+        document.getElementById(SETTINGS_VIEWS_LIMIT).removeAttribute("readonly");
         document.getElementById(SETTINGS_SHOW_CASH).removeAttribute("readonly");
         document.getElementById(SETTINGS_SHOW_ARTICLES).removeAttribute("readonly");
         

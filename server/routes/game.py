@@ -58,11 +58,9 @@ def create_game():
 @game.route("/api/change_settings", methods=["POST"])
 @login_required
 def change_settings():
-    print(request.form)
     # Make sure the user is the owner of the game
     game_id = request.form["game_id"]
     this_game = Game.get_by_game_id(game_id)
-    print(this_game.settings)
     if this_game.owner_id != current_user.user_id:
         flash("You can't change the settings of this game.")
         return(redirect(url_for("game.play", game_id=game_id)))
@@ -71,13 +69,13 @@ def change_settings():
         new_game_settings = {
             # if-elses just in case (backwards compatibility? probably not) (required for checkboxes)
             # Can't change the game name (outside of game_settings dict) or starting_cash
+            "starting_cash": float(this_game.settings[:"starting_cash"]) if "starting_cash" in this_game.settings else 100000, # This is to fix a mistake -- whoops!
             "views_limit": int(request.form["views_limit"]) if "views_limit" in request.form else this_game.settings["views_limit"],
-            "show_cash": True if "show_cash" in request.form else this_game.settings["show_cash"],
-            "show_articles": True if "show_articles" in request.form else this_game.settings["show_articles"],
-            "show_number": True if "show_number" in request.form else this_game.settings["show_number"],
+            "show_cash": True if "show_cash" in request.form else False,
+            "show_articles": True if "show_articles" in request.form else False,
+            "show_number": True if "show_number" in request.form else False,
         }
         this_game.change_settings(new_game_settings)
-        print(this_game.settings)
         return(redirect(url_for("game.play", game_id=game_id)))
     
 @game.route("/api/join_game", methods=["POST"])
