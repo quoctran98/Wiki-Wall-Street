@@ -10,6 +10,10 @@ which track the value of real stocks. I played it in twelfth grade for a week as
 my "economics unit" in my history class, which is why I'm bad with money 
 and spending like $15 a month to host this thing.
 
+Here, you have fake money to **buy and sell fake Wikipedia article "stocks"**
+and the value of the stocks is based on the number of **page views** that the article gets that day.
+If you're able to **predict trends in the popularity** of Wikipedia articles, you'll make more (fake) money!
+
 # How do I play?
 
 Try it out at [wiki-wall-street.com](https://wiki-wall-street.com)!
