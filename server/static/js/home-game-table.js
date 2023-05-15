@@ -23,14 +23,12 @@ async function add_game_row (game_id, joined_games_table) {
     let name_cell = row.insertCell(0);
     let players_cell = row.insertCell(1);
     let change_cell = row.insertCell(2);
-    let id_cell = row.insertCell(3);
-    let action_cell = row.insertCell(4);
+    let action_cell = row.insertCell(3);
 
     // Populate the cells with the game info
     name_cell.innerHTML = game.name;
     players_cell.innerHTML = game.players.join(", ");
     change_cell.innerHTML = `${(daily_change > 0)? "📈" : "📉"} ${daily_change}%`
-    id_cell.innerHTML = game.game_id;
     action_cell.innerHTML = `<button class="btn btn-primary" 
         onclick="window.location.href='/play?game_id=${game.game_id}'">Play</button>`;
 }
@@ -71,12 +69,10 @@ async function populate_public_games() {
         let row = public_games_table.insertRow(-1);
         let name_cell = row.insertCell(0);
         let players_cell = row.insertCell(1);
-        let id_cell = row.insertCell(2);
-        let action_cell = row.insertCell(3);
+        let action_cell = row.insertCell(2);
 
         name_cell.innerHTML = this_game.name;
         players_cell.innerHTML = this_game.players.join(", ");
-        id_cell.innerHTML = this_game.game_id;
         action_cell.innerHTML = `<button class="btn btn-primary"
             onclick="window.location.href='/play?game_id=${this_game.game_id}'">Play</button>`;
     }

@@ -4,14 +4,17 @@
 
 <div class="row">
     <h2>
-        Welcome<span id=game-name></span>!
+        Welcome<span id=game-name></span>! 
+        <span id="title-cash"></span>
+        <span id="title-rank"></span>
     </h2>
+</div>
 
-    <!-- LEADERBOARD BANNER -->
+<!-- LEADERBOARD BANNER -->
+<div class="row">
     <div style="overflow-x: scroll; height: 100%;">
         <div style="display: inline-flex; height: 100%;" id="leaderboard-banner"></div>
     </div>
-
 </div>
 
 <hr>
@@ -38,16 +41,9 @@
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
+
                 <div class="row">
-                    <h6>RANK! <p id="player-leaderboard-modal-rank"></p></h6>
-                </div>
-        
-                <div class="row">
-                    <h6>PROTFOLIO VALUE! <p id="player-leaderboard-modal-value"></p></h6>
-                </div>
-        
-                <div class="row">
-                    <h6 id="player-leaderboard-modal-cash"></h6>
+                    <h6 id="player-leaderboard-modal-sentence"></h6>
                 </div>
         
                 <!-- LIST OF ARTICLES -->
@@ -69,50 +65,19 @@
     </div>
 </div>
 
-<!-- BANNER FOR PORTFOLIO SUMMARY -->
-<div class="row" id="portfolio-summary" style="height: 7em;">
-
-    <div class="col-md-3">
-        <h3>CASH! <span id="portfolio-cash"></span></h3>
-        <h3>VALUE! <span id="portfolio-value"></span></h3>
-    </div> 
-
-    <!-- SCROLLABLE PORTFOLIO! I FINALLY FIGURED IT OUT -->
-    <!-- it's bascially a long inline-flex div inside one with a scroll overflow :) -->
-    <div class="col-md-9">
-        <div style="overflow-x: scroll; height: 100%;">
-            <div style="display: inline-flex; height: 100%;" id="portfolio-card-deck"></div>
-        </div>
+<!-- SCROLLABLE PORTFOLIO BANNER! I FINALLY FIGURED IT OUT -->
+<!-- it's bascially a long inline-flex div inside one with a scroll overflow :) -->
+<div class="row">
+    <div style="overflow-x: scroll; height: 100%;">
+        <div style="display: inline-flex; height: 100%;" id="portfolio-banner"></div>
     </div>
-
 </div>
 
 <hr>
 
 <div class="row">
 
-    <!-- LEFT COLUMN FOR TRENDING ARTICLES -->
-    <div class="col-md-2">
-        <h3>TRENDING!</h3>
-        <div id="trending-articles" style="max-height: 70vh; overflow-y: scroll;"></div>
-    </div>
-
-    <!-- MIDDLE COLUMN FOR GRAPH -->
-    <div class="col-md-7">
-        <h3 id="graph-title"></h3>
-        <h5 id="graph-desc">&nbsp;</h5>
-        <hr>
-        <div class="row">
-            <h6>Timeframe: </h6>
-            <button id="graph-week-button" onclick="graph_time('week')">Weekly</button>
-            <button id="graph-month-button" onclick="graph_time('month')">Monthly</button>
-            <button id="graph-year-button" onclick="graph_time('year')">Yearly</button>
-            <button id="graph-all-button" onclick="graph_time('all')">All</button>
-        </div>
-        <div id="transaction-graph"></div>
-    </div>
-
-    <!-- RIGHT COLUMN FOR SEARCH AND TX INFO -->
+    <!-- LEFT COLUMN FOR SEARCH AND TX INFO -->
     <div class="col-md-3">
 
             <h3>SEARCH!</h3>
@@ -141,6 +106,27 @@
         </div>
 
     </div>
+
+    <!-- MIDDLE COLUMN FOR GRAPH -->
+    <div class="col-md-7">
+        <h3 id="graph-title"></h3>
+        <h5 id="graph-desc">&nbsp;</h5>
+        <hr>
+        <div class="row">
+            <button id="graph-week-button" onclick="graph_time('week')">Weekly</button>
+            <button id="graph-month-button" onclick="graph_time('month')">Monthly</button>
+            <button id="graph-year-button" onclick="graph_time('year')">Yearly</button>
+            <button id="graph-all-button" onclick="graph_time('all')">All</button>
+        </div>
+        <div id="transaction-graph"></div>
+    </div>
+
+    <!-- RIGHT COLUMN FOR TRENDING ARTICLES -->
+    <div class="col-md-2">
+        <h3>TRENDING!</h3>
+        <div id="trending-articles" style="max-height: 70vh; overflow-y: scroll;"></div>
+    </div>
+
 </div>
 
 <script src="{{url_for('static', filename='js/plotly-2.20.0.min.js')}}"></script>

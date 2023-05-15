@@ -9,13 +9,26 @@
 const LEADERBOARD_BANNER = "leaderboard-banner";
 const PLAYER_INFO_MODAL = "player-leaderboard-modal";
 const PLAYER_INFO_MODAL_TITLE = "player-leaderboard-modal-title";
-const PLAYER_INFO_MODAL_RANK = "player-leaderboard-modal-rank";
-const PLAYER_INFO_MODAL_VALUE = "player-leaderboard-modal-value";
-const PLAYER_INFO_MODAL_CASH = "player-leaderboard-modal-cash";
+const PLAYER_INFO_MODAL_SENTENCE = "player-leaderboard-modal-sentence";
 const PLAYER_INFO_MODAL_ARTICLES = "player-leaderboard-modal-articles";
 
 const PLAYER_INFO_MODAL_CLOSE_SYMBOL = "player-leaderboard-modal-close-symbol";
 const PLAYER_INFO_MODAL_CLOSE_BUTTON = "player-leaderboard-modal-close-button";
+
+const TITLE_RANK_SPAN = "title-rank";
+
+// Returns the suffix for a number (e.g. 1st, 2nd, 3rd, 4th, etc.)
+function get_rank_suffix(rank) {
+    if (rank === 1) {
+        return("st");
+    } else if (rank === 2) {
+        return("nd");
+    } else if (rank === 3) {
+        return("rd");
+    } else {
+        return("th");
+    }
+}
 
 // This is called when a player's name is clicked on the leaderboard
 function show_player_info_modal(player_id) {
@@ -26,19 +39,18 @@ function show_player_info_modal(player_id) {
 
     // Set the info in the modal!
     document.getElementById(PLAYER_INFO_MODAL_TITLE).innerHTML = this_player.name;
-    document.getElementById(PLAYER_INFO_MODAL_RANK).innerHTML = rank;
-    document.getElementById(PLAYER_INFO_MODAL_VALUE).innerHTML = format_price(Math.round(this_player.value));
 
-    // Set the cash if it exists (i.e. hidden in this game)
-    if (this_player.cash) {
-        document.getElementById(PLAYER_INFO_MODAL_CASH).innerHTML = "<h6>CASH! </h6><p>" + format_price(Math.round(this_player.cash)) + "</p>";
-    }
+    // Set the summar in the modal! (with cash if it exists and articles if they exist)
+    document.getElementById(PLAYER_INFO_MODAL_SENTENCE).innerHTML = `
+        ${this_player.name} is in <ins>${rank}${get_rank_suffix(rank)}</ins> place
+        with a portfolio value of <ins>${format_price(this_player.value)}</ins>
+        ${this_player.cash? "and <ins>" + format_price(this_player.cash) + "</ins> in cash" : ""}!
+        ${this_player.articles? "<hr>Here's what they own:" : ""}
+    `;
 
     // Set the articles if they exist
     if (this_player.articles) {
-        let articles_html = `
-            <div class="row"><h6>ARTICLES! </h6></div> 
-            <div class="row"><ul>`;
+        let articles_html = "<ul>";
         let articles = this_player.articles;
         for (let article_name in articles) {
             // Check if the value is a number -- will be boolean if amount is hidden
@@ -50,7 +62,7 @@ function show_player_info_modal(player_id) {
                 articles_html += `<li>${clickable_article_name} (${maybe_number})</li>`;
             }
         }
-        articles_html += "</ul></div>";
+        articles_html += "</ul>";
         document.getElementById(PLAYER_INFO_MODAL_ARTICLES).innerHTML = articles_html;
     }
     
@@ -68,13 +80,10 @@ function leaderboard_card (player) {
     // Generate the HTML for the card
     let card_html = `
         <a href="#" onclick="show_player_info_modal('${player.player_id}');return(false);">
-        <div class="card leaderboard-card">
-            <h6 class="card-title"> 
-                ${player.name} (${format_price(Math.round(player.value))})
-            </h6>
-            <p class="card-text">
-                ${(daily_change > 0)? "📈" : "📉"} ${daily_change}%
-            </p>
+        <div class="leaderboard-${(daily_change > 0)? "up" : "down"}" role="alert">
+                ${player.name}: 
+                ${format_price(Math.round(player.value))}
+                (${(daily_change > 0)? "📈" : "📉"} ${daily_change}%)
         </div>
         </a>
     `;
@@ -90,7 +99,6 @@ document.getElementById(PLAYER_INFO_MODAL_CLOSE_BUTTON).onclick = (() => {
     document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
 });
 
-
 // Load the leaderboard onto the page -- called by play-page-main.js
 async function init_leaderboard() {
 
@@ -100,12 +108,15 @@ async function init_leaderboard() {
     lboard_res = await lboard_res.json();
     ALL_PLAYERS = lboard_res.players;
 
-    console.log(ALL_PLAYERS);
+    // Set the title rank
+    const rank = ALL_PLAYERS.indexOf(ALL_PLAYERS.find(p => p.player_id === THIS_PLAYER.player_id)) + 1;
+    document.getElementById(TITLE_RANK_SPAN).innerHTML = `You are in 
+        <ins>${rank}${get_rank_suffix(rank)}</ins>
+         place!`;
 
     for (let i = 0; i < ALL_PLAYERS.length; i++) {
         const player = ALL_PLAYERS[i];
         const card = leaderboard_card(player);
         document.getElementById(LEADERBOARD_BANNER).insertAdjacentHTML("beforeend", card);
     }
-
 } 

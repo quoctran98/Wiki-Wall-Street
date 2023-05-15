@@ -2,6 +2,44 @@
     height: 1em;
 }
 
+.leaderboard-up {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin: 0.5rem;
+  border: 1px solid;
+  border-radius: 0.25rem;
+
+  border-color: #000000;
+  color: #ffffff;
+  background-color: #4668ff;
+}
+
+.leaderboard-down {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin: 0.5rem;
+  border: 1px solid;
+  border-radius: 0.25rem;
+
+  border-color: #000000;
+  color: #ffffff;
+  background-color: #c13030;
+}
+
+.portfolio-card {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin: 0.5rem;
+  border: 1px solid;
+  border-radius: 0.25rem;
+
+  border-color: #000000;
+  color: #000000;
+  background-color: #f8f9fa;
+
+  white-space: nowrap;
+}
+
 .alert {
   position: relative;
   padding: 0.75rem 1.25rem;
@@ -28,17 +66,6 @@
   border-color: #f5c6cb;
 }
 
-.portfolio-card {
-  width: 10em;
-  height: 90%;
-  background-color: #f8f9fa;
-
-  border-radius: 0.5em;
-  padding: 0.5em;
-  margin: 0.5em;
-
-}
-
 .trending-card {
   width: 90%;
   height: 12em;
@@ -52,15 +79,4 @@
   margin: 0.5em;
 
   display: flex;
-}
-
-.leaderboard-card {
-  width: 10em;
-  height: 90%;
-  background-color: #f8f9fa;
-
-  border-radius: 0.5em;
-  padding: 0.5em;
-  margin: 0.5em;
-
 }
