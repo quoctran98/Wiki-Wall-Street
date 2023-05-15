@@ -79,36 +79,15 @@
 
 <hr>
 
-<div class="row">
+<!-- REVERSE COLUMN ORDER FOR PHONE :) -->
+<div class="row flex-column-reverse flex-md-row">
 
-    <!-- LEFT COLUMN FOR SEARCH AND TX INFO -->
-    <div class="col-md-3">
-
-            <h3>SEARCH!</h3>
-            <input list="search-datalist" id="search-input" placeholder="">
-            <datalist id="search-datalist"></datalist>
-            <button onclick="load_article()"" id="search-button">Search</button>
-
-        <hr>
-
-            <h3>BUY!</h3>
-            <button id="buy-1-button" onclick="new_tx(1,'buy')">Buy 1</button>
-            <button id="buy-5-button" onclick="new_tx(5,'buy')">Buy 5</button>
-            <input type="number" id="custom-buy-input" min="1" value="10"></input>
-            <button id="buy-custom-button" onclick="new_tx(document.getElementById('custom-buy-input').value,'buy')">Buy</button>
-
-        <hr>
-
-        <div id="sell-div">
-            <h3>SELL!</h3>
-            <p><span id="num-owned"></span></p>
-            <p><span id="avg-price"></span></p>
-
-            <button id="sell-1-button" onclick="new_tx(1,'sell')">Sell 1</button>
-            <input type="number" id="custom-sell-input" min="1" value="10"></input>
-            <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')">Sell</button>
+    <!-- LEFT/BOTTOM COLUMN FOR TRENDING ARTICLES -->
+    <div class="col-md-2">
+        <h3>TRENDING!</h3>
+        <div id="trending-articles" style="max-height: 70vh; overflow-y: scroll;">
+            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
         </div>
-
     </div>
 
     <!-- MIDDLE COLUMN FOR GRAPH -->
@@ -127,13 +106,35 @@
         </div>
     </div>
 
-    <!-- RIGHT COLUMN FOR TRENDING ARTICLES -->
-    <div class="col-md-2">
-        <h3>TRENDING!</h3>
-        <div id="trending-articles" style="max-height: 70vh; overflow-y: scroll;">
-            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
-        </div>
+    <!-- RIGHT/TOP COLUMN FOR SEARCH AND TX INFO -->
+    <div class="col-md-3">
+
+        <h3>SEARCH!</h3>
+        <input list="search-datalist" id="search-input" placeholder="">
+        <datalist id="search-datalist"></datalist>
+        <button onclick="load_article()"" id="search-button">Search</button>
+
+    <hr>
+
+        <h3>BUY!</h3>
+        <button id="buy-1-button" onclick="new_tx(1,'buy')">Buy 1</button>
+        <button id="buy-5-button" onclick="new_tx(5,'buy')">Buy 5</button>
+        <input type="number" id="custom-buy-input" min="1" value="10"></input>
+        <button id="buy-custom-button" onclick="new_tx(document.getElementById('custom-buy-input').value,'buy')">Buy</button>
+
+    <hr>
+
+    <div id="sell-div">
+        <h3>SELL!</h3>
+        <p><span id="num-owned"></span></p>
+        <p><span id="avg-price"></span></p>
+
+        <button id="sell-1-button" onclick="new_tx(1,'sell')">Sell 1</button>
+        <input type="number" id="custom-sell-input" min="1" value="10"></input>
+        <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')">Sell</button>
     </div>
+
+</div>
 
 </div>
 
