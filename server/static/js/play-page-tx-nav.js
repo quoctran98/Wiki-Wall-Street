@@ -181,7 +181,17 @@ async function load_article (article_name=null) {
 
     // Get the article name from the search bar if it's not passed as an argument
     if (article_name == null) {
-        article_name = document.getElementById(SEARCH_ID).value;
+
+        // Make the first item of the datalist the actual search term if it doesn't match!
+        // Check to see if the datalist has any suggestions
+        if (document.getElementById(SEARCH_DATALIST_ID).firstChild == null) {
+            // If not, just set the article name to the search bar value
+            article_name = document.getElementById(SEARCH_ID).value;
+        } else {
+            // If so, set the article name to the first suggestion and set the search bar value to that
+            article_name = document.getElementById(SEARCH_DATALIST_ID).firstChild.value;
+            document.getElementById(SEARCH_ID).value = article_name;
+        }
         CURRENT_ARTICLE = article_name;
     }
 
@@ -239,6 +249,9 @@ async function init_tx_nav() {
             search_article(); // This does the datalist updating stuff :)
         }
     });
+
+    // Add an event listener to datalist to search on click
+    // I can't do this???
 
     // Add event listeners to the custom buy/sell inputs
     document.getElementById(CUSTOM_BUY_INPUT_ID).addEventListener("input", function() {

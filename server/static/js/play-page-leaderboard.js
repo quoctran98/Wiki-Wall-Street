@@ -89,9 +89,10 @@ function leaderboard_card (player) {
     let card_html = `
         <a href="#" onclick="show_player_info_modal('${player.player_id}');return(false);">
         <div class="leaderboard-${(daily_change > 0)? "up" : "down"}" role="alert">
-                ${player.name}: 
-                ${format_price(Math.round(player.value))}
-                (${(daily_change > 0)? "📈" : "📉"} ${daily_change}%)
+            ${player.name}
+            <br>
+            ${format_price(Math.round(player.value))}
+            (${(daily_change > 0)? "📈" : "📉"} ${daily_change}%)
         </div>
         </a>
     `;
