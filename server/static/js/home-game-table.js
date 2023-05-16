@@ -20,7 +20,7 @@ async function add_game_row (game_id, joined_games_table) {
     daily_change = Math.round(daily_change * 10000) / 100;
 
     // Remove loading div row if it exists
-    if (document.getElementById(JOINED_GAMES_LOADING_ID))
+    if (document.getElementById(JOINED_GAMES_LOADING_ID)) {
         document.getElementById(JOINED_GAMES_LOADING_ID).remove();
     }
 
