@@ -19,8 +19,10 @@ async function add_game_row (game_id, joined_games_table) {
     let daily_change = (player.today_value - player.yesterday_value) / player.yesterday_value;
     daily_change = Math.round(daily_change * 10000) / 100;
 
-    // Remove loading div row!
-    document.getElementById(JOINED_GAMES_LOADING_ID).remove();
+    // Remove loading div row if it exists
+    if (document.getElementById(JOINED_GAMES_LOADING_ID))
+        document.getElementById(JOINED_GAMES_LOADING_ID).remove();
+    }
 
     // Add the row and cells for this game
     let row = joined_games_table.insertRow(-1);
