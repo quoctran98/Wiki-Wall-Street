@@ -2,6 +2,7 @@ import json
 from flask import Flask, request, Blueprint, render_template, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from pymongo import MongoClient
+import datetime
 
 from server.helper import settings, cache, active_games_coll
 from server.models import User, Game, Player, Transaction
@@ -99,7 +100,19 @@ def new_transaction():
     # Make sure the price is right (I didn't multiply by quantity before, but it didn't break??)
     real_price = WikiAPI.normalized_views(tx_data["article"])[-1]["views"] * float(tx_data["quantity"])
     if abs(abs(real_price) - abs(float(tx_data["price"]))) > 1: # Just because of rounding errors (I should fix it)
-        flash("Price is incorrect. It's either a bug or you're trying to cheat.")
+        
+        # This happens a lot -- let's see why?
+        bug_message = f"PRICING BUG! YOUR TRANSACTION DIDN'T GO THROUGH! I'M TRYING TO SOLVE IT! PLEASE SEND QUOC A SCREENSHOT OF THIS MESSAGE!"
+        real_price_now = WikiAPI.normalized_views(tx_data["article"])[-1]["views"]
+        real_time_now = WikiAPI.normalized_views(tx_data["article"])[-1]["timestamp"]
+        real_price_before = WikiAPI.normalized_views(tx_data["article"])[-2]["views"]
+        real_time_before = WikiAPI.normalized_views(tx_data["article"])[-2]["timestamp"]
+        bug_message += f"\n\n  SENT | time-ish: {datetime.datetime.now()} | price: {tx_data['price']}"
+        bug_message += f"\n\n REAL NOW | time: {real_time_now} | price: {real_price_now}"
+        bug_message += f"\n\n REAL -1 | time: {real_time_before} | price: {real_price_before}"
+        bug_message += f"\n\n DIFFERENCE | {abs(abs(real_price) - abs(float(tx_data['price'])))}"
+        flash(bug_message)
+
         return(jsonify({"success": False}))
     # Make sure the article is allowed to be bought
     # I guess that you should be allowed to sell anything just in case it dips after you buy it
