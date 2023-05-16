@@ -37,35 +37,6 @@ function format_price(p) {
     return(p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 }
 
-// Call blur_background() when any modals are opened
-function blur_background() {
-    let to_blur = document.getElementsByClassName("gets-blurred");
-    for (let i = 0; i < to_blur.length; i++) {
-        to_blur[i].style = `
-            -webkit-filter: blur(3px);
-            -moz-filter: blur(3px);
-            -o-filter: blur(3px);
-            -ms-filter: blur(3px);
-            filter: blur(3px);
-        `;
-    }
-}
-
-// Call unblur_background() when any modals are closed
-function unblur_background() {
-    let to_unblur = document.getElementsByClassName("gets-blurred");
-    for (let i = 0; i < to_unblur.length; i++) {
-        to_unblur[i].style = `
-            -webkit-filter: blur(0px);
-            -moz-filter: blur(0px);
-            -o-filter: blur(0px);
-            -ms-filter: blur(0px);
-            filter: blur(0px);
-        `;
-    }
-}
-
-
 // Call api/get_play_info to get the game and player objects -- this is also used globally!
 fetch("/api/get_play_info?game_id=" + GAME_ID, {method: 'GET'})
 .then(response => response.json())

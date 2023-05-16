@@ -36,6 +36,20 @@
   white-space: nowrap;
 }
 
+.leaderboard-neutral {
+  position: relative;
+  padding: 0.25rem 1rem;
+  margin: 0rem 0.25rem;
+  border: 1px solid;
+  border-radius: 0.25rem;
+
+  border-color: #000000;
+  color: #ffffff;
+  background-color: #f8f9fa;
+
+  white-space: nowrap;
+}
+
 .portfolio-card {
   position: relative;
   padding: 0.25rem 1rem;
@@ -70,14 +84,6 @@
   -o-filter: blur(1px);
   -ms-filter: blur(1px);
   filter: blur(1px);
-}
-
-.unblurred-modal {
-  -webkit-filter: blur(0px);
-  -moz-filter: blur(0px);
-  -o-filter: blur(0px);
-  -ms-filter: blur(0px);
-  filter: blur(0px);
 }
 
 .alert {

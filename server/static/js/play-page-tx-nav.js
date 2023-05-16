@@ -16,8 +16,7 @@ const GRAPH_TITLE_ID = "graph-title";
 const GRAPH_DESC_ID = "graph-desc";
 
 // Transaction div elements (when the player owns an article)
-const PLAYER_ART_INFO_N = "num-owned";
-const PLAYER_ART_INFO_AVG_BUY = "avg-price";
+const PLAYER_ART_INFO = "article-info";
 
 // Buttons and input for buying
 const BUY_1_BUTTON_ID = "buy-1-button";
@@ -80,10 +79,10 @@ function update_trade_buttons(article=CURRENT_ARTICLE, price=CURRENT_PRICE, play
     // Reveal sell div if player owns article and update sell buttons with current price
     if (article in player.articles && player.articles[article] > 0) {
         // Update the player's article info (number owned and average buy price)
-        const owned_html = `Number Owned: ${player.articles[article]}`;
-        document.getElementById(PLAYER_ART_INFO_N).innerHTML = owned_html;
-        const avg_buy_html = `Average Buy Price: ${format_price(player.avg_price[article])}`;
-        document.getElementById(PLAYER_ART_INFO_AVG_BUY).innerHTML = avg_buy_html;
+        document.getElementById(PLAYER_ART_INFO).innerHTML = `
+            You own <b>${player.articles[article]}</b> of this article, 
+            bought at an average price of <b>${format_price(player.avg_price[article])}</b>!
+        `;    
         
         // Reveal sell div and update sell buttons with current price
         document.getElementById(SELL_DIV_ID).style.display = "block";
@@ -104,8 +103,7 @@ function update_trade_buttons(article=CURRENT_ARTICLE, price=CURRENT_PRICE, play
         document.getElementById(SELL_DIV_ID).style.display = "none";
 
         // Reset the player's article info (number owned and average buy price)
-        document.getElementById(PLAYER_ART_INFO_N).innerHTML = "";
-        document.getElementById(PLAYER_ART_INFO_AVG_BUY).innerHTML = "";
+        document.getElementById(PLAYER_ART_INFO).innerHTML = "";
     }
 
     // Disable buy buttons if article is not allowed in this game (selling is always allowed, I guess)
@@ -194,6 +192,7 @@ async function load_article (article_name=null) {
         }
         CURRENT_ARTICLE = article_name;
     }
+
 
    // Do all the API calls up top, then update the page at the end
    Promise.all([

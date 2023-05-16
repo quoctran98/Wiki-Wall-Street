@@ -15,7 +15,7 @@
         </h4>
     </div>
     <div class="col-md-2"> <!-- I don't like this column-based solution, but it's fine :) -->
-        <button class="btn btn-secondary float-right" onclick="show_game_settings_modal();" id="game-settings-open-button" disabled="true">Settings</button>
+        <button class="btn btn-primary float-right" onclick="show_game_settings_modal();" id="game-settings-open-button" disabled="true">Settings</button>
     </div> 
 </div>
 
@@ -24,6 +24,11 @@
     <div style="overflow-x: scroll; height: 100%;">
         <div style="display: inline-flex; height: 100%;" id="leaderboard-banner">
             <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
+            <!-- <div class="leaderboard-neutral blurred-container" role="alert">
+                marcduck
+                <br>
+                113,000 (📈 12.95%)
+            </div> -->
         </div>
     </div>
 </div>
@@ -80,20 +85,18 @@
     <hr>
 
         <h3>BUY!</h3>
-        <button id="buy-1-button" onclick="new_tx(1,'buy')">Buy 1</button>
-        <button id="buy-5-button" onclick="new_tx(5,'buy')">Buy 5</button>
-        <input type="number" id="custom-buy-input" min="1" value="10"></input>
+        <button id="buy-1-button" onclick="new_tx(1,'buy')">Buy 1</button> <br>
+        <button id="buy-5-button" onclick="new_tx(5,'buy')">Buy 5</button> <br>
+        <input type="number" id="custom-buy-input" min="1" value="10"></input> <br>
         <button id="buy-custom-button" onclick="new_tx(document.getElementById('custom-buy-input').value,'buy')">Buy</button>
 
     <hr>
 
     <div id="sell-div">
         <h3>SELL!</h3>
-        <p><span id="num-owned"></span></p>
-        <p><span id="avg-price"></span></p>
-
-        <button id="sell-1-button" onclick="new_tx(1,'sell')">Sell 1</button>
-        <input type="number" id="custom-sell-input" min="1" value="10"></input>
+        <p><span id="article-info"></span></p>
+        <button id="sell-1-button" onclick="new_tx(1,'sell')">Sell 1</button> <br>
+        <input type="number" id="custom-sell-input" min="1" value="10"></input> <br>
         <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')">Sell</button>
     </div>
 

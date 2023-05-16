@@ -25,34 +25,6 @@ const JOIN_GAME_MODAL_CLOSE_ID = "join-game-modal-close";
 const JOIN_GAME_MODAL_CANCEL_ID = "join-game-modal-cancel";
 const JOIN_GAME_MODAL_JOIN_ID = "join-game-modal-join";
 
-// Call blur_background() when any modals are opened
-function blur_background() {
-    let to_blur = document.getElementsByClassName("gets-blurred");
-    for (let i = 0; i < to_blur.length; i++) {
-        to_blur[i].style = `
-            -webkit-filter: blur(3px);
-            -moz-filter: blur(3px);
-            -o-filter: blur(3px);
-            -ms-filter: blur(3px);
-            filter: blur(3px);
-        `;
-    }
-}
-
-// Call unblur_background() when any modals are closed
-function unblur_background() {
-    let to_unblur = document.getElementsByClassName("gets-blurred");
-    for (let i = 0; i < to_unblur.length; i++) {
-        to_unblur[i].style = `
-            -webkit-filter: blur(0px);
-            -moz-filter: blur(0px);
-            -o-filter: blur(0px);
-            -ms-filter: blur(0px);
-            filter: blur(0px);
-        `;
-    }
-}
-
 // New game modal open/close
 document.getElementById(NEW_GAME_BUTTON_ID).onclick = (() => {
     document.getElementById(NEW_GAME_MODAL_ID).style.display = "block";

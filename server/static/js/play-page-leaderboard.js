@@ -20,9 +20,11 @@ const TITLE_RANK_SPAN = "title-rank";
 // Add event listener to close symbol and button :)
 document.getElementById(PLAYER_INFO_MODAL_CLOSE_SYMBOL).onclick = (() => {
     document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
+    unblur_background();
 });
 document.getElementById(PLAYER_INFO_MODAL_CLOSE_BUTTON).onclick = (() => {
     document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
+    unblur_background();
 });
 
 // Returns the suffix for a number (e.g. 1st, 2nd, 3rd, 4th, etc.)
@@ -63,7 +65,11 @@ function show_player_info_modal(player_id) {
         for (let article_name in articles) {
             // Check if the value is a number -- will be boolean if amount is hidden
             const maybe_number = articles[article_name];
-            const clickable_article_name = `<a href="javascript:load_into_search('${article_name}')">${article_name}</a>`;
+            const clickable_article_name = `
+                <a href="javascript:load_into_search('${article_name}');
+                close_all_modals();">
+                    ${article_name}
+                </a>`;
             if (typeof maybe_number !== "number") {
                 articles_html += `<li>${clickable_article_name}</li>`;
             } else {
@@ -76,6 +82,7 @@ function show_player_info_modal(player_id) {
     
     // Show the modal!
     document.getElementById(PLAYER_INFO_MODAL).style.display = "block";
+    blur_background();
 }
 
 // Generates HTML for a single player's card on the leaderboard
