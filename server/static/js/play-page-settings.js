@@ -29,9 +29,11 @@ const SETTINGS_PUBLIC_GAME = "settings-public-game";
 // Add event listener to close symbol and button :)
 document.getElementById(GAME_SETTINGS_MODAL_CLOSE_SYMBOL).onclick = (() => {
     document.getElementById(GAME_SETTINGS_MODAL).style.display = "none";
+    unblur_background();
 });
 document.getElementById(GAME_SETTINGS_CLOSE_BUTTON).onclick = (() => {
     document.getElementById(GAME_SETTINGS_MODAL).style.display = "none";
+    unblur_background();
 });
 
 // Add event listener to disable number of articles if show articles is not checked
@@ -59,9 +61,10 @@ document.getElementById(SETTINGS_FORM).addEventListener("change", function() {
 function show_game_settings_modal(game=GAME_OBJECT) {
     // Run the init_settings function to fill out the form (in case it was closed and reopened)
     init_settings(game);
-    // Redisable the save button
+    // Redisable the save button and show the modal
     document.getElementById(GAME_SETTINGS_SAVE_BUTTON).setAttribute("disabled", true);
     document.getElementById(GAME_SETTINGS_MODAL).style.display = "block";
+    blur_background();
 }
 
 // Fill out the modal on page load

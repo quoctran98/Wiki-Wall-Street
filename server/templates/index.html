@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<div class="gets-blurred">
+
 <div class="alert alert-info" role="alert">
   Hi, I've deployed a new database to hopefully increase speeds!
   However, this means that all of your accounts and games have been deleted.
@@ -93,6 +95,8 @@
   <script src="{{url_for('static', filename='js/home-game-table.js')}}"></script>
 
 {% endif %}
+
+</div>
 
 <!-- NEW GAME MODAL -->
 <div class="modal" id="new-game-modal">
