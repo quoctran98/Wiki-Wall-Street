@@ -41,13 +41,13 @@ document.getElementById(NEW_GAME_MODAL_CANCEL_ID).onclick = (() => {
 });
 
 // New game modal: disable number of articles if show articles is not checked
-// DON'T USE DISABLE ATTRIBUTE, USE READONLY INSTEAD
+// DON'T USE DISABLE ATTRIBUTE, USE READONLY INSTEAD -- doesn't work for some reason
 document.getElementById(NEW_GAME_SHOW_ARTICLES_ID).addEventListener("change", function() {
     if (this.checked) {
-        document.getElementById(NEW_GAME_SHOW_NUMBER_ID).removeAttribute("readonly");
+        document.getElementById(NEW_GAME_SHOW_NUMBER_ID).removeAttribute("disabled");
         document.getElementById(NEW_GAME_SHOW_ARTICLES_LABEL_ID).style.color = "black";
     } else {
-        document.getElementById(NEW_GAME_SHOW_NUMBER_ID).setAttribute("readonly", true);
+        document.getElementById(NEW_GAME_SHOW_NUMBER_ID).setAttribute("disabled", true);
         document.getElementById(NEW_GAME_SHOW_ARTICLES_LABEL_ID).style.color = "#E5E5E5";
         document.getElementById(NEW_GAME_SHOW_NUMBER_ID).checked = false
     }
