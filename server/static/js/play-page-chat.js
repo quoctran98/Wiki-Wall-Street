@@ -45,8 +45,10 @@ async function show_chat_modal() {
 }
 
 function render_messages(message_array) {
+    let chat_box = document.getElementById(CHAT_MODAL_MAIN);
+
     // Clear the chat
-    document.getElementById(CHAT_MODAL_MAIN).innerHTML = "";
+    chat_box.innerHTML = "";
 
     // Render the messages
     for (let i = 0; i < message_array.length; i++) {
@@ -54,8 +56,11 @@ function render_messages(message_array) {
         let message_div = document.createElement("div");
         message_div.className = "chat-message";
         message_div.innerHTML = message.name + ": " + message.message;
-        document.getElementById(CHAT_MODAL_MAIN).appendChild(message_div);
+        chat_box.appendChild(message_div);
     }
+
+    // Scroll to the bottom of the chat
+    chat_box.scrollTop = chat_box.scrollHeight;
 }
 
 async function get_messages(game_id) {
