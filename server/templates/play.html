@@ -5,7 +5,7 @@
 <div class="gets-blurred">
 
 <div class="row">
-    <div class="col-md-10">
+    <div class="col-md-8">
         <h2>
             Welcome<span id=game-name></span>! 
         </h2>
@@ -14,9 +14,9 @@
             <span id="title-rank"></span>
         </h4>
     </div>
-    <div class="col-md-2"> <!-- I don't like this column-based solution, but it's fine :) -->
-        <button class="btn btn-primary float-right" onclick="show_chat_modal();">Chat</button>
+    <div class="col-md-4">
         <button class="btn btn-primary float-right" onclick="show_game_settings_modal();" id="game-settings-open-button" disabled="true">Settings</button>
+        <button class="btn btn-primary float-right" onclick="show_chat_modal();">Chat</button>
     </div> 
 </div>
 
@@ -285,10 +285,11 @@ const CHAT_FORM_SEND_BUTTON = "chat-form-send-button"; -->
         </div>
 
         <!-- FORM FOR CHAT -->
+        <!-- will be handled with javascript not by the form POST action :) -->
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
-            <form id="chat-form" action="{{ url_for('chat.send_chat') }}" method="POST">
+            <form id="chat-form">
                 <input type="hidden" name="user_id" id="chat-form-user-id" value="{{ current_user.user_id }}">
                 <input type="hidden" name="game_id" id="chat-form-game-id" value="">
                 <input type="hidden" name="name" id="chat-form-name" value="">

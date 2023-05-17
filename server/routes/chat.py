@@ -10,13 +10,6 @@ import server.WikiAPI as WikiAPI
 
 chat = Blueprint("chat", __name__)
 
-@chat.route("/api/TEST", methods=["POST"])
-@login_required
-def TEST():
-    print("🧪")
-    print(request.form)
-    return(jsonify({"message": "TEST"}))
-
 @chat.route("/api/see_chat")
 @login_required
 def see_chat():
