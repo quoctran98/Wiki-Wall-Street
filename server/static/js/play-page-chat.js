@@ -110,6 +110,7 @@ async function send_message() {
         document.getElementById(CHAT_FORM_SEND_BUTTON).disabled = false;
         document.getElementById(CHAT_FORM_MESSSAGE).disabled = false;
         document.getElementById(CHAT_FORM_MESSSAGE).paceholder = "Type a message...";
+        document.getElementById(CHAT_FORM_MESSSAGE).focus();
 
         // Get the messages and render them now that we have sent a message
         let message = await get_messages(GAME_OBJECT.game_id);
