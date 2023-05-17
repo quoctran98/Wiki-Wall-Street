@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     GAMES_DB_NAME:str
     PLAYERS_DB_NAME:str
     TRANSACTIONS_DB_NAME:str
+    CHATS_DB_NAME:str
     
     WIKI_API_USER_AGENT:str
     FLASK_SECRET_KEY:str
@@ -39,6 +40,10 @@ transactions_db = client[settings.TRANSACTIONS_DB_NAME]
 # Connect to the MongoDB players database
 # Not collections! Each game has its own collection in the players database
 players_db = client[settings.PLAYERS_DB_NAME]
+
+# Connect to the MongoDB chats database
+# Not collections! Each game has its own collection in the chats database
+chats_db = client[settings.CHATS_DB_NAME]
 
 # Cache for later use
 cache_config = {

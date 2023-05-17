@@ -63,6 +63,10 @@ def create_app():
     from .routes.wiki import wiki as wiki_blueprint
     app.register_blueprint(wiki_blueprint)
 
+    # Blueprint for chat routes from server/chat.py
+    from .routes.chat import chat as chat_blueprint
+    app.register_blueprint(chat_blueprint)
+
     # Make sure the app is running with the correct settings
     print("Routes registered! 🌐")
     # print(f"Connected to MongoDB at {settings.MONGODB_CONNECTION_STRING} 💾")

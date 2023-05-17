@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import datetime
 
-from server.helper import settings, active_users_coll, active_games_coll, transactions_db, players_db
+from server.helper import settings, active_users_coll, active_games_coll, transactions_db, players_db, chats_db
 
 from server import WikiAPI
 
@@ -69,7 +69,7 @@ class User(UserMixin):
         return(False)
 
 class Game():
-    def __init__(self, game_id, name, owner_id, user_ids, settings, players, transactions, public=False):
+    def __init__(self, game_id, name, owner_id, user_ids, settings, players, transactions, chats=None, public=None):
         self.game_id = game_id
         self.name = name
         self.owner_id = owner_id
@@ -77,7 +77,9 @@ class Game():
         self.settings = settings
         self.players = players
         self.transactions = transactions
-        self.public = public # Default is False in __init__ for backwards compatibility
+        # Defaults in __init__ for backwards compatibility
+        self.chats = chats if chats is not None else ["chat_0"] # Default chat I guess
+        self.public = public if public is not None else False
 
     def update_game(self):
         """Update the game in the MongoDB."""
@@ -91,6 +93,8 @@ class Game():
             "owner_id": self.owner_id,
             "settings": self.settings,
             "players": self.players,
+            "chat": self.chats, # "public" means "public to all players in the game", I guess
+            "public": self.public,
         })
     
     def allowed_article(self, article_name):
@@ -131,6 +135,7 @@ class Game():
             "settings": settings,
             "players": [],
             "transactions": [],
+            "chats": [],
             "public": public,
         })
         return(game_id)
@@ -360,3 +365,39 @@ class Transaction():
             "timestamp": datetime.datetime.now(),
         })
         return(tx_id)
+
+class Chat():
+    def __init__(self, chat_id, game_id, user_id, name, message, timestamp):
+        self.chat_id = chat_id
+        self.game_id = game_id
+        self.user_id = user_id
+        self.name = name
+        self.message = message
+        self.timestamp = timestamp
+
+    @classmethod
+    def get_by_chat_id(cls, game_id, chat_id):
+        data = chats_db[game_id].find_one({"chat_id": chat_id})
+        if data is not None:
+            data.pop("_id", None) # Remove the MongoDB _id field
+            return cls(**data)
+
+    @classmethod
+    def send_chat(self, game_id, user_id, message, name=None):
+        # Give the chat a unique ID
+        chat_id = "chat_" + uuid.uuid4().hex
+
+        # Update the game's chats
+        active_games_coll.update_one({"game_id": game_id}, {"$push": {"chats": chat_id}})
+        
+        # Saving the chat to the chats collection for the game
+        chats_db[game_id].insert_one({
+            "chat_id": chat_id,
+            "user_id": user_id,
+            # so that non-player system messages can be sent (user_id will be game_id)
+            "name": User.get_by_user_id(user_id).name if name is None else name,
+            "message": message,
+            "timestamp": datetime.datetime.now(),
+        })
+        return(chat_id)
+    

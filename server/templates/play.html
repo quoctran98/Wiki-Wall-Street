@@ -15,6 +15,7 @@
         </h4>
     </div>
     <div class="col-md-2"> <!-- I don't like this column-based solution, but it's fine :) -->
+        <button class="btn btn-primary float-right" onclick="show_chat_modal();">Chat</button>
         <button class="btn btn-primary float-right" onclick="show_game_settings_modal();" id="game-settings-open-button" disabled="true">Settings</button>
     </div> 
 </div>
@@ -244,6 +245,74 @@
     </div>
 </div>
 
+<!-- const CHAT_MODAL = "chat-modal";
+const CHAT_MODAL_CLOSE_SYMBOL = "chat-modal-close-symbol";
+const CHAT_MODAL_CLOSE_BUTTON = "chat-modal-close-button";
+const CHAT_MODAL_TITLE = "chat-modal-title";
+
+const CHAT_MODAL_TEST = "chat-modal-TEST";
+
+const CHAT_FORM_USER_ID = "chat-form-user-id";
+const CHAT_FORM_GAME_ID = "chat-form-game-id";
+const CHAT_FORM_NAME = "chat-form-name";
+const CHAT_FORM_MESSSAGE = "chat-form-message";
+const CHAT_FORM_SEND_BUTTON = "chat-form-send-button"; -->
+
+<!-- CHAT MODAL -->
+<div class="modal" id="chat-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h5 id="chat-modal-title"></h5>
+
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" id="chat-modal-close-symbol" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- MODAL BODY -->
+    <div class="modal-body">
+        
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8" id="chat-modal-main">
+        
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+        <!-- FORM FOR CHAT -->
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+            <form id="chat-form" action="{{ url_for('chat.send_chat') }}" method="POST">
+                <input type="hidden" name="user_id" id="chat-form-user-id" value="{{ current_user.user_id }}">
+                <input type="hidden" name="game_id" id="chat-form-game-id" value="">
+                <input type="hidden" name="name" id="chat-form-name" value="">
+
+                <input type="text" name="message" id="chat-form-message" placeholder="Type a message...">
+                <button type="submit" class="btn btn-primary" id="chat-form-send-button">Send</button>
+
+            </form>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="chat-modal-close-button">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>
+
 <script src="{{url_for('static', filename='js/plotly-2.20.0.min.js')}}"></script>
 
 <!-- JS FILES TO DEFINE FUNCITONS FOR VARIOUS ELEMENTS (refer to comment at the top of play-page-main.js) -->
@@ -254,6 +323,7 @@
 <script src="{{url_for('static', filename='js/play-page-portfolio.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-leaderboard.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-trending.js')}}"></script>
+<script src="{{url_for('static', filename='js/play-page-chat.js')}}"></script>
 
 <!-- THIS IS THE MAIN JS FILE FOR THE PLAY PAGE -->
 <script src="{{url_for('static', filename='js/play-page-main.js')}}"></script>

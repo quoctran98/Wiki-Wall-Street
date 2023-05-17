@@ -1,11 +1,10 @@
 import json
-from flask import Flask, request, Blueprint, render_template, flash, redirect, url_for, jsonify
+from flask import request, Blueprint, render_template, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from pymongo import MongoClient
 import datetime
 
 from server.helper import settings, cache, active_games_coll
-from server.models import User, Game, Player, Transaction
+from server.models import Game, Player, Transaction
 
 import server.WikiAPI as WikiAPI
 
