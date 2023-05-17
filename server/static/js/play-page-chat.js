@@ -47,20 +47,30 @@ async function show_chat_modal() {
 function render_messages(message_array) {
     let chat_box = document.getElementById(CHAT_MODAL_MAIN);
 
-    // Clear the chat
-    chat_box.innerHTML = "";
+    // Check if new messages have been added
+    if (chat_box.children.length != message_array.length) {
 
-    // Render the messages
-    for (let i = 0; i < message_array.length; i++) {
-        let message = message_array[i];
-        let message_div = document.createElement("div");
-        message_div.className = "chat-message";
-        message_div.innerHTML = message.name + ": " + message.message;
-        chat_box.appendChild(message_div);
+        // Add the new messages
+        let last_message = chat_box.children[chat_box.children.length - 1];
+        for (let i = chat_box.children.length; i < message_array.length; i++) {
+            let message = message_array[i];
+
+            // Create a div for the message
+            let message_div = document.createElement("div");
+            message_div.className = "chat-message";
+            message_div.innerHTML = `
+                <b>${message.name}</b> 
+                <span color='gray' style='font-size:60%; float:right;'>${message.timestamp}</span> <br>
+                ${message.message}
+            `;
+        
+            chat_box.appendChild(message_div);
+            last_message = message_div;
+        }
+
+        // Scroll to the bottom of the chat since new messages have been added
+        last_message.scrollIntoView(false);
     }
-
-    // Scroll to the bottom of the chat
-    chat_box.scrollTop = chat_box.scrollHeight;
 }
 
 async function get_messages(game_id) {
@@ -72,6 +82,12 @@ async function get_messages(game_id) {
 
 async function send_message() {
     const form_data = new FormData(document.getElementById(CHAT_FORM));
+
+    // Disable the send button and change the text to "Sending..."
+    document.getElementById(CHAT_FORM_MESSSAGE).value = "";
+    document.getElementById(CHAT_FORM_SEND_BUTTON).disabled = true;
+    document.getElementById(CHAT_FORM_MESSSAGE).disabled = true;
+    document.getElementById(CHAT_FORM_MESSSAGE).paceholder = "Sending...";
 
     // Send the message
     const chat_url = "/api/send_chat";
@@ -90,8 +106,12 @@ async function send_message() {
 
     } else {
 
-        // Get the messages and render them now that we have sent a message (also clear the input)
-        document.getElementById(CHAT_FORM_MESSSAGE).value = "";
+        // Re-enable the send button and change the text to "Type a message..."
+        document.getElementById(CHAT_FORM_SEND_BUTTON).disabled = false;
+        document.getElementById(CHAT_FORM_MESSSAGE).disabled = false;
+        document.getElementById(CHAT_FORM_MESSSAGE).paceholder = "Type a message...";
+
+        // Get the messages and render them now that we have sent a message
         let message = await get_messages(GAME_OBJECT.game_id);
         render_messages(message);
     }

@@ -97,6 +97,15 @@
   border-color: #000000;
   color: #000000;
   background-color: #f8f9fa;
+
+}
+
+.chat-message-timestamp {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 0.25rem 1rem;
+  margin: 0.25rem 0rem;
 }
 
 .blurred-container{
