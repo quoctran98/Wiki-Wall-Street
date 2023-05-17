@@ -98,7 +98,7 @@ def projectviews(project="en.wikipedia", start=date.today()-timedelta(days=30), 
         print(f"Error: {response.status_code}")
         return(json.loads(response.content)) 
 
-def top_articles(project="en.wikipedia", date=date.today()-timedelta(days=1), timespan="day",
+def top_articles(project="en.wikipedia", date=date.today()-timedelta(days=1), timespan="month",
                  access="all-access", agent="user"):
     """
     Python wrapper for the Wikimedia Pageviews API (https://wikimedia.org/api/rest_v1/)

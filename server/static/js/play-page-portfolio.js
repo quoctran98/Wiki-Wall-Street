@@ -33,13 +33,19 @@ async function init_portfolio(game=GAME_OBJECT , player=THIS_PLAYER) {
     document.getElementById(PORTFOLIO_BANNER).innerHTML = "";
 
     // Load the cards for each article into the HTML
+    total = 0;
     for (let article_name in player["articles"]) {
         let avg_buy_price = player["avg_price"][article_name];
         let n_owned = player["articles"][article_name];
         if (n_owned > 0) {
+            total += n_owned;
             let card = portfolio_card(article_name, n_owned, avg_buy_price);
             document.getElementById(PORTFOLIO_BANNER).insertAdjacentHTML("beforeend", card);
         }
     }
-}
 
+    // If player has no articles, display a message
+    if (total == 0) {
+        document.getElementById(PORTFOLIO_BANNER).innerHTML = "You don't own any article -- buy some!";
+    }
+}
