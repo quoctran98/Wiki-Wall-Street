@@ -98,7 +98,7 @@ def projectviews(project="en.wikipedia", start=date.today()-timedelta(days=30), 
         print(f"Error: {response.status_code}")
         return(json.loads(response.content)) 
 
-def top_articles(project="en.wikipedia", date=date.today()-timedelta(days=1), timespan="month",
+def top_articles(project="en.wikipedia", date=date.today()-timedelta(days=1), timespan="day",
                  access="all-access", agent="user"):
     """
     Python wrapper for the Wikimedia Pageviews API (https://wikimedia.org/api/rest_v1/)
@@ -143,7 +143,13 @@ def top_articles(project="en.wikipedia", date=date.today()-timedelta(days=1), ti
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        return(response.json()["items"][0])
+        res = response.json()
+        if "title" in res:
+            if res["title"] == "Not found.":
+                # Try again with the previous day -- we love recursion
+                print(f"top_articles() error trying again with {date-timedelta(days=1)}")
+                return(top_articles(project=project, date=date-timedelta(days=1), timespan=timespan, access=access, agent=agent))
+        return(res["items"][0])
     else:
         print(f"Error: {response.status_code}")
         return(json.loads(response.content))
