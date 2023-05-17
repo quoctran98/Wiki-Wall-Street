@@ -8,7 +8,7 @@ const JOINED_GAMES_LOADING_ID = "joined-games-loading";
 const PUBLIC_GAMES_TABLE_ID = "public-games-table";
 
 // This function adds a row to the joined games table
-async function add_game_row (game_id, joined_games_table) {
+async function add_game_row (game_id, joined_games_table, total_games) {
 
     // Get game object and this player's object from the server
     const play_info_url = `/api/get_play_info?game_id=${game_id}`;
@@ -19,17 +19,21 @@ async function add_game_row (game_id, joined_games_table) {
     let daily_change = (player.today_value - player.yesterday_value) / player.yesterday_value;
     daily_change = Math.round(daily_change * 10000) / 100;
 
-    // Remove loading div row if it exists
-    if (document.getElementById(JOINED_GAMES_LOADING_ID)) {
-        document.getElementById(JOINED_GAMES_LOADING_ID).remove();
-    }
-
-    // Add the row and cells for this game
-    let row = joined_games_table.insertRow(-1);
+    // Add the row and cells for this game (make row right before the last row, which is the loading row)
+    n_rows = joined_games_table.rows.length;
+    let row = joined_games_table.insertRow(n_rows - 1);
     let name_cell = row.insertCell(0);
     let players_cell = row.insertCell(1);
     let change_cell = row.insertCell(2);
     let action_cell = row.insertCell(3);
+
+    // Make the player cell shorten to ellipses if it's too long
+    players_cell.style = `
+        overflow: hidden; 
+        text-overflow: ellipsis;
+        max-width: 30vw;
+        white-space: nowrap;
+    `;
 
     // Populate the cells with the game info
     name_cell.innerHTML = game.name;
@@ -37,6 +41,11 @@ async function add_game_row (game_id, joined_games_table) {
     change_cell.innerHTML = `${(daily_change > 0)? "📈" : "📉"} ${daily_change}%`
     action_cell.innerHTML = `<button class="btn btn-primary" 
         onclick="window.location.href='/play?game_id=${game.game_id}'">Play</button>`;
+    
+    // Remove the loading row if this is the last game
+    if (n_rows == total_games + 1) {
+        joined_games_table.deleteRow(n_rows);
+    }
 }
 
 async function populate_joined_games() {
@@ -52,8 +61,11 @@ async function populate_joined_games() {
 
     // Populate the table with the joined games asynchonously
     for (let i = 0; i < joined_games.length; i++) {
-        this_game = joined_games[i];
-        add_game_row(this_game.game_id, joined_games_table);
+        let this_game = joined_games[i];
+        console.log(i);
+        console.log(joined_games.length);
+        console.log(this_game);
+        add_game_row(this_game.game_id, joined_games_table, joined_games.length);
     }
 }
 

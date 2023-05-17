@@ -78,36 +78,31 @@
   white-space: nowrap;
 }
 
+.chat-container {
+  position: relative;
+  padding: 0rem;
+  margin: 0rem;
+
+  max-height: 60vh;
+  overflow-y: scroll;
+}
+
+.chat-message {
+  position: relative;
+  padding: 0.25rem 1rem;
+  margin: 0.25rem 0rem;
+  border: 1px solid;
+  border-radius: 0.25rem;
+
+  border-color: #000000;
+  color: #000000;
+  background-color: #f8f9fa;
+}
+
 .blurred-container{
   -webkit-filter: blur(1px);
   -moz-filter: blur(1px);
   -o-filter: blur(1px);
   -ms-filter: blur(1px);
   filter: blur(1px);
-}
-
-.alert {
-  position: relative;
-  padding: 0.75rem 1.25rem;
-  margin-bottom: 1rem;
-  border: 1px solid transparent;
-  border-radius: 0.25rem;
-}
-
-.alert-primary {
-  color: #004085;
-  background-color: #cce5ff;
-  border-color: #b8daff;
-}
-
-.alert-info {
-  color: #0c5460;
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
-}
-
-.alert-danger {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #ffffff;
 }
