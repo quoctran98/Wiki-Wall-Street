@@ -8,6 +8,7 @@ const PLAYERS_MODAL = "players-modal";
 const PLAYERS_MODAL_CLOSE_SYMBOL = "players-modal-close-symbol";
 const PLAYERS_MODAL_CLOSE_BUTTON = "players-modal-close-button";
 const PLAYERS_MODAL_TITLE = "players-modal-title";
+const PLAYER_MODAL_INVITE = "players-modal-invite";
 const PLAYERS_MODAL_MAIN = "players-modal-main";
 
 function copy_link(div_id) {
@@ -22,22 +23,23 @@ function show_players_modal(game=GAME_OBJECT) {
     document.getElementById(PLAYERS_MODAL).style.display = "block";
     blur_background();
 
+    // Fill out the modal
+    let invite_link_html = document.getElementById(PLAYER_MODAL_INVITE);
+    let players_list_html = document.getElementById(PLAYERS_MODAL_MAIN);
+
     // Add an invite link that copies to clipboard
     const invite_link = window.location.origin + "/invite?game_id=" + game.game_id;
-    let invite_link_html = `
-    <p> INVITE LINK! <input readonly="true" type="text" id="game-invite-link" value="${invite_link}"> 
-    <button class="btn btn-light" onclick="copy_link('game-invite-link')">📋</button></p>
+    invite_link_html.innerHTML = `
+    <button class="btn btn-primary" onclick="copy_link('game-invite-link')">🔗</button>
+    <input readonly="true" type="text" id="game-invite-link" value="${invite_link}"> 
     `;
-    players_list.insertAdjacentHTML("beforeend", invite_link_html);
 
-    // Fill out the modal
-    let players_list = document.getElementById(PLAYERS_MODAL_MAIN);
-    players_list.innerHTML = "<ul></ul>";
+    players_list_html.innerHTML = "<ul></ul>";
     for (let i = 0; i < game.players.length; i++) {
         let player_html = `
             <li> ${game.players[i]} </li>
         `;
-        players_list.insertAdjacentHTML("beforeend", player_html);
+        players_list_html.insertAdjacentHTML("beforeend", player_html);
     }
 }
 
