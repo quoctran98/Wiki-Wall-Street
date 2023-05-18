@@ -77,7 +77,7 @@ function render_game_info(game) {
     let player_list = "";
     for (let i = 0; i < game.players.length; i++) {
         // Could be more elegant, but this lets me underline everything
-        if (i === game.players.length - 1) {
+        if ((i === game.players.length - 1) && (game.players.length > 1)) {
             player_list += ", and ";
         }
         player_list += `<ins>${game.players[i]}</ins>`;
@@ -85,6 +85,7 @@ function render_game_info(game) {
             player_list += ", ";
         }
     }
+    player_list += "!";
     const visible_info = Object.keys(game.settings).filter((key) => game.settings[key] === true);
 
     // Create the HTML
