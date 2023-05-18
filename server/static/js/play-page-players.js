@@ -10,6 +10,13 @@ const PLAYERS_MODAL_CLOSE_BUTTON = "players-modal-close-button";
 const PLAYERS_MODAL_TITLE = "players-modal-title";
 const PLAYERS_MODAL_MAIN = "players-modal-main";
 
+function copy_link(div_id) {
+    const text = document.getElementById(div_id);
+    text.select(); 
+    text.setSelectionRange(0, 99999); // For mobile devices
+    navigator.clipboard.writeText(text.value);
+  }
+
 function show_players_modal(game=GAME_OBJECT) {
     // Show modal
     document.getElementById(PLAYERS_MODAL).style.display = "block";
@@ -24,6 +31,14 @@ function show_players_modal(game=GAME_OBJECT) {
         `;
         players_list.insertAdjacentHTML("beforeend", player_html);
     }
+
+    // Add an invite link that copies to clipboard
+    const invite_link = window.location.origin + "/invite?game_id=" + game.game_id;
+    let invite_link_html = `
+    <p> INVITE LINK! <input readonly="true" type="text" id="game-invite-link" value="${invite_link}"> 
+    <button class="btn btn-light" onclick="copy_link('game-invite-link')">📋</button></p>
+    `;
+    players_list.insertAdjacentHTML("beforeend", invite_link_html);
 }
 
 function init_players() {

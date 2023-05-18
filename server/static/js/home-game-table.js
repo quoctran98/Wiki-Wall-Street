@@ -109,7 +109,7 @@ async function populate_public_games() {
 function open_join_game_modal(game_id) {
     document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = game_id;
     document.getElementById(JOIN_GAME_MODAL_ID).style.display = "block";
-    document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = false;
+    blur_background();
 }
 
 populate_joined_games();

@@ -20,10 +20,51 @@ const JOIN_GAME_BUTTON_ID = "join-game-button";
 const JOIN_GAME_MODAL_ID = "join-game-modal";
 
 const JOIN_GAME_MODAL_GAME_ID = "join-game-modal-game-id";
+const JOIN_GAME_MODAL_INFO_ID = "join-game-modal-info";
+const JOIN_GAME_MODAL_SEARCH = "join-game-modal-search"
 
 const JOIN_GAME_MODAL_CLOSE_ID = "join-game-modal-close";
 const JOIN_GAME_MODAL_CANCEL_ID = "join-game-modal-cancel";
 const JOIN_GAME_MODAL_JOIN_ID = "join-game-modal-join";
+
+// This makes a sentence out of the game information
+// Ugh, this is repeated in invite-page.js
+function render_game_info(game) {
+    // Format game information as strings
+    let player_list = "";
+    for (let i = 0; i < game.players.length; i++) {
+        // Could be more elegant, but this lets me underline everything
+        if (i === game.players.length - 1) {
+            player_list += ", and ";
+        }
+        player_list += `<ins>${game.players[i]}</ins>`;
+        if (i < game.players.length - 2) {
+            player_list += ", ";
+        }
+    }
+    const visible_info = Object.keys(game.settings).filter((key) => game.settings[key] === true);
+
+    // Create the HTML
+    let game_info_html = `
+        <h2>Join <ins>${game.name}</ins>!</h2>
+        <p> 👥 Play with ${player_list} </p>
+        <p> ⚙️ You'll start with <ins>${format_price(game.settings.starting_cash)}</ins> cash
+    `;
+
+    // Add the settings to the HTML
+    if (visible_info.length > 0) {
+        game_info_html += 
+        `and you'll be able to see other players ${(game.settings["show_cash"]) ? "<ins>cash</ins>" : ""}
+            ${(game.settings["show_cash"] && (game.settings["show_articles"])) ? "and" : ""}
+            ${(game.settings["show_articles"]) ? "<ins>owned articles</ins>" : ""} 
+            ${(game.settings["show_number"]) ? "(and <ins>how many</ins> they own!)" : "!"} 
+        </p>
+        `;
+    } else {
+        game_info_html += `!</p>`;
+    }
+    return(game_info_html);
+}
 
 // New game modal open/close
 document.getElementById(NEW_GAME_BUTTON_ID).onclick = (() => {
@@ -70,18 +111,37 @@ document.getElementById(JOIN_GAME_BUTTON_ID).onclick = (() => {
 document.getElementById(JOIN_GAME_MODAL_CLOSE_ID).onclick = (() => {
     document.getElementById(JOIN_GAME_MODAL_ID).style.display = "none";
     unblur_background();
+    // Clear the game info and game id
+    document.getElementById(JOIN_GAME_MODAL_INFO_ID).innerHTML = "Enter a game ID!";
+    document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = "";
+    document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = true;
 });
 document.getElementById(JOIN_GAME_MODAL_CANCEL_ID).onclick = (() => {
     document.getElementById(JOIN_GAME_MODAL_ID).style.display = "none";
     unblur_background();
+    // Clear the game info and game id
+    document.getElementById(JOIN_GAME_MODAL_INFO_ID).innerHTML = "Enter a game ID!";
+    document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = "";
+    document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = true;
 });
 
-// Join game modal: disable join button if no game id
-document.getElementById(JOIN_GAME_MODAL_GAME_ID).addEventListener("input", function() {
-    if (this.value) {
-        document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = false;
-    } else {
-        document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = true;
-    }
+// Join game modal: search for game
+document.getElementById(JOIN_GAME_MODAL_SEARCH).onclick = (() => {
+    // Replace the info with a loading spinner
+    document.getElementById(JOIN_GAME_MODAL_INFO_ID).innerHTML = `Loading game information <img class="inline-image" src="/static/img/loading.gif" alt="Loading spinner">`;
+    const game_id = document.getElementById(JOIN_GAME_MODAL_GAME_ID).value;
+    // Get the game information and render it
+    fetch("/api/get_invite_info?game_id=" + game_id)
+    .then((response) => response.json())
+    .then((game_res) => {
+        const game = game_res.game;
+        if (game) {
+            const game_info_div = document.getElementById(JOIN_GAME_MODAL_INFO_ID);
+            game_info_div.innerHTML = render_game_info(game);
+            document.getElementById(JOIN_GAME_MODAL_JOIN_ID).removeAttribute("disabled");
+        } else {
+            document.getElementById(JOIN_GAME_MODAL_INFO_ID).innerHTML = "Game not found :(";
+            document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = true;
+        }
+    });
 });
-

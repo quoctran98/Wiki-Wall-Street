@@ -20,3 +20,7 @@ def profile():
 @main.route("/about")
 def about():
     return(render_template("about.html"))
+
+@main.route("/invite")
+def invite():
+    return(render_template("invite.html"))

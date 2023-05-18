@@ -12,6 +12,8 @@
         <div class="box">
             <form method="POST" action="/signup">
 
+                <input type="hidden" id="next" name="next" value="">
+
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
                     <input class="form-control" type="email" name="email" placeholder="Email" autofocus="">
@@ -37,5 +39,16 @@
     </div>
 
 </div>
+
+<!-- FILL OUT NEXT FORM WITH URL PARAM-->
+<!-- I CANNOT BELIEVE THIS WOKRS -->
+<script type="text/javascript">
+    let next_url = window.location.href.split("next=")[1];
+    if (next_url !== undefined) {
+        // Decode next_url 
+        next_url = decodeURIComponent(next_url);
+        document.getElementById("next").value = next_url;
+    }
+</script>
 
 {% endblock %}

@@ -198,7 +198,12 @@
       <form action="{{ url_for('game.join_game') }}" method="POST" id="join-game-modal-form">
           <input type="hidden" name="user_id" value="{{ current_user.id }}">
           <input type="text" name="game_id" id="join-game-modal-game-id" placeholder="Game ID">
-  </form>
+          <button id="join-game-modal-search" type="button" class="btn btn-primary">Search</button>
+      </form>
+
+      <div id="join-game-modal-info">
+          <p>Enter a game ID!</p>
+      </div>
   </div>
   
   <!-- MODAL FOOTER -->

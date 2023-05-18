@@ -11,11 +11,12 @@
         <h3 class="title">Login</h3>
         <div class="box">
             <form method="POST" action="/login">
-                    <input class="form-control" type="email" name="email" placeholder="Email" autofocus="">
-                    <input class="form-control" type="password" name="password" placeholder="Password">
-                    <div class="checkbox">
-                        <label><input type="checkbox" name="remember"> Remember me</label>
-                    </div>
+                <input type="hidden" id="next" name="next" value="{{ next }}">
+                <input class="form-control" type="email" name="email" placeholder="Email" autofocus="">
+                <input class="form-control" type="password" name="password" placeholder="Password">
+                <div class="checkbox">
+                    <label><input type="checkbox" name="remember"> Remember me</label>
+                </div>
                 <button class="btn btn-primary">Login</button>
             </form>
         </div>
@@ -25,5 +26,16 @@
     </div>
     
 </div>
+
+<!-- FILL OUT NEXT FORM WITH URL PARAM-->
+<!-- I CANNOT BELIEVE THIS WOKRS -->
+<script type="text/javascript">
+    let next_url = window.location.href.split("next=")[1];
+    if (next_url !== undefined) {
+        // Decode next_url 
+        next_url = decodeURIComponent(next_url);
+        document.getElementById("next").value = next_url;
+    }
+</script>
 
 {% endblock %}

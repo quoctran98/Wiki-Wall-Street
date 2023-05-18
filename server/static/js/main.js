@@ -3,6 +3,17 @@
     Use it to define functions that are used in multiple pages.
 */
 
+// This is used a lot, so let's just define it here
+function format_price(p) {
+    // Round the price to the nearest integer or at least 3 significant figures
+    if (p < 1000) {
+        p = Math.round(p);
+    } else {
+        p = Math.round(p / 100) * 100;
+    }
+    return(p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+}
+
 // Call this function to close all modals
 function close_all_modals() {
     let modals = document.getElementsByClassName("modal");

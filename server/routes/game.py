@@ -171,7 +171,7 @@ def get_play_info():
     this_game = Game.get_by_game_id(game_id)
     this_player = Player.get_by_user_id(game_id, current_user.user_id)
     if this_game is None or this_player is None:
-        flash("Error in /api/get_play_info")
+        flash("Could not find game!")
         return(jsonify({"error": True}))
     else:
         this_player_props = vars(this_player)
@@ -193,3 +193,20 @@ def leaderboard():
     # Sort by value so leaderboard is in order for JS
     players.sort(key=lambda x: x["value"], reverse=True)
     return(jsonify({"players": players}))
+
+@game.route("/api/leave_game", methods=["POST"])
+@login_required
+def leave_game():
+    game = Game.get_by_game_id(request.form["game_id"])
+    player = Player.get_by_user_id(request.form["game_id"], current_user.user_id)
+    return(redirect(url_for("main.index")))
+
+@game.route("/api/get_invite_info")
+def get_invite_info():
+    game_id = request.args.get("game_id")
+    this_game = Game.get_by_game_id(game_id)
+    if this_game is None:
+        flash("Could not find game!")
+        return(jsonify({"error": True}))
+    else:
+        return(jsonify({"game": vars(this_game)}))
