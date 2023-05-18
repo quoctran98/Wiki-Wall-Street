@@ -22,6 +22,14 @@ function show_players_modal(game=GAME_OBJECT) {
     document.getElementById(PLAYERS_MODAL).style.display = "block";
     blur_background();
 
+    // Add an invite link that copies to clipboard
+    const invite_link = window.location.origin + "/invite?game_id=" + game.game_id;
+    let invite_link_html = `
+    <p> INVITE LINK! <input readonly="true" type="text" id="game-invite-link" value="${invite_link}"> 
+    <button class="btn btn-light" onclick="copy_link('game-invite-link')">📋</button></p>
+    `;
+    players_list.insertAdjacentHTML("beforeend", invite_link_html);
+
     // Fill out the modal
     let players_list = document.getElementById(PLAYERS_MODAL_MAIN);
     players_list.innerHTML = "<ul></ul>";
@@ -31,14 +39,6 @@ function show_players_modal(game=GAME_OBJECT) {
         `;
         players_list.insertAdjacentHTML("beforeend", player_html);
     }
-
-    // Add an invite link that copies to clipboard
-    const invite_link = window.location.origin + "/invite?game_id=" + game.game_id;
-    let invite_link_html = `
-    <p> INVITE LINK! <input readonly="true" type="text" id="game-invite-link" value="${invite_link}"> 
-    <button class="btn btn-light" onclick="copy_link('game-invite-link')">📋</button></p>
-    `;
-    players_list.insertAdjacentHTML("beforeend", invite_link_html);
 }
 
 function init_players() {
