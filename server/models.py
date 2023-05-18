@@ -190,7 +190,14 @@ class Player():
                 public_dict["cash"] = self.cash
         if "show_articles" in game_settings:
             if game_settings["show_articles"]:
-                public_dict["articles"] = {article: True for article in self.articles if self.articles[article] > 0}
+                public_dict["articles"] = {}
+                for article, amount in self.articles.items():
+                    try:
+                        if amount > 0:
+                            public_dict["articles"][article] = amount
+                    except TypeError:
+                        public_dict["articles"][article] = 0
+                        # Cirstyn found a weird bug and somehow "'Chateau Ste': {' Michelle': 10}" is in her articles dictionary
         if "show_number" in game_settings:
             if game_settings["show_number"]:
                 # Overwrite the above if show_number is True
