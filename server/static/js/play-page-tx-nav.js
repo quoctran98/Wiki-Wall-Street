@@ -38,7 +38,7 @@ const ALL_TX_BUTTONS = ALL_BUY_BUTTONS.concat(ALL_SELL_BUTTONS);
 function loading_graph(article="Article", timespan="month") {
     // Graph title 
     document.getElementById(GRAPH_TITLE_ID).innerHTML = `
-        <a href="#">${article}</a>
+        <a>${article}</a>
     `;
     // Graph description
     document.getElementById(GRAPH_DESC_ID).innerHTML = `
@@ -60,9 +60,15 @@ function loading_graph(article="Article", timespan="month") {
     let views = [];
     let date = new Date();
     for (let i = 0; i < n_days; i++) {
-        date.setDate(date.getDate() - 1);
-        timestamps.push(date.toISOString().substring(0, 10).replace(/-/g, ""));
-        views.push(Math.round(Math.random() * 1000));
+        timestamps.push(new Date(date.getFullYear(), date.getMonth(), date.getDate() - i));
+        // Make views follow a random walk
+        if (i == 0) {
+            views.push(Math.round(Math.random() * 1000) + 1000);
+        } else {
+            let last_view = views[views.length - 1];
+            let new_view = Math.round(last_view * (1 + (Math.random() - 0.5) / 10));
+            views.push(new_view);
+        }
     }
 
     const plot_data = [{x: timestamps, y: views, type: "scatter"}];
@@ -211,8 +217,8 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
     }
     let short_desc = article_data.short_desc;
     if (allowed == false) {
-        short_desc = `<s>${short_desc}</s>`;
-        short_desc += "<br><p style='color:Tomato'>Article is not allowed in this game!</p>"
+        short_desc = (short_desc === null)? "<p style='color:Tomato'>Article is not allowed in this game!</p>" : `
+            <s>${short_desc}</s> <p style='color:Tomato'>Article is not allowed in this game!</p>`;
     }
     
     // Update the title and description

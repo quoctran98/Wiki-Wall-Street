@@ -17,6 +17,7 @@
     </div>
     <div class="col-md-4">
         <button class="btn btn-dark float-right" style="margin:0.1rem;" onclick="show_game_settings_modal();" id="game-settings-open-button" disabled="true">⚙️</button>
+        <button class="btn btn-dark float-right" style="margin:0.1rem;" onclick="show_players_modal();" id="players-modal-open-button" disabled="true">👥</button>
         <button class="btn btn-dark float-right" style="margin:0.1rem;" onclick="show_chat_modal();" id="chat-modal-open-button" disabled="true">💬</button>
     </div> 
 </div>
@@ -79,19 +80,19 @@
     <hr>
 
         <h3>BUY!</h3>
-        <button id="buy-1-button" onclick="new_tx(1,'buy')">Buy 1</button> <br>
-        <button id="buy-5-button" onclick="new_tx(5,'buy')">Buy 5</button> <br>
+        <button id="buy-1-button" onclick="new_tx(1,'buy')" disabled="true">Buy 1</button> <br>
+        <button id="buy-5-button" onclick="new_tx(5,'buy')" disabled="true">Buy 5</button> <br>
         <input type="number" id="custom-buy-input" min="1" value="10"></input> <br>
-        <button id="buy-custom-button" onclick="new_tx(document.getElementById('custom-buy-input').value,'buy')">Buy</button>
+        <button id="buy-custom-button" onclick="new_tx(document.getElementById('custom-buy-input').value,'buy')" disabled="true">Buy</button>
 
     <hr>
 
     <div id="sell-div">
         <h3>SELL!</h3>
         <p><span id="article-info"></span></p>
-        <button id="sell-1-button" onclick="new_tx(1,'sell')">Sell 1</button> <br>
+        <button id="sell-1-button" onclick="new_tx(1,'sell')" disabled="true">Sell 1</button> <br>
         <input type="number" id="custom-sell-input" min="1" value="10"></input> <br>
-        <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')">Sell</button>
+        <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')" disabled="true">Sell</button>
     </div>
 
     </div>
@@ -200,7 +201,7 @@
 
     <!-- MODAL HEADER -->
     <div class="modal-header">
-        <h5 id="player-leaderboard-modal-title"></h5>
+        <h5 id="player-leaderboard-modal-title">SETTINGS!</h5>
 
         <!-- CLOSE BUTTON -->
         <button type="button" class="close" id="player-leaderboard-modal-close-symbol" aria-label="Close">
@@ -245,7 +246,7 @@
 
     <!-- MODAL HEADER -->
     <div class="modal-header">
-        <h5 id="chat-modal-title"></h5>
+        <h5 id="chat-modal-title">CHAT!</h5>
 
         <!-- CLOSE BUTTON -->
         <button type="button" class="close" id="chat-modal-close-symbol" aria-label="Close">
@@ -298,6 +299,45 @@
     </div>
 </div>
 
+<!-- PLAEYRS MODAL -->
+<div class="modal" id="players-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h5 id="players-modal-title">PLAYERS!</h5>
+
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" id="players-modal-close-symbol" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- MODAL BODY -->
+    <div class="modal-body">
+        
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <div class="players-container" id="players-modal-main">
+                    
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="players-modal-close-button">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>
+
 <script src="{{url_for('static', filename='js/plotly-2.20.0.min.js')}}"></script>
 
 <!-- JS FILES TO DEFINE FUNCITONS FOR VARIOUS ELEMENTS (refer to comment at the top of play-page-main.js) -->
@@ -309,6 +349,7 @@
 <script src="{{url_for('static', filename='js/play-page-leaderboard.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-trending.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-chat.js')}}"></script>
+<script src="{{url_for('static', filename='js/play-page-players.js')}}"></script>
 
 <!-- THIS IS THE MAIN JS FILE FOR THE PLAY PAGE -->
 <script src="{{url_for('static', filename='js/play-page-main.js')}}"></script>

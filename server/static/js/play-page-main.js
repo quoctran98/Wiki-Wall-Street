@@ -61,6 +61,7 @@ fetch("/api/get_play_info?game_id=" + GAME_ID, {method: 'GET'})
     init_portfolio(); // defined in play-page-portfolio.js
     init_trending(); // defined in play-page-trending.js
     init_chat(); // defined in play-page-chat.js
+    init_players(); // defined in play-page-players.js
 
     // There's nothing in play-page-inputs.js to run :)
 });

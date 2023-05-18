@@ -7,20 +7,29 @@ const TRENDING_DECK = "trending-articles";
 
 // Called when the trending articles are loading
 function loading_trending() {
-    // Let's make a loading card when this srcipt is loaded!
-    let trending_loading_card = `
-    <div class="card trending-card" role="alert">
-        <div id="trending-loading-graph" class="blurred-container" style="width: 100%; height: 3em;"></div>
-        <h5 class="card-title blurred-container">Loading <img class="inline-image" src="/static/img/loading.gif" alt="Loading"></h5>
-        <p class="card-text"></p>
-    </div>
-    `;
-    document.getElementById(TRENDING_DECK).innerHTML = trending_loading_card;
+    // Let's make a loading card when this srcipt is loaded! (10!)
+    // Easiest way is to wrap it in a for loop
+    for (let i = 0; i < 10; i++) {
+        let trending_loading_card = `
+        <div class="card trending-card" role="alert">
+            <div id="trending-loading-graph-${i}" class="blurred-container" style="width: 100%; height: 3em;"></div>
+            <h5 class="card-title blurred-container">Articles</h5>
+            <p class="card-text blurred-container">Loading <img class="inline-image" src="/static/img/loading.gif" alt="Loading"></p>
+        </div>
+        `;
+        document.getElementById(TRENDING_DECK).insertAdjacentHTML("beforeend", trending_loading_card);
 
-    // Add a loading graph to the loading card
-    let plot_data = [{x: [0, 1, 2, 4, 5, 6], y: [0, 1, 4, 16, 25, 36], type: "line"}];
-    let plot_layout = {autosize: true, margin:{t: 0, b: 0, l: 0, r: 1}, xaxis: {type: "date",},yaxis: {title: "",}};
-    Plotly.newPlot("trending-loading-graph", plot_data, plot_layout, {staticPlot: true, responsive: true});
+        // Add a loading graph to the loading card
+        timestamps = [101, 102, 103, 104, 105, 106, 107]
+        views = []
+        for (let i = 0; i < timestamps.length; i++) {
+            // No need for the random walk like in center graph because for 7 days it's pretty random
+            views.push(Math.round(Math.random() * 1000) + 1000);
+        }
+        let plot_data = [{x: timestamps, y: views, type: "line"}];
+        let plot_layout = {autosize: true, margin:{t: 0, b: 0, l: 0, r: 1}, xaxis: {type: "date",},yaxis: {title: "",}};
+        Plotly.newPlot(`trending-loading-graph-${i}`, plot_data, plot_layout, {staticPlot: true, responsive: true});
+    }
 }
 
 // Generate HTML for each trending article

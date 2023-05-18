@@ -8,54 +8,39 @@
     height: 1em;
 }
 
-.leaderboard-up {
+.leaderboard-card {
   position: relative;
   padding: 0.25rem 1rem;
   margin: 0rem 0.25rem;
-  border: 1px solid;
+  border: 2px solid;
   border-radius: 0.25rem;
 
+  white-space: nowrap;
+}
+
+.lb-up {
   border-color: #000000;
   color: #ffffff;
   background-color: #4668ff;
-
-  white-space: nowrap;
 }
 
-.leaderboard-down {
-  position: relative;
-  padding: 0.25rem 1rem;
-  margin: 0rem 0.25rem;
-  border: 1px solid;
-  border-radius: 0.25rem;
-
+.lb-down {
   border-color: #000000;
   color: #ffffff;
   background-color: #c13030;
-
-  white-space: nowrap;
 }
 
-.leaderboard-loading {
-  position: relative;
-  padding: 0.25rem 1rem;
-  margin: 0rem 0.25rem;
-  border: 1px solid;
-  border-radius: 0.25rem;
-
+.lb-loading {
   border-color: #000000;
   color: #000000;
   background-color: #f8f9fa;
-
-  white-space: nowrap;
-
 }
 
 .portfolio-card {
   position: relative;
   padding: 0.25rem 1rem;
   margin: 0rem 0.25rem;
-  border: 1px solid;
+  border: 2px solid;
   border-radius: 0.25rem;
 
   border-color: #000000;
@@ -69,7 +54,7 @@
   position: relative;
   padding: 0.75rem 1.25rem;
   margin: 0.5rem;
-  border: 1px solid;
+  border: 2px solid;
   border-radius: 0.25rem;
 
   border-color: #000000;
@@ -99,6 +84,11 @@
   color: #000000;
   background-color: #f8f9fa;
 
+  overflow-x: clip;
+  overflow-y: clip;
+
+  max-height: 10em;
+  text-overflow: ellipsis;
 }
 
 .chat-message-timestamp {

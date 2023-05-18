@@ -62,9 +62,6 @@ async function populate_joined_games() {
     // Populate the table with the joined games asynchonously
     for (let i = 0; i < joined_games.length; i++) {
         let this_game = joined_games[i];
-        console.log(i);
-        console.log(joined_games.length);
-        console.log(this_game);
         add_game_row(this_game.game_id, joined_games_table, joined_games.length);
     }
 }

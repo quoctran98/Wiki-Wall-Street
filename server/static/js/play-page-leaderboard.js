@@ -31,11 +31,17 @@ document.getElementById(PLAYER_INFO_MODAL_CLOSE_BUTTON).onclick = (() => {
 function loading_leaderboard() {
     // Add a loading card to the leaderboard banner
     let leaderboard_loading_card = `
-    <div class="leaderboard-up" role="alert">
-        <p class="blurred-container">Loading Leaderboard <img class="inline-image" src="static/img/loading.gif"></p>
+    <div class="leaderboard-card lb-loading" role="alert">
+    <div class="blurred-container">
+        Leaderboard
+        <br>
+        Loading <img class="inline-image" src="/static/img/loading.gif" alt="Loading">
+    </div>
     </div>
     `;
-    document.getElementById(LEADERBOARD_BANNER).innerHTML = leaderboard_loading_card;
+    for (let i = 0; i < 10; i++) {
+        document.getElementById(LEADERBOARD_BANNER).insertAdjacentHTML("beforeend", leaderboard_loading_card);
+    }
 }
 
 // Returns the suffix for a number (e.g. 1st, 2nd, 3rd, 4th, etc.)
@@ -107,7 +113,7 @@ function leaderboard_card (player) {
     // Generate the HTML for the card
     let card_html = `
         <a href="#" onclick="show_player_info_modal('${player.player_id}');return(false);">
-        <div class="leaderboard-${(daily_change > 0)? "up" : "down"}" role="alert">
+        <div class="leaderboard-card lb-${(daily_change > 0)? "up" : "down"}" role="alert">
             ${player.name}
             <br>
             ${format_price(Math.round(player.value))}

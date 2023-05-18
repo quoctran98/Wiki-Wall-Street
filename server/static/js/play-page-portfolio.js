@@ -11,11 +11,17 @@ function loading_portfolio() {
     // Let's make a loading portfolio card when this srcipt is loaded!
     let portfolio_loading_card = `
     <div class="portfolio-card" role="alert">
-        <p class="blurred-container">Loading Portfolio <img class="inline-image" src="/static/img/loading.gif" alt="Loading"></p>
-        <p></p>
+    <div class="blurred-container">
+        Portfolio 
+        <br>
+        Loading <img class="inline-image" src="/static/img/loading.gif" alt="Loading">
+    </div>
     </div>
     `;
-    document.getElementById(PORTFOLIO_BANNER).innerHTML = portfolio_loading_card;   
+    // Add 10 of these cards to the portfolio banner
+    for (let i = 0; i < 10; i++) {
+        document.getElementById(PORTFOLIO_BANNER).insertAdjacentHTML("beforeend", portfolio_loading_card);
+    }
 }
 
 function portfolio_card(article_name, n_owned, avg_buy_price) {
@@ -58,6 +64,6 @@ async function init_portfolio(game=GAME_OBJECT , player=THIS_PLAYER) {
 
     // If player has no articles, display a message
     if (total == 0) {
-        document.getElementById(PORTFOLIO_BANNER).innerHTML = "You don't own any article -- buy some!";
+        document.getElementById(PORTFOLIO_BANNER).innerHTML = "<h3>You don't own any articles -- buy some!</h3>";
     }
 }
