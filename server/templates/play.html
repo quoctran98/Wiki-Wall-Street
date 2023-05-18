@@ -11,12 +11,13 @@
         </h2>
         <h4>
             <span id="title-cash"></span>
-            <span id="title-rank"></span>
+            <span id="title-rank">Loading <img class="inline-image" src="{{url_for('static', filename='img/loading.gif')}}"></span>
+            <!-- rank loads after cash, usually (always?) so put the loading message there  -->
         </h4>
     </div>
     <div class="col-md-4">
-        <button class="btn btn-primary float-right" onclick="show_game_settings_modal();" id="game-settings-open-button" disabled="true">Settings</button>
-        <button class="btn btn-primary float-right" onclick="show_chat_modal();">Chat</button>
+        <button class="btn btn-dark float-right" style="margin:0.1rem;" onclick="show_game_settings_modal();" id="game-settings-open-button" disabled="true">⚙️</button>
+        <button class="btn btn-dark float-right" style="margin:0.1rem;" onclick="show_chat_modal();" id="chat-modal-open-button" disabled="true">💬</button>
     </div> 
 </div>
 
@@ -24,12 +25,6 @@
 <div class="row">
     <div style="overflow-x: scroll; height: 100%;">
         <div style="display: inline-flex; height: 100%;" id="leaderboard-banner">
-            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
-            <!-- <div class="leaderboard-neutral blurred-container" role="alert">
-                marcduck
-                <br>
-                113,000 (📈 12.95%)
-            </div> -->
         </div>
     </div>
 </div>
@@ -41,7 +36,6 @@
 <div class="row">
     <div style="overflow-x: scroll; height: 100%;">
         <div style="display: inline-flex; height: 100%;" id="portfolio-banner">
-            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
         </div>
     </div>
 </div>
@@ -55,7 +49,6 @@
     <div class="col-md-2">
         <h3>TRENDING!</h3>
         <div id="trending-articles" style="max-height: 70vh; overflow-y: scroll;">
-            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
         </div>
     </div>
 

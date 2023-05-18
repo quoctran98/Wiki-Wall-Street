@@ -36,7 +36,7 @@
   white-space: nowrap;
 }
 
-.leaderboard-neutral {
+.leaderboard-loading {
   position: relative;
   padding: 0.25rem 1rem;
   margin: 0rem 0.25rem;
@@ -44,10 +44,11 @@
   border-radius: 0.25rem;
 
   border-color: #000000;
-  color: #ffffff;
+  color: #000000;
   background-color: #f8f9fa;
 
   white-space: nowrap;
+
 }
 
 .portfolio-card {
@@ -109,9 +110,9 @@
 }
 
 .blurred-container{
-  -webkit-filter: blur(1px);
-  -moz-filter: blur(1px);
-  -o-filter: blur(1px);
-  -ms-filter: blur(1px);
-  filter: blur(1px);
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -o-filter: blur(2px);
+  -ms-filter: blur(2px);
+  filter: blur(2px);
 }

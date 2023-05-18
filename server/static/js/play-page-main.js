@@ -37,6 +37,12 @@ function format_price(p) {
     return(p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 }
 
+// Create the loading elements -- functions defined in the scripts that manage the actual elements
+loading_graph(CURRENT_ARTICLE, CURRENT_TIMESPAN);
+loading_leaderboard();
+loading_portfolio();
+loading_trending();
+
 // Call api/get_play_info to get the game and player objects -- this is also used globally!
 fetch("/api/get_play_info?game_id=" + GAME_ID, {method: 'GET'})
 .then(response => response.json())

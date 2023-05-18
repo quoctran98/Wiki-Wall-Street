@@ -27,13 +27,25 @@ document.getElementById(PLAYER_INFO_MODAL_CLOSE_BUTTON).onclick = (() => {
     unblur_background();
 });
 
+// Called when the leaderboard is loading
+function loading_leaderboard() {
+    // Add a loading card to the leaderboard banner
+    let leaderboard_loading_card = `
+    <div class="leaderboard-up" role="alert">
+        <p class="blurred-container">Loading Leaderboard <img class="inline-image" src="static/img/loading.gif"></p>
+    </div>
+    `;
+    document.getElementById(LEADERBOARD_BANNER).innerHTML = leaderboard_loading_card;
+}
+
 // Returns the suffix for a number (e.g. 1st, 2nd, 3rd, 4th, etc.)
 function get_rank_suffix(rank) {
-    if (rank === 1) {
+    const last_num = rank % 10;
+    if (last_num === 1) {
         return("st");
-    } else if (rank === 2) {
+    } else if (last_num === 2) {
         return("nd");
-    } else if (rank === 3) {
+    } else if (last_num === 3) {
         return("rd");
     } else {
         return("th");
@@ -116,7 +128,7 @@ async function init_leaderboard() {
     lboard_res = await lboard_res.json();
     ALL_PLAYERS = lboard_res.players;
 
-    // Remove the loading spinner
+    // Remove the loading card
     document.getElementById(LEADERBOARD_BANNER).innerHTML = "";
 
     // Set the title rank

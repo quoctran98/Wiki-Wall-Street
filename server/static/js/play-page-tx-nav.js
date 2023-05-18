@@ -33,6 +33,50 @@ const CUSTOM_SELL_INPUT_ID = "custom-sell-input";
 const ALL_SELL_BUTTONS = [SELL_1_BUTTON_ID, SELL_CUSTOM_BUTTON_ID];
 const ALL_TX_BUTTONS = ALL_BUY_BUTTONS.concat(ALL_SELL_BUTTONS);
 
+// Let's add a bunch of loading elements to the page!
+// Wrapping in a function to avoid global variables and so we can call it again later
+function loading_graph(article="Article", timespan="month") {
+    // Graph title 
+    document.getElementById(GRAPH_TITLE_ID).innerHTML = `
+        <a href="#">${article}</a>
+    `;
+    // Graph description
+    document.getElementById(GRAPH_DESC_ID).innerHTML = `
+        <p>Loading <img class="inline-image" src="/static/img/loading.gif" alt="Loading"></p>
+    `;
+
+    // Make fake timestamps and views
+    let n_days;
+    if (timespan == "week") {
+        n_days = 7;
+    } else if (timespan == "month") {
+        n_days = 30;
+    } else if (timespan == "year") {
+        n_days = 365;
+    } else if (timespan == "all") {
+        n_days = 365 * 5;
+    }
+    let timestamps = [];
+    let views = [];
+    let date = new Date();
+    for (let i = 0; i < n_days; i++) {
+        date.setDate(date.getDate() - 1);
+        timestamps.push(date.toISOString().substring(0, 10).replace(/-/g, ""));
+        views.push(Math.round(Math.random() * 1000));
+    }
+
+    const plot_data = [{x: timestamps, y: views, type: "scatter"}];
+    const plot_layout = {margin:{t: 10},xaxis: {type: "date",},yaxis: {title: "Page Views",},};
+    const graph_div = document.getElementById(GRAPH_DIV_ID);
+
+    // Clear the div (of loading gif) and plot the graph
+    graph_div.innerHTML = "";
+    Plotly.newPlot(graph_div, plot_data, plot_layout, {staticPlot: true});
+
+    // Make it blurry
+    graph_div.classList.add("blurred-container");
+}
+
 // Update the buy/sell buttons! And the information about the player buying the article!
 function update_trade_buttons(article=CURRENT_ARTICLE, price=CURRENT_PRICE, player=THIS_PLAYER, allowed=ARTICLE_ALLOWED) {
 
@@ -145,6 +189,9 @@ function update_graph(pageviews_data=PAGEVIEWS_DATA_OBJECT, timespan="month") {
     // Clear the div (of loading gif) and plot the graph
     graph_div.innerHTML = "";
     Plotly.newPlot(graph_div, plot_data, plot_layout, {staticPlot: true});
+
+    // Remove the blurry effect
+    graph_div.classList.remove("blurred-container");
 }
 
 // Update the article title and description
@@ -193,6 +240,8 @@ async function load_article (article_name=null) {
         CURRENT_ARTICLE = article_name;
     }
 
+    // Make the graph loading again
+    loading_graph(CURRENT_ARTICLE, CURRENT_TIMESPAN);
 
    // Do all the API calls up top, then update the page at the end
    Promise.all([

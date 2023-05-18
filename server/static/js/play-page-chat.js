@@ -3,6 +3,7 @@
 */
 
 // IDs for HTML elements
+const CHAT_MODAL_OPEN_BUTTON = "chat-modal-open-button";
 const CHAT_MODAL = "chat-modal";
 const CHAT_MODAL_CLOSE_SYMBOL = "chat-modal-close-symbol";
 const CHAT_MODAL_CLOSE_BUTTON = "chat-modal-close-button";
@@ -115,6 +116,11 @@ async function send_message() {
         // Get the messages and render them now that we have sent a message
         let message = await get_messages(GAME_OBJECT.game_id);
         render_messages(message);
+
+        // Scroll to the bottom of the chat
+        let chat_box = document.getElementById(CHAT_MODAL_MAIN);
+        let last_message = chat_box.children[chat_box.children.length - 1];
+        last_message.scrollIntoView(false);
     }
 }
 
@@ -140,4 +146,7 @@ function init_chat() {
         clearInterval(CHAT_UPDATE_LOOP);
         send_message();
     });
+
+    // Enable the chat button
+    document.getElementById(CHAT_MODAL_OPEN_BUTTON).disabled = false;
 }
