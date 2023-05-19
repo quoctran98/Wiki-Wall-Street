@@ -106,3 +106,8 @@
   -ms-filter: blur(2px);
   filter: blur(2px);
 }
+
+.modal-rounder-corners {
+  border-radius: 1.5rem;
+  border: 2px solid;
+}
