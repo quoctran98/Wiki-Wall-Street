@@ -22,8 +22,17 @@ It's also not super consistent and not all pageviews data are updated at the sam
 
 Try it out at [wiki-wall-street.com](https://wiki-wall-street.com)!
 
-Make an account and log in! From there, you can either make a new game 
-or join an exisiting private or public one. You can start by using the search bar 
-to search for any Wikipedia article, view its page view trends, and buy "stock"
-in it! 
+Make an account and log in, then **create** a new game for you and your friends or **join** a one! Join a private game with its **Game ID** or an **invite link**. You can join a public game by finding one in the table!
 
+Once you're in a game, you can **buy and sell Wikipedia articles** using your **cash**. "Prices" are based on the number of **page views** that the article gets that day. You can use the play page to look up articles, see their pageview trends, and buy and sell them! Compete against your friends to see who can predict the popularity of Wikipedia articles the best!
+
+1.  **Game Information** Shows the name of this game, how much cash you have, and your ranking.
+2.  **Search for Articles** Type in the search bar to look up any Wikipedia article!
+3.  **Pageview Trends** Look at the pageview trends over any timespan -- the current "price" of the article is its latest daily pageview count and is displayed next to the article name alongside its percent change! Click on the article name to look at its Wikipedia page!
+4.  **Buy and Sell Articles** Click on a "Buy" button to buy an article and a "Sell" button to sell it if you own it -- use the number inputs to buy or sell a custom amount!
+5.  **Portfolio Banner** See which articles you own and their average buy prices -- click on one to see its pageview trends!
+6.  **Leaderboard Banner** Check how other players are doing -- the card displays their portfolio value and daily percent change. Click on the one to see more information about the player's portfolio!
+7.  **Trending Articles** Look at Wikipedia's trending articles for the day! Click on one to see its pageview trends!
+8.  **More Stuff** Click on these buttons to open the game chat, see players in the game (or leave the game), and check the game's settings!
+
+![](https://github.com/quoctran98/Wiki-Wall-Street/blob/master/server/static/img/tutorial/tutorial-main.png)
