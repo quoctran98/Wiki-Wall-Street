@@ -299,7 +299,7 @@
     </div>
 </div>
 
-<!-- PLAEYRS MODAL -->
+<!-- PLAYERS MODAL -->
 <div class="modal" id="players-modal">
     <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -332,7 +332,39 @@
     
     <!-- MODAL FOOTER -->
     <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="players-modal-leave-button">Leave Game</button>
         <button type="button" class="btn btn-secondary" id="players-modal-close-button">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>
+
+<!-- LEAVE CONFIRM MODAL -->
+<div class="modal" id="leave-confirm-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+    <!-- MODAL BODY -->
+    <div class="modal-body">
+        
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-10">
+                <h6>Are you sure you want to leave the game?</h6>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <form action="{{ url_for('admin.leave_game') }}" method="POST" id="leave-confirm-modal-form">
+            <input type="hidden" name="game_id" id="leave-confirm-modal-game-id" value="">
+        </form>
+        <button type="submit" class="btn btn-danger" id="leave-confirm-modal-leave-button" form="leave-confirm-modal-form">Leave Game</button>
+        <button type="button" class="btn btn-secondary" id="leave-confirm-modal-close-button">Close</button>
     </div>
 
     </div>

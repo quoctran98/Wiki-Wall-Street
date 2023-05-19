@@ -53,25 +53,29 @@ def create_app():
         scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="interval", hours=1)
         print("Scheduler started! ⏰")
 
-    # Blueprint for auth routes from server/auth.py
+    # Blueprint for auth routes from routes/auth.py
     from .routes.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
-    # Blueprint for non-auth routes from server/main.py
+    # Blueprint for non-auth routes from routes/main.py
     from .routes.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
-    # Blueprint for game routes from server/game.py
+    # Blueprint for game routes from routes/game.py
     from .routes.game import game as game_blueprint
     app.register_blueprint(game_blueprint)
 
-    # Blueprint for wiki routes from server/wiki.py
+    # Blueprint for wiki routes from routes/wiki.py
     from .routes.wiki import wiki as wiki_blueprint
     app.register_blueprint(wiki_blueprint)
 
-    # Blueprint for chat routes from server/chat.py
+    # Blueprint for chat routes from routes/chat.py
     from .routes.chat import chat as chat_blueprint
     app.register_blueprint(chat_blueprint)
+
+    # Blueprint for admin routes from routes/admin.py
+    from .routes.admin import admin as admin_blueprint
+    app.register_blueprint(admin_blueprint)
 
     # Make sure the app is running with the correct settings
     print("Routes registered! 🌐")

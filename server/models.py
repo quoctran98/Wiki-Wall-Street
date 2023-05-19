@@ -8,13 +8,14 @@ from server.helper import settings, active_users_coll, active_games_coll, transa
 from server import WikiAPI
 
 class User(UserMixin):
-    def __init__(self, name, email, password, signup_time, joined_games, user_id=None):
+    def __init__(self, name, email, password, signup_time, joined_games, old_games=[], user_id=None):
         # We're ignoring MongoDB's document _id field and using our own UUID
         self.name = name
         self.email = email
         self.password = password
         self.signup_time = signup_time
         self.joined_games = joined_games
+        self.old_games = old_games # This is for backwards compatibility :)
         self.user_id = uuid.uuid4().hex if user_id is None else str(user_id)
         # We're going to avoid touching MongoDB document _id fields entirely
 
@@ -217,6 +218,22 @@ class Player():
         last_timestamp = self.value_history[-1]["timestamp"] if len(self.value_history) > 0 else None
         if (last_value is None) or (last_value != this_value["value"]) or (last_timestamp is None) or (this_value["timestamp"] - last_timestamp > datetime.timedelta(hours=24)):
             players_db[self.game_id].update_one({"player_id": self.player_id}, {"$push": {"value_history": this_value}})    
+
+    def leave_game(self):
+        """Remove the player from the game."""
+
+        # Remove the player from the game's players list and user_ids list
+        active_games_coll.update_one({"game_id": self.game_id}, {"$pull": {"players": self.name}})
+        active_games_coll.update_one({"game_id": self.game_id}, {"$pull": {"user_ids": self.user_id}})
+
+        # Remove the game from the user's joined_games list
+        active_users_coll.update_one({"user_id": self.user_id}, {"$pull": {"joined_games": self.game_id}})
+
+        # Add the game to the user's old_games list
+        active_users_coll.update_one({"user_id": self.user_id}, {"$push": {"old_games": self.game_id}})
+
+        # Remove the player from the MongoDB
+        players_db[self.game_id].delete_one({"player_id": self.player_id})
 
     @property
     def yesterday_value(self):
