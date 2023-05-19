@@ -110,6 +110,9 @@ function open_join_game_modal(game_id) {
     document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = game_id;
     document.getElementById(JOIN_GAME_MODAL_ID).style.display = "block";
     blur_background();
+
+    // Click the search button to populate the search results for the user
+    document.getElementById(JOIN_GAME_MODAL_SEARCH).click(); // Defined in home-game-modals.js
 }
 
 populate_joined_games();

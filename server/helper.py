@@ -57,3 +57,12 @@ cache = Cache()
 
 # Scheduler for later use
 scheduler = APScheduler()
+
+# We have to write a function to sanitize a bunch of user inputs
+# Don't run article names through this function -- it will break them
+# This is mainly for usernames, game names, etc.
+def sanitize(string):
+    bad_chars = ["$", "{", "}", "[", "]", "(", ")", "<", ">", "'", '"', ";", ":", "/", "\\", "|", "?", "*", "+", "=", "&", "#", "%", "@", "!", "~", "`", "^", " "]
+    for char in bad_chars:
+        string = string.replace(char, "_")
+    return(string)

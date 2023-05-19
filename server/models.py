@@ -358,7 +358,7 @@ class Transaction():
         players_db[game_id].update_one({"player_id": player_id},
             update = {"$inc": {"cash": price},
                       "$push": {"transactions": tx_id},
-                      "$set": {f"articles.{article}": new_quantity,
+                      "$set": {f"articles.{article}": new_quantity, 
                                f"avg_price.{article}": new_avg_price}},
         )
 

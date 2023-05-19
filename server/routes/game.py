@@ -3,7 +3,7 @@ from flask import request, Blueprint, render_template, flash, redirect, url_for,
 from flask_login import login_required, current_user
 import datetime
 
-from server.helper import settings, cache, active_games_coll
+from server.helper import settings, cache, active_games_coll, sanitize
 from server.models import Game, Player, Transaction
 
 import server.WikiAPI as WikiAPI
@@ -41,7 +41,7 @@ def create_game():
         "show_articles": True if "show_articles" in request.form else False,
         "show_number": True if "show_number" in request.form else False,
     }
-    new_game_id = Game.create_game(request.form["game_name"], 
+    new_game_id = Game.create_game(sanitize(request.form["game_name"]),
                                    current_user.user_id, 
                                    game_settings,
                                    True if "public_game" in request.form else False)
@@ -118,6 +118,14 @@ def new_transaction():
     if not this_game.allowed_article(tx_data["article"]) and tx_data["quantity"] > 0:
         flash("You can't buy this article.")
         return(jsonify({"success": False}))
+    
+    bad_article_chars = [".", "'"]
+    # Periods (.) make MongoDB think it's a nested object
+    # Single quotes (') break the front end :( -- I should have only dealt with article IDs
+    for char in bad_article_chars:
+        if char in tx_data["article"]:
+            flash("You can't buy/sell this article. It has a weird character in it that might break the game. I'm not smart enough to fix it without rewriting a lot of code.")
+            return(jsonify({"success": False}))
 
     # Transaction method will verify that user can make this transaction
     new_tx = Transaction.new_transaction(tx_data["game_id"], 

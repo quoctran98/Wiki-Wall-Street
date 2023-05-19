@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from pymongo import MongoClient
 
-from server.helper import settings
+from server.helper import settings, sanitize
 from server.models import User
 
 auth = Blueprint("auth", __name__)
@@ -27,7 +27,7 @@ def login_post():
     # Use the method from User class to check the password
     if user is not None and user.check_password(password):
         login_user(user, remember=remember)
-        if next_url is not "":
+        if next_url != "":
             return(redirect(next_url))
         else:
             return(redirect(url_for("main.index")))
@@ -43,7 +43,7 @@ def signup():
 @auth.route("/signup", methods=["POST"])
 def signup_post():
     email = request.form.get("email")
-    name = request.form.get("name")
+    name = sanitize(request.form.get("name"))
     password = request.form.get("password")
 
     # This is added by the JS on the frontend
