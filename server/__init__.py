@@ -44,8 +44,14 @@ def create_app():
     # Set up scheduler
     scheduler.init_app(app)
     scheduler.start()
-    # Run update_all_portfolio_vals() every hour (should only change once a day, but this will make it easy to search!)
-    scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="interval", hours=1)
+    
+    # Don't run the value updater when testing locally -- the timezones mess up the history
+    if settings.ENVIRONMENT == "local":
+        print("Not starting scheduler in local environment ⏰")
+    else:
+        # Run update_all_portfolio_vals() every hour (should only change once a day, but this will make it easy to search!)
+        scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="interval", hours=1)
+        print("Scheduler started! ⏰")
 
     # Blueprint for auth routes from server/auth.py
     from .routes.auth import auth as auth_blueprint

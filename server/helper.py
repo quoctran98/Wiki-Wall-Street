@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     
     EN_WIKI_AVERAGE_DAILY_PROJECT_VIEWS:float
 
+    ENVIRONMENT:str
+
     class Config:
         env_file = ".env"
 

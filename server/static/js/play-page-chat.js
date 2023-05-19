@@ -23,6 +23,11 @@ const CHAT_FORM_SEND_BUTTON = "chat-form-send-button";
 // Global variable for the chat update loop
 let CHAT_UPDATE_LOOP;
 
+// Ugh, this is such a bad way to prevent XSS attacks
+function escape_html(unsafe) {
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 async function show_chat_modal() {
     // Fill out the form for sending messages
     document.getElementById(CHAT_FORM_USER_ID).value = THIS_PLAYER.user_id;
@@ -62,7 +67,7 @@ function render_messages(message_array) {
             message_div.innerHTML = `
                 <b>${message.name}</b> 
                 <span color='gray' style='font-size:60%; float:right;'>${message.timestamp}</span> <br>
-                ${message.message}
+                ${escape_html(message.message)}
             `;
         
             chat_box.appendChild(message_div);
