@@ -138,6 +138,7 @@ function update_trade_buttons(article=CURRENT_ARTICLE, price=CURRENT_PRICE, play
         document.getElementById(SELL_DIV_ID).style.display = "block";
         sell_1_button.innerHTML = `Sell 1 for ${format_price(price)}`; 
         // This button is always enabled or the div is hidden, so no need to disable it :)
+        sell_1_button.removeAttribute("disabled"); // It's disabled before the page loads :)
         sell_custom_button.innerHTML = `Sell ${custom_sell} for ${format_price(price * custom_sell)}`;
 
         // Disable sell buttons if player doesn't own enough of the article
