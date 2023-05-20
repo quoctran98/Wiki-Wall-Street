@@ -1,7 +1,7 @@
 import json
 from flask import request, Blueprint, render_template, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-import datetime
+from datetime import datetime, timezone
 
 from server.helper import settings, cache, active_games_coll, sanitize
 from server.models import Game, Player, Transaction
@@ -106,7 +106,7 @@ def new_transaction():
         real_time_now = WikiAPI.normalized_views(tx_data["article"])[-1]["timestamp"]
         real_price_before = WikiAPI.normalized_views(tx_data["article"])[-2]["views"]
         real_time_before = WikiAPI.normalized_views(tx_data["article"])[-2]["timestamp"]
-        bug_message += f"\n\n  SENT | time-ish: {datetime.datetime.now()} | price: {tx_data['price']}"
+        bug_message += f"\n\n  SENT | time-ish: {datetime.now(timezone.utc)} | price: {tx_data['price']}"
         bug_message += f"\n\n REAL NOW | time: {real_time_now} | price: {real_price_now}"
         bug_message += f"\n\n REAL -1 | time: {real_time_before} | price: {real_price_before}"
         bug_message += f"\n\n DIFFERENCE | {abs(abs(real_price) - abs(float(tx_data['price'])))}"

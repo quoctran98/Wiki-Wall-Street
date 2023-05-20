@@ -66,20 +66,22 @@ function render_game_info(game) {
     return(game_info_html);
 }
 
-// New game modal open/close
-document.getElementById(NEW_GAME_BUTTON_ID).onclick = (() => {
-    document.getElementById(NEW_GAME_MODAL_ID).style.display = "block";
-    blur_background();
-});
-
-document.getElementById(NEW_GAME_MODAL_CLOSE_ID).onclick = (() => {
-    document.getElementById(NEW_GAME_MODAL_ID).style.display = "none";
-    unblur_background();
-});
-document.getElementById(NEW_GAME_MODAL_CANCEL_ID).onclick = (() => {
-    document.getElementById(NEW_GAME_MODAL_ID).style.display = "none";
-    unblur_background();
-});
+// New game modal open/close buttons but only if the user is logged in
+if (document.getElementById(NEW_GAME_BUTTON_ID)) {
+    document.getElementById(NEW_GAME_BUTTON_ID).onclick = (() => {
+        document.getElementById(NEW_GAME_MODAL_ID).style.display = "block";
+        blur_background();
+    });
+    
+    document.getElementById(NEW_GAME_MODAL_CLOSE_ID).onclick = (() => {
+        document.getElementById(NEW_GAME_MODAL_ID).style.display = "none";
+        unblur_background();
+    });
+    document.getElementById(NEW_GAME_MODAL_CANCEL_ID).onclick = (() => {
+        document.getElementById(NEW_GAME_MODAL_ID).style.display = "none";
+        unblur_background();
+    });
+}
 
 // New game modal: disable number of articles if show articles is not checked
 // DON'T USE DISABLE ATTRIBUTE, USE READONLY INSTEAD -- doesn't work for some reason
@@ -103,27 +105,29 @@ document.getElementById(NEW_GAME_NAME_ID ).addEventListener("input", function() 
     }
 });
 
-// Join game modal open/close
-document.getElementById(JOIN_GAME_BUTTON_ID).onclick = (() => {
-    document.getElementById(JOIN_GAME_MODAL_ID).style.display = "block";
-    blur_background();
-});
-document.getElementById(JOIN_GAME_MODAL_CLOSE_ID).onclick = (() => {
-    document.getElementById(JOIN_GAME_MODAL_ID).style.display = "none";
-    unblur_background();
-    // Clear the game info and game id
-    document.getElementById(JOIN_GAME_MODAL_INFO_ID).innerHTML = "Enter a game ID!";
-    document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = "";
-    document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = true;
-});
-document.getElementById(JOIN_GAME_MODAL_CANCEL_ID).onclick = (() => {
-    document.getElementById(JOIN_GAME_MODAL_ID).style.display = "none";
-    unblur_background();
-    // Clear the game info and game id
-    document.getElementById(JOIN_GAME_MODAL_INFO_ID).innerHTML = "Enter a game ID!";
-    document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = "";
-    document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = true;
-});
+// Join game modal open/close but only if the user is logged in
+if (document.getElementById(JOIN_GAME_BUTTON_ID)) {
+    document.getElementById(JOIN_GAME_BUTTON_ID).onclick = (() => {
+        document.getElementById(JOIN_GAME_MODAL_ID).style.display = "block";
+        blur_background();
+    });
+    document.getElementById(JOIN_GAME_MODAL_CLOSE_ID).onclick = (() => {
+        document.getElementById(JOIN_GAME_MODAL_ID).style.display = "none";
+        unblur_background();
+        // Clear the game info and game id
+        document.getElementById(JOIN_GAME_MODAL_INFO_ID).innerHTML = "Enter a game ID!";
+        document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = "";
+        document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = true;
+    });
+    document.getElementById(JOIN_GAME_MODAL_CANCEL_ID).onclick = (() => {
+        document.getElementById(JOIN_GAME_MODAL_ID).style.display = "none";
+        unblur_background();
+        // Clear the game info and game id
+        document.getElementById(JOIN_GAME_MODAL_INFO_ID).innerHTML = "Enter a game ID!";
+        document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = "";
+        document.getElementById(JOIN_GAME_MODAL_JOIN_ID).disabled = true;
+    });
+}
 
 // Join game modal: search for game
 document.getElementById(JOIN_GAME_MODAL_SEARCH).onclick = (() => {

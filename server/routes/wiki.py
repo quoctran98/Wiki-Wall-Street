@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from pymongo import MongoClient
 from datetime import date, timedelta
 
-from server.helper import settings, cache
+from server.helper import settings, cache, today_wiki
 
 # Functions for the actual game -- we don't really need these in other pages
 import server.WikiAPI as WikiAPI
@@ -24,6 +24,7 @@ def search_article():
 
 @wiki.route("/api/current_price")
 def current_price():
+    # THIS DOESN'T ACTUALLY GET THE LATEST PRICE because normalized_views() uses today_wiki()
     article = request.args.get("article")
     normalized_views = WikiAPI.normalized_views(article)
     price = normalized_views[-1]["views"]
@@ -34,16 +35,18 @@ def current_price():
 def monthly_views():
     article = request.args.get("article")
     timespan = request.args.get("timespan")
+    # Shouldn't actually need to use today_wiki() here, but it'll make sure the frontend is consistent :)
     if timespan == "week":
-        start = date.today() - timedelta(days=7)
+        start = today_wiki() - timedelta(days=7)
     elif timespan == "month":
-        start = date.today() - timedelta(days=30)
+        start = today_wiki() - timedelta(days=30)
     elif timespan == "year":
-        start = date.today() - timedelta(days=365)
+        start = today_wiki() - timedelta(days=365)
     elif timespan == "all":
+        # No articles actually have data before like 2015, so this doesn't even matter
         start = date(2007, 12, 1)
     else:
-        start = date.today() - timedelta(days=30)
+        start = today_wiki() - timedelta(days=30) # default to month
     normalized_views = WikiAPI.normalized_views(article, start=start)
     # Return in a format to graph in JavaScript
     timestamps = [x["timestamp"] for x in normalized_views]
@@ -67,7 +70,8 @@ def trending_articles():
         if name in ["Main_Page", "Special:Search"]:
             continue
         try:
-            normalized_views = WikiAPI.normalized_views(name, start= date.today() - timedelta(days=7))
+            # Again shouldn't need to use today_wiki() here, but it'll make sure the frontend is consistent :)
+            normalized_views = WikiAPI.normalized_views(name, start= today_wiki() - timedelta(days=7))
             trending.append({
                 "article": name,
                 "last_week_views": normalized_views[0]["views"],

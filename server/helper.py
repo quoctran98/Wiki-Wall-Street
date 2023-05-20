@@ -2,6 +2,7 @@ from pydantic import BaseSettings
 from pymongo import MongoClient
 from flask_caching import Cache
 from flask_apscheduler import APScheduler
+from datetime import datetime, timezone, timedelta
 
 # Load settings from .env file
 class Settings(BaseSettings):
@@ -12,6 +13,7 @@ class Settings(BaseSettings):
     TRANSACTIONS_DB_NAME:str
     CHATS_DB_NAME:str
     
+    UPDATE_HOUR_UTC:int
     WIKI_API_USER_AGENT:str
     FLASK_SECRET_KEY:str
     
@@ -58,6 +60,10 @@ cache = Cache()
 # Scheduler for later use
 scheduler = APScheduler()
 
+###########################
+# Helper functions below! #
+###########################
+
 # We have to write a function to sanitize a bunch of user inputs
 # Don't run article names through this function -- it will break them
 # This is mainly for usernames, game names, etc.
@@ -66,3 +72,15 @@ def sanitize(string):
     for char in bad_chars:
         string = string.replace(char, "_")
     return(string)
+
+# This is called a lot in WikiAPI.py :)
+# Basically doesn't let the day change until UPDATE_HOUR_UTC
+# It's a little HACK to force a single update time :)
+def today_wiki():
+    # All times should be in UTC (the server's been doing that by default but I should be explicit)
+    now = datetime.now(timezone.utc)
+    now = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    if now.hour < settings.UPDATE_HOUR_UTC:
+        return(now - timedelta(days=1))
+    else:
+        return(now)

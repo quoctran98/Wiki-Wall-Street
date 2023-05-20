@@ -8,7 +8,7 @@
 
 from flask import Flask
 from flask_login import LoginManager
-from datetime import datetime
+from datetime import datetime, timezone
 
 from server.helper import settings, cache_config, cache, scheduler, active_games_coll, players_db
 from server.models import User, Player
@@ -29,6 +29,7 @@ def create_app():
     cache.init_app(app, config=cache_config)
 
     # Run Player.update_value_history() for every player in every active game
+    # I'm defining this function here because it needs access to a few models :)
     def update_all_portfolio_vals():
         n_games = 0
         n_players = 0
@@ -38,7 +39,7 @@ def create_app():
                 this_player = Player.get_by_player_id(game["game_id"], player["player_id"])
                 this_player.update_value_history()
                 n_players += 1
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         print(f"Updated value history for {n_players} players in {n_games} games at {timestamp} ⏰")
 
     # Set up scheduler
@@ -46,11 +47,12 @@ def create_app():
     scheduler.start()
     
     # Don't run the value updater when testing locally -- the timezones mess up the history
+    # It's actually solved now, but I'm leaving this here just in case :)
     if settings.ENVIRONMENT == "local":
         print("Not starting scheduler in local environment ⏰")
     else:
-        # Run update_all_portfolio_vals() every hour (should only change once a day, but this will make it easy to search!)
-        scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="interval", hours=1)
+        # Run every 12 hours even though today_wiki() should make it so it won't actually update a player's value more than once a day :)
+        scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="interval", hours=12)
         print("Scheduler started! ⏰")
 
     # Blueprint for auth routes from routes/auth.py
@@ -79,7 +81,8 @@ def create_app():
 
     # Make sure the app is running with the correct settings
     print("Routes registered! 🌐")
-    # print(f"Connected to MongoDB at {settings.MONGODB_CONNECTION_STRING} 💾")
     print(f"Game set up with average en.wikipedia project views of {settings.EN_WIKI_AVERAGE_DAILY_PROJECT_VIEWS} 📈")
+    print(f"The current environment is {settings.ENVIRONMENT} 🌎")
+    print(f"The game will allow pageviews to update at {settings.UPDATE_HOUR_UTC}:00 UTC ⏰")
 
     return(app)

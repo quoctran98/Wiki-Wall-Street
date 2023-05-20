@@ -1,9 +1,9 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
-import datetime
+from datetime import datetime, timezone, timedelta
 
-from server.helper import settings, active_users_coll, active_games_coll, transactions_db, players_db, chats_db
+from server.helper import settings, active_users_coll, active_games_coll, transactions_db, players_db, chats_db, today_wiki
 
 from server import WikiAPI
 
@@ -62,7 +62,7 @@ class User(UserMixin):
                 "name": name,
                 "password": generate_password_hash(password, method="sha256"),
                 # scrypt breaks on DigitalOcean?
-                "signup_time": datetime.datetime.now(),
+                "signup_time": datetime.now(timezone.utc),
                 "joined_games": [],
                 "user_id": user_id
             })
@@ -155,6 +155,7 @@ class Player():
 
     def update_player(self):
         """Update the player in the MongoDB."""
+        # I don't think this is ever used?
         players_db[self.game_id].update_one({"player_id": self.player_id}, {"$set": self.__dict__})
 
     def get_public_dict(self):
@@ -171,18 +172,27 @@ class Player():
         }
 
         # Add daily and weekly values to the public dictionary
-        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
-        last_week = datetime.datetime.now() - datetime.timedelta(days=7)
+        # Use today_wiki() so these values also only update at UPDATE_HOUR_UTC
+        yesterday = today_wiki() - timedelta(days=1)
+        last_week = today_wiki() - timedelta(days=7)
         yesterday_value = None
         last_week_value = None
-        for value in self.value_history: # Going through from oldest to newest
-            if value["timestamp"] > last_week and last_week_value is None:
+        for value in self.value_history:
+            # today_wiki() should make it so it's all the same time of day :)
+            # But we'll just scan through the whole list just in case
+            if value["timestamp"].timestamp() >= last_week.timestamp() and last_week_value is None:
                 last_week_value = value["value"]
-            if value["timestamp"] > yesterday:
+            if value["timestamp"].timestamp() >= yesterday.timestamp() and yesterday_value is None:
+                # Shouldn't need the "is None" part because of the break?
                 yesterday_value = value["value"]
                 break
-        public_dict["yesterday_value"] = yesterday_value
-        public_dict["last_week_value"] = last_week_value
+        if yesterday_value is not None:
+            public_dict["yesterday_value"] = yesterday_value
+            public_dict["last_week_value"] = last_week_value
+        else:
+            # If there's no yesterday value, just use the first value in the history
+            public_dict["yesterday_value"] = self.value_history[0]["value"]
+            public_dict["last_week_value"] = self.value_history[0]["value"]
 
         # Some games don't have these visibility (ugh!), so check if they exist first
         # Remove 0s from the articles dictionary (previously owned articles)
@@ -209,15 +219,20 @@ class Player():
     def update_value_history(self):
         """Update the player's value history in the MongoDB."""
         this_value = {
-            "timestamp": datetime.datetime.now(),
+            # Value history only updates at UPDATE_HOUR_UTC!
+            # This means all update times are the same time!
+            "timestamp": today_wiki(), 
             "value": self.portfolio_value
         }
 
-        # Insert a new value into the value history if it's different from the last one or it's been 24 hours
-        last_value = self.value_history[-1]["value"] if len(self.value_history) > 0 else None
-        last_timestamp = self.value_history[-1]["timestamp"] if len(self.value_history) > 0 else None
-        if (last_value is None) or (last_value != this_value["value"]) or (last_timestamp is None) or (this_value["timestamp"] - last_timestamp > datetime.timedelta(hours=24)):
-            players_db[self.game_id].update_one({"player_id": self.player_id}, {"$push": {"value_history": this_value}})    
+        # Insert a new value into the value history if the timestamp doesn't exist
+        # There should always be at least one since it's initialized with the starting cash :)
+        if len(self.value_history) == 0:
+            players_db[self.game_id].update_one({"player_id": self.player_id}, 
+                                                {"$push": {"value_history": this_value}})
+        elif self.value_history[-1]["timestamp"] < this_value["timestamp"]:
+            players_db[self.game_id].update_one({"player_id": self.player_id}, 
+                                                {"$push": {"value_history": this_value}})   
 
     def leave_game(self):
         """Remove the player from the game."""
@@ -239,10 +254,15 @@ class Player():
     def yesterday_value(self):
         """Return the value of the player's portfolio yesterday."""
         # This is only used by game.get_play_info route (should roll this into public_dict)
-        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
-        for value in self.value_history:
-            if value["timestamp"] > yesterday:
+        yesterday = today_wiki() - timedelta(days=1)
+        for value in reversed(self.value_history):
+            # We can scan from newest to oldest probably!
+            # Ideally it's in order so this is fast/accurate :)
+            # Eventually I want to phase this out and just use == because of the UPDATE_HOUR_UTC thing
+            if value["timestamp"].timestamp() <= yesterday.timestamp():
                 return(value["value"])
+        # Return the first value if there's no yesterday value
+        return(self.value_history[0]["value"])
 
     @property
     def portfolio_value(self):
@@ -304,7 +324,7 @@ class Player():
             "avg_price": {},
             "transactions": [],
             "value_history": [
-                {"timestamp": datetime.datetime.now(), "value": game.settings["starting_cash"]}
+                {"timestamp": today_wiki(), "value": game.settings["starting_cash"]}
             ]
         })
         return(player_id)
@@ -386,7 +406,7 @@ class Transaction():
             "article_id": article,
             "price": price,
             "quantity": quantity,
-            "timestamp": datetime.datetime.now(),
+            "timestamp": datetime.now(timezone.utc),
         })
         return(tx_id)
 
@@ -421,7 +441,7 @@ class Chat():
             # so that non-player system messages can be sent (user_id will be game_id)
             "name": User.get_by_user_id(user_id).name if name is None else name,
             "message": message,
-            "timestamp": datetime.datetime.now(),
+            "timestamp": datetime.now(timezone.utc),
         })
         return(chat_id)
     

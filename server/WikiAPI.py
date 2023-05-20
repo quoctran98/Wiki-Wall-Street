@@ -2,9 +2,9 @@ import requests
 import json
 from datetime import date, timedelta
 
-from server.helper import settings
+from server.helper import settings, today_wiki
 
-def pageviews(article, start=date.today()-timedelta(days=30), end=date.today(),
+def pageviews(article, start=today_wiki()-timedelta(days=30), end=today_wiki(),
               project="en.wikipedia", access="all-access", agent="user", granularity="daily"):
     """
     Python wrapper for the Wikimedia Pageviews API (https://wikimedia.org/api/rest_v1/)
@@ -52,7 +52,7 @@ def pageviews(article, start=date.today()-timedelta(days=30), end=date.today(),
         print(f"Error: {response.status_code}")
         return(json.loads(response.content)) 
 
-def projectviews(project="en.wikipedia", start=date.today()-timedelta(days=30), end=date.today(),
+def projectviews(project="en.wikipedia", start=today_wiki()-timedelta(days=30), end=today_wiki(),
                 access="all-access", agent="user", granularity="daily"):
     """
     Python wrapper for the Wikimedia Pageviews API (https://wikimedia.org/api/rest_v1/)
@@ -98,7 +98,7 @@ def projectviews(project="en.wikipedia", start=date.today()-timedelta(days=30), 
         print(f"Error: {response.status_code}")
         return(json.loads(response.content)) 
 
-def top_articles(project="en.wikipedia", date=date.today()-timedelta(days=1), timespan="day",
+def top_articles(project="en.wikipedia", date=today_wiki()-timedelta(days=1), timespan="day",
                  access="all-access", agent="user"):
     """
     Python wrapper for the Wikimedia Pageviews API (https://wikimedia.org/api/rest_v1/)
@@ -235,8 +235,8 @@ def verify_article(article_name, project="en.wikipedia", namespace=0, suggest=Fa
             return(False)
 
 def normalized_views(article,
-                     start=date.today()-timedelta(days=30),
-                     end=date.today(),
+                     start=today_wiki()-timedelta(days=30),
+                     end=today_wiki(),
                      project="en.wikipedia",
                      access="all-access",
                      agent="user",
