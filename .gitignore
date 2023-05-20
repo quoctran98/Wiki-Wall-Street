@@ -1,6 +1,5 @@
 .env
 **/.DS_Store
 **/__pycache__/
-api_testing.ipynb
-admin.ipynb
+**.ipynb
 NOTES.md

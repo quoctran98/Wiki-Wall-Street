@@ -84,3 +84,15 @@ def today_wiki():
         return(now - timedelta(days=1))
     else:
         return(now)
+
+# Don't rely on this!
+# There are already currently usernames that have spaces
+# This is for later in the future, I guess :)
+# Also doesn't check if username is already taken -- do that in the signup route
+def username_is_valid(username):
+    # Make sure username only containts allowed characters
+    allowed_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+    for char in username:
+        if char not in allowed_chars:
+            return(False)
+    return(True)

@@ -44,6 +44,15 @@ class User(UserMixin):
             data.pop('_id', None) # Remove the MongoDB _id field
             return cls(**data)
     
+    # This shouldn't be used often!
+    # I want usernames to be unique, but I can't guarantee that right now
+    @classmethod
+    def get_by_name(cls, name):
+        data = active_users_coll.find_one({"name": name})
+        if data is not None:
+            data.pop('_id', None)
+            return cls(**data)
+    
     # This method is only used by Flask-Login's load_user() in __init__.py
     @classmethod
     def get_by_user_id(cls, user_id):

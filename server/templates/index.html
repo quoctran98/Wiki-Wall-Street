@@ -5,9 +5,10 @@
 <div class="gets-blurred">
 
 <div class="alert alert-info" role="alert">
-  Hi, I've deployed a new database to hopefully increase speeds!
-  However, this means that all of your accounts and games have been deleted.
-  Please sign up again and create/join new games! (May 14th, 2020 @ 3:00 PM PDT)
+  Hi! Thanks for playing my game! It's finally functionally complete (I hope), 
+  but please let me know if you find any bugs or have any suggestions!
+  <br>
+  -Quoc
 </div>
 
 <!-- GAME EXPLANATION -->
@@ -49,8 +50,8 @@
     </h3>
 
     <p>
-      <button id="new-game-button" class="btn btn-primary">Create a New Game</button>
-      <button id="join-game-button" class="btn btn-primary">Join a Private Game</button>
+      <button id="new-game-button" class="btn btn-primary" data-toggle="modal" data-target="#new-game-modal">Create a New Game</button>
+      <button id="join-game-button" class="btn btn-primary" data-toggle="modal" data-target="#join-game-modal">Join a Private Game</button>
     </p>
   
     <hr>
@@ -78,8 +79,8 @@
   </div>
 
   <p>
-    <button id="new-game-button" class="btn btn-primary">Create a New Game</button>
-    <button id="join-game-button" class="btn btn-primary">Join a Private Game</button>
+    <button id="new-game-button" class="btn btn-primary" data-toggle="modal" data-target="#new-game-modal">Create a New Game</button>
+    <button id="join-game-button" class="btn btn-primary" data-toggle="modal" data-target="#join-game-modal">Join a Private Game</button>
   </p>
 
   <hr>
@@ -156,7 +157,7 @@
       <h5 class="modal-title">CREATE NEW GAME!</h5>
 
       <!-- CLOSE BUTTON -->
-      <button type="button" class="close" id="new-game-modal-close" aria-label="Close">
+      <button type="button" class="close" id="new-game-modal-close" data-dismiss="modal">
         <span aria-hidden="true">&times;</span>
       </button>
   </div>
@@ -213,12 +214,34 @@
   
   <!-- MODAL FOOTER -->
   <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" id="new-game-modal-cancel">Cancel</button>
+      <button type="button" class="btn btn-secondary" id="new-game-modal-cancel" data-dismiss="modal">Cancel</button>
       <button type="submit" class="btn btn-primary" id="new-game-modal-create" form="new-game-modal-form" disabled="true">Create</button>
   </div>
 
   </div>
   </div>
+  <script type="text/javascript">
+    // Disable the "Number of Each Article" checkbox if the "Articles Owned" checkbox is not checked
+    document.getElementById("new-game-show-articles").addEventListener("change", function() {
+      if (this.checked) {
+          document.getElementById("new-game-show-number").removeAttribute("disabled");
+          document.getElementById("new-game-show-number-label").style.color = "black";
+      } else {
+          document.getElementById("new-game-show-number").setAttribute("disabled", true);
+          document.getElementById("new-game-show-number-label").style.color = "#E5E5E5";
+          document.getElementById("new-game-show-number").checked = false
+      }
+    });
+
+    // Disable the "Create" button if the game name is empty
+    document.getElementById("new-game-modal-game-name").addEventListener("input", function() {
+    if (this.value) {
+        document.getElementById("new-game-modal-create").disabled = false;
+    } else {
+        document.getElementById("new-game-modal-create").disabled = true;
+    }
+});
+  </script>
 </div>
 
 <!-- JOIN GAME MODAL -->
@@ -231,7 +254,7 @@
       <h5 class="modal-title">JOIN GAME!</h5>
 
       <!-- CLOSE BUTTON -->
-      <button type="button" class="close" id="join-game-modal-close" aria-label="Close">
+      <button type="button" class="close" id="join-game-modal-close" data-dismiss="modal">
         <span aria-hidden="true">&times;</span>
       </button>
   </div>
@@ -251,14 +274,15 @@
   
   <!-- MODAL FOOTER -->
   <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" id="join-game-modal-cancel">Cancel</button>
+      <button type="button" class="btn btn-secondary" id="join-game-modal-cancel" data-dismiss="modal">Cancel</button>
       <button type="submit" class="btn btn-primary" id="join-game-modal-join" form="join-game-modal-form" disabled="true">Join</button>
   </div>
 
   </div>
   </div>
+  <script type="text/javascript" src="{{url_for('static', filename='js/home-join-modal.js')}}"></script>
 </div>
 
-<script src="{{url_for('static', filename='js/home-game-modals.js')}}"></script>
+<!-- <script src="{{url_for('static', filename='js/home-game-modals.js')}}"></script> -->
 
 {% endblock %}
