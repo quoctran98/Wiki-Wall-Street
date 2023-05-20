@@ -268,6 +268,8 @@ async function load_article (article_name=null) {
         PRICE_CHANGE = Math.round(((price_res.views[price_res.views.length-1] - price_res.views[0]) / price_res.views[0]) * 1000) / 10;
         ARTICLE_DATA_OBJECT = article_res;
 
+        console.log(ARTICLE_DATA_OBJECT.categories);
+
         // Set custom sell input to how many articles the player owns
         // We can't do that in update_trade_buttons() because that's called when the input changes
         if (article_name in THIS_PLAYER.articles) {
