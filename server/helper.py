@@ -52,8 +52,12 @@ chats_db = client[settings.CHATS_DB_NAME]
 # Cache for later use
 cache_config = {
     "CACHE_DEBUG": 1,
-    "CACHE_TYPE": "simple",
-    "CACHE_DEFAULT_TIMEOUT": 1800
+    #"CACHE_TYPE": "SimpleCache",
+    "CACHE_DEFAULT_TIMEOUT": 1800,
+    
+    "CACHE_TYPE": "FileSystemCache",
+    "CACHE_THRESHOLD": 1000,
+    "CACHE_DIR": "./temp/cache"
 }
 cache = Cache()
 
