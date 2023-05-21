@@ -41,11 +41,6 @@ def create_game():
     if "banned_categories" in request.form:
         this_banned_categories = request.form.getlist("banned_categories")
 
-    # Make sure there's no overlap
-    if len(this_allowed_categories) > 0 and len(this_banned_categories) > 0:
-        flash("You can't have both allowed and banned categories.")
-        return(redirect(url_for("main.index")))
-
     # I should have GameSettings a class :)
     game_settings = {
         # if-elses just in case (backwards compatibility? probably not)
