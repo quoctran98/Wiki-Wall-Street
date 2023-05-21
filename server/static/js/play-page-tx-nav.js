@@ -129,9 +129,14 @@ function update_trade_buttons(article=CURRENT_ARTICLE, price=CURRENT_PRICE, play
     // Reveal sell div if player owns article and update sell buttons with current price
     if (article in player.articles && player.articles[article] > 0) {
         // Update the player's article info (number owned and average buy price)
+        let percent_change = Math.round(((price - player.avg_price[article]) / player.avg_price[article]) * 1000) / 10;
+        let absolute_change = (price - player.avg_price[article]) * player.articles[article];
         document.getElementById(PLAYER_ART_INFO).innerHTML = `
             You own <b>${player.articles[article]}</b> of this article, 
             bought at an average price of <b>${format_price(player.avg_price[article])}</b>!
+            <br>
+            It's <b>${(percent_change > 0)? "up 📈" : "down 📉"} ${percent_change}%</b> since you bought it,
+            and you would <b>${(absolute_change > 0)? "make" : "lose"} ${format_price(absolute_change)}</b> if you sold it now!
         `;    
         
         // Reveal sell div and update sell buttons with current price
