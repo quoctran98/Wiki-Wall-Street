@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from datetime import datetime, timezone, timedelta
 
-from server.helper import settings, active_users_coll, active_games_coll, transactions_db, players_db, chats_db, today_wiki
+from server.helper import settings, active_users_coll, active_games_coll, old_games_coll, transactions_db, players_db, chats_db, today_wiki, allowed_categories, banned_categories
 
 from server import WikiAPI
 
@@ -79,7 +79,8 @@ class User(UserMixin):
         return(False)
 
 class Game():
-    def __init__(self, game_id, name, owner_id, user_ids, settings, players, transactions, chats=None, public=None):
+    def __init__(self, game_id, name, owner_id, user_ids, settings, players, transactions, 
+                 chats=None, public=None):
         self.game_id = game_id
         self.name = name
         self.owner_id = owner_id
@@ -87,7 +88,7 @@ class Game():
         self.settings = settings
         self.players = players
         self.transactions = transactions
-        # Defaults in __init__ for backwards compatibility
+        # Defaults in __init__ for backwards compatibility-ish
         self.chats = chats if chats is not None else ["chat_0"] # Default chat I guess
         self.public = public if public is not None else False
 
@@ -108,18 +109,75 @@ class Game():
         })
     
     def allowed_article(self, article_name):
+        # Sucks that I have to make this call twice per article but it's probably fine
+        article_categories = WikiAPI.article_information(article_name)["categories"]
+        
+        # Check if the game has any explicitly allowed themes
+        if "allowed_categories" in self.settings:
+            unpacked_allowed = [] # unpack the game's allowed categories
+            for c in self.settings["allowed_categories"]:
+                unpacked_allowed.extend(allowed_categories[c])
+            if len(unpacked_allowed) > 0: # if there's an explicit list of allowed categories
+                return(any([cat in unpacked_allowed for cat in article_categories]) or article_name in unpacked_allowed)
+
+        # Check if the game has any banned categories
+        if "banned_categories" in self.settings:
+            unpacked_banned = []
+            for c in self.settings["banned_categories"]:
+                unpacked_banned.extend(banned_categories[c])
+            if any([cat in unpacked_banned for cat in article_categories]) or article_name in unpacked_banned:
+                return(False) # not necessarily allowed yet but definitely not allowed
+
+        # Check if the article is below the minimum views limit
         if "views_limit" in self.settings:
-            lowest_this_month = min([x["views"] for x in WikiAPI.normalized_views(article_name)])
-            return(self.settings["views_limit"] < lowest_this_month)
+            lowest_this_month = float(min([x["views"] for x in WikiAPI.normalized_views(article_name)]))
+            if (float(self.settings["views_limit"]) > lowest_this_month):
+                return(False)
+
         return(True)
 
     def change_settings(self, new_settings):
         """Change the settings of the game."""
-        # new_settings MUST contain all the same fields as self.settings
+        updated_settings = self.settings
+        # Add/change settings that are in the new settings
+        for setting in new_settings:
+            updated_settings[setting] = new_settings[setting]
+
         # Update the settings in the MongoDB
-        active_games_coll.update_one({"game_id": self.game_id}, {"$set": {"settings": new_settings}})
+        active_games_coll.update_one({"game_id": self.game_id}, {"$set": {"settings": updated_settings}})
         # Update the current game object
-        self.settings = new_settings
+        self.settings = updated_settings
+        
+        # I would love to clear all the caches related to this game here but I don't know how
+
+    def delete_game(self):
+        """Delete the game from the MongoDB."""
+
+        # Add the game to the old games collection
+        old_games_coll.insert_one({
+            "game_id": self.game_id,
+            "name": self.name,
+            "owner_id": self.owner_id,
+            "user_ids": self.user_ids,
+            "settings": self.settings,
+            "players": self.players,
+            "transactions": self.transactions,
+            "chats": self.chats,
+            "public": self.public,
+        })
+
+        # Remove the game from the users' joined_games lists
+        for user_id in self.user_ids:
+            active_users_coll.update_one({"user_id": user_id}, {"$pull": {"joined_games": self.game_id}})
+            active_users_coll.update_one({"user_id": user_id}, {"$push": {"old_games": self.game_id}})
+        # Remove the game from the MongoDB
+        active_games_coll.delete_one({"game_id": self.game_id})
+        # Remove the game's transactions collection
+        transactions_db.drop_collection(self.game_id)
+        # Remove the game's players collection
+        players_db.drop_collection(self.game_id)
+        # Remove the game's chats collection
+        chats_db.drop_collection(self.game_id)
 
     @classmethod
     def get_by_game_id(cls, game_id):

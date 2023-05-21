@@ -5,10 +5,10 @@
 <div class="gets-blurred">
 
 <div class="alert alert-info" role="alert">
-  Hi! Thanks for playing my game! It's finally functionally complete (I hope), 
-  but please let me know if you find any bugs or have any suggestions!
-  <br>
-  -Quoc
+  Hi! I've added the ability to create <b>themed games</b> and games with <b>article banlists</b>!
+  I still have to generate these lists somewhat manually, but let me know if you have any suggestions (or can help out)!
+  You can find these lists <a href="https://github.com/quoctran98/Wiki-Wall-Street/tree/master/server/categories">here</a>
+  for now :) 
 </div>
 
 <!-- GAME EXPLANATION -->
@@ -21,7 +21,7 @@
   -- it's a game where you have fake money that you can use to buy and sell fake stocks,
   which track the value of real stocks. I played it in twelfth grade for a week as the only part of
   my "economics unit" in my history class, which is why I'm bad with money 
-  and spending like $15 a month to host this thing.
+  and spending like <s>$15</s> $25 a month to host this thing.
 </p>
 <p>
   Here, you have fake money to <b>buy and sell Wikipedia article "stocks"</b>
@@ -124,7 +124,7 @@
   </div>
 
   <!-- MODAL BODY -->
-  <div class="modal-body">
+  <div class="modal-body" style="max-height:70vh; overflow-y:scroll;">
       <form action="{{ url_for('game.create_game') }}" method="POST" id="new-game-modal-form">
           <input type="hidden" name="user_id" value="{{ current_user.id }}">
 
@@ -145,6 +145,43 @@
               <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
               <input class="form-control" type="number" name="views_limit" id="new-game-modal-views-limit" min="1" value="10">
           </div>
+
+          <hr>
+
+          <label for="new-game-modal-allowed">Themes (only articles in these categories are allowed)</label>
+          <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+              <select class="form-control" name="allowed_categories" id="new-game-modal-allowed" multiple="multiple">
+                  {% for category in allowed_categories %}
+                      <option value="{{ category }}">{{ category }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          <script type="text/javascript">
+            document.getElementById("new-game-modal-allowed").selectedIndex = 0;
+          </script>
+
+          <label for="new-game-modal-banned">Banned Categories (use Ctrl/Cmd to select multiple)</label>
+          <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+              <select class="form-control" name="banned_categories" id="new-game-modal-banned" multiple="multiple">
+                  {% for category in banned_categories %}
+                      <option value="{{ category }}" {{ 'selected' if category=='Default-Banlist' else '' }}>{{ category }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          <script type="text/javascript">
+            // Disable the banned categories if any of the allowed categories are selected (must be readonly!)
+            document.getElementById("new-game-modal-allowed").addEventListener("change", function() {
+              if (this.value) {
+                  document.getElementById("new-game-modal-banned").setAttribute("readonly", true);
+                  document.getElementById("new-game-modal-banned").selectedIndex = 0;
+              } else {
+                  document.getElementById("new-game-modal-banned").removeAttribute("readonly");
+                  document.getElementById("new-game-modal-banned").value = "Default-Banlist";
+              }
+            });
+          </script>
 
           <hr>
           

@@ -20,11 +20,35 @@ const SETTING_GAME_ID = "settings-game-id";
 const SETTINGS_GAME_NAME = "settings-game-name";
 const SETTINGS_STARTING_CASH = "settings-starting-cash";
 const SETTINGS_VIEWS_LIMIT = "settings-views-limit";
+const SETTINGS_SHOW_CASH_LABEL = "settings-show-cash-label";
 const SETTINGS_SHOW_CASH = "settings-show-cash";
+const SETTINGS_SHOW_ARTICLES_LABEL = "settings-show-articles-label";
 const SETTINGS_SHOW_ARTICLES = "settings-show-articles";
 const SETTINGS_SHOW_NUMBER_LABEL = "settings-show-number-label";
 const SETTINGS_SHOW_NUMBER = "settings-show-number";
 const SETTINGS_PUBLIC_GAME = "settings-public-game";
+const SETTINGS_ALLOWED = "settings-allowed";
+const SETTINGS_BANNED = "settings-banned";
+
+// Deleting a game modal elements
+const SETTINGS_MODAL_DELETE = "settings-modal-delete-button";
+const DELETE_CONFIRM_MODAL = "delete-confirm-modal";
+const DELETE_CONFIRM_MODAL_GAME_ID = "delete-confirm-modal-game-id";
+const DELETE_CONFIRM_MODAL_CLOSE_BUTTON = "delete-confirm-modal-close-button";
+
+// Add event listeners to the delete game button
+document.getElementById(SETTINGS_MODAL_DELETE).onclick = (() => {
+    document.getElementById(GAME_SETTINGS_MODAL).style.display = "none";
+    document.getElementById(DELETE_CONFIRM_MODAL_GAME_ID).value = GAME_OBJECT.game_id;
+    document.getElementById(DELETE_CONFIRM_MODAL).style.display = "block";
+    blur_background();
+});
+
+// Add event listeners to the delete game confirm modal
+document.getElementById(DELETE_CONFIRM_MODAL_CLOSE_BUTTON).onclick = (() => {
+    document.getElementById(DELETE_CONFIRM_MODAL).style.display = "none";
+    show_game_settings_modal();
+});
 
 // Add event listener to close symbol and button :)
 document.getElementById(GAME_SETTINGS_MODAL_CLOSE_SYMBOL).onclick = (() => {
@@ -82,24 +106,62 @@ function init_settings(game=GAME_OBJECT) {
     document.getElementById(SETTINGS_SHOW_CASH).checked = game.settings.show_cash;
     document.getElementById(SETTINGS_SHOW_ARTICLES).checked = game.settings.show_articles;
     document.getElementById(SETTINGS_SHOW_NUMBER).checked = game.settings.show_number;
+    document.getElementById(SETTINGS_PUBLIC_GAME).checked = game.public;
 
-    document.getElementById(SETTINGS_PUBLIC_GAME).checked = game.public_game;
+    // Select the allowed and banned categories in the select elements
+    if (game.settings.allowed_categories) {
+        for (let category of game.settings.allowed_categories) {
+            option_id = `allowed-option-${category}`;
+            try { // In case we delete a category and it's still in the game settings
+                document.getElementById(option_id).selected = true;
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    }
+    if (game.settings.banned_categories) {
+        for (let category of game.settings.banned_categories) {
+            option_id = `banned-option-${category}`;
+            try { // In case we delete a category and it's still in the game settings
+                document.getElementById(option_id).selected = true;
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    }
 
     // Enable form elements if the user is the game creator
-    // USE READONLY ATTRIUUTE INSTEAD OF DISABLED (disabled elements don't get sent in the form!)
+    // USE READONLY ATTRIBUTE INSTEAD OF DISABLED (disabled elements don't get sent in the form!)
+    // select options only work with DISABLED!
     // It doesn't matter in the new game modal for now, but keep this in mind!
     if (THIS_PLAYER.user_id === game.owner_id) {
-        // document.getElementById(SETTINGS_GAME_NAME).readonly = false;
-        // Should we let the user change the game name? I don't think so.
         document.getElementById(SETTINGS_VIEWS_LIMIT).removeAttribute("readonly");
-        document.getElementById(SETTINGS_SHOW_CASH).removeAttribute("readonly");
-        document.getElementById(SETTINGS_SHOW_ARTICLES).removeAttribute("readonly");
+        document.getElementById(SETTINGS_SHOW_CASH_LABEL).style.color = "black";
+        document.getElementById(SETTINGS_SHOW_CASH).removeAttribute("disabled");
+        document.getElementById(SETTINGS_SHOW_ARTICLES_LABEL).style.color = "black";
+        document.getElementById(SETTINGS_SHOW_ARTICLES).removeAttribute("disabled");
+        // Users can't change public game status after the game is created! Maybe
         
         // Enable the number of articles checkbox if it's already checked :)
-        if (document.getElementById(SETTINGS_SHOW_NUMBER).checked) {
+        if (document.getElementById(SETTINGS_SHOW_ARTICLES).checked) {
             document.getElementById(SETTINGS_SHOW_NUMBER_LABEL).style.color = "black";
-            document.getElementById(SETTINGS_SHOW_NUMBER).removeAttribute("readonly");
-        }  
+            document.getElementById(SETTINGS_SHOW_NUMBER).removeAttribute("disabled");
+        } 
+
+        // Enable the select elements and options within :)
+        document.getElementById(SETTINGS_ALLOWED).removeAttribute("readonly");
+        document.getElementById(SETTINGS_BANNED).removeAttribute("readonly");
+        for (let option of document.getElementById(SETTINGS_ALLOWED).options) {
+            option.removeAttribute("disabled");
+        }
+        for (let option of document.getElementById(SETTINGS_BANNED).options) {
+            option.removeAttribute("disabled");
+        }
+
+        // Enable the delete game button
+        document.getElementById(SETTINGS_MODAL_DELETE).removeAttribute("disabled");
     }
     
     // Enable the settings button now :)

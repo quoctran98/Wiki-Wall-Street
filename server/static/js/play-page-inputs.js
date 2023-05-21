@@ -88,7 +88,7 @@ async function search_article() {
 
     // Get search suggestions from the server
     const search_input = document.getElementById(SEARCH_ID).value;
-    const search_url = "/api/search_article?query=" + search_input;
+    const search_url = "/api/search_article?query=" + search_input + "&game_id=" + GAME_OBJECT.game_id;
     let serach_res = await fetch(search_url, { method: "GET" })
     if (serach_res.status !== 200) {
         console.log("Something went wrong!");
@@ -97,7 +97,9 @@ async function search_article() {
 
     // Update the datalist with suggestions from the server
     const search_data = await serach_res.json()
-    const suggestions = search_data.suggestions;
+    let suggestions = search_data.suggestions;
+    // Filter out duplicates (I don't know why there are duplicates, but there are)
+    suggestions = suggestions.filter((suggestion, index) => suggestions.indexOf(suggestion) === index);
     let datalist_html = suggestions.map(suggestion => `<option value="${suggestion}">`).join("");
     document.getElementById(SEARCH_DATALIST_ID).innerHTML = datalist_html;
 }

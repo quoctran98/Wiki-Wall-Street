@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from flask_caching import Cache
 from flask_apscheduler import APScheduler
 from datetime import datetime, timezone, timedelta
+import os
 
 # Load settings from .env file
 class Settings(BaseSettings):
@@ -32,10 +33,12 @@ client = MongoClient(settings.MONGODB_CONNECTION_STRING)
 # Connect to MongoDB users database
 users_db = client[settings.USERS_DB_NAME]
 active_users_coll = users_db.active_users
+old_users_coll = users_db.old_users
 
 # Connect to the MongoDB games database
 games_db = client[settings.GAMES_DB_NAME]
 active_games_coll = games_db.active_games
+old_games_coll = games_db.old_games
 
 # Connect to the MongoDB transactions database
 # Not collections! Each game has its own collection in the transactions database
@@ -57,12 +60,31 @@ cache_config = {
     
     "CACHE_TYPE": "FileSystemCache",
     "CACHE_THRESHOLD": 1000,
-    "CACHE_DIR": "./temp/cache"
+    "CACHE_DIR": "./server/temp/cache"
 }
 cache = Cache()
 
 # Scheduler for later use
 scheduler = APScheduler()
+
+# Unpack article categories from .txt files in ./categories
+allowed_categories = {"": []}
+for filename in os.listdir("./server/categories/allowed"):
+    if filename.endswith(".txt"):
+        with open("server/categories/allowed/" + filename, "r") as f:
+            allowed_categories[filename[:-4]] = f.read().splitlines()
+banned_categories = {"": []}
+for filename in os.listdir("./server/categories/banned"):
+    if filename.endswith(".txt"):
+        with open("server/categories/banned/" + filename, "r") as f:
+            banned_categories[filename[:-4]] = f.read().splitlines()
+
+# For allowed categories with explicit search lists :)
+search_lists = {}
+for filename in os.listdir("./server/categories/search_lists"):
+    if filename.endswith(".txt"):
+        with open("server/categories/search_lists/" + filename, "r") as f:
+            search_lists[filename[:-4]] = f.read().splitlines()
 
 ###########################
 # Helper functions below! #
@@ -72,7 +94,7 @@ scheduler = APScheduler()
 # Don't run article names through this function -- it will break them
 # This is mainly for usernames, game names, etc.
 def sanitize(string):
-    bad_chars = ["$", "{", "}", "[", "]", "(", ")", "<", ">", "'", '"', ";", ":", "/", "\\", "|", "?", "*", "+", "=", "&", "#", "%", "@", "!", "~", "`", "^", " "]
+    bad_chars = ["$", "{", "}", "[", "]", "(", ")", "<", ">", "'", '"', ";", ":", "/", "\\", "|", "?", "*", "+", "=", "&", "~", "`", "^",]
     for char in bad_chars:
         string = string.replace(char, "_")
     return(string)

@@ -40,6 +40,23 @@ function render_game_info(game) {
     } else {
         game_info_html += `!</p>`;
     }
+
+    // Add themes/bans to the HTML
+    if ("allowed_categories" in game.settings) {
+        if (game.settings["allowed_categories"][0]!= "") {
+            const allowed_categories = game.settings["allowed_categories"].filter((category) => category != "");
+            const theme_list = allowed_categories.map((category) => `<ins>${category}</ins>`).join(", ");
+            game_info_html += `<p> 📚 Only buy articles from the ${theme_list} Wikipedia ${allowed_categories.length > 1 ? "categories" : "category"} </p>`;   
+        }
+    }
+    if ("banned_categories" in game.settings) {
+        if (game.settings["banned_categories"][0]!= "") {
+            const banned_categories = game.settings["banned_categories"].filter((category) => category != "");
+            const ban_list = banned_categories.map((category) => `<ins>${category}</ins>`).join(", ");
+            game_info_html += `<p> 🚫 Don't buy articles from the ${ban_list} Wikipedia ${banned_categories.length > 1 ? "categories" : "category"} </p>`;
+        }
+    }
+
     return(game_info_html);
 }
 

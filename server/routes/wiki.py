@@ -4,7 +4,8 @@ from flask_login import login_required, current_user
 from pymongo import MongoClient
 from datetime import date, timedelta
 
-from server.helper import settings, cache, today_wiki
+from server.helper import settings, cache, today_wiki, allowed_categories, search_lists
+from server.models import Game
 
 # Functions for the actual game -- we don't really need these in other pages
 import server.WikiAPI as WikiAPI
@@ -12,9 +13,29 @@ import server.WikiAPI as WikiAPI
 wiki = Blueprint("wiki", __name__)
 
 @wiki.route("/api/search_article")
-@cache.cached(timeout=86400, query_string=True)
+@cache.cached(timeout=3600, query_string=True) 
+# Long time if the settings change but hopefully they don't
 def search_article():
     query = request.args.get("query")
+    game = Game.get_by_game_id(request.args.get("game_id"))
+
+    # Try to use the search lists
+    if "allowed_categories" in game.settings:
+        if "" not in game.settings["allowed_categories"]:
+            suggestions = []
+            unfound_search_lists = False
+            for category in game.settings["allowed_categories"]:
+                if category in search_lists:
+                    suggestions += search_lists[category]
+                else:
+                    unfound_search_lists = True
+                    break 
+            if not unfound_search_lists: # Only return suggestions if ALL categories have search lists
+                suggestions = [x for x in suggestions if query.lower() in x.lower()]
+                suggestions = sorted(suggestions, key=len)
+                return(jsonify(suggestions=suggestions))
+
+    # Use the default Wikipedia search
     if len(query) > 0:
         results = WikiAPI.search_article(query)
         if results:

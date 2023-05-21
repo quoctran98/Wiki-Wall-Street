@@ -3,7 +3,7 @@ from flask import request, Blueprint, render_template, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from datetime import datetime, timezone
 
-from server.helper import settings, cache, active_games_coll, sanitize
+from server.helper import settings, cache, active_games_coll, sanitize, allowed_categories, banned_categories
 from server.models import Game, Player, Transaction
 
 import server.WikiAPI as WikiAPI
@@ -27,11 +27,25 @@ def play():
         flash("You're not in this game. You must join it first.")
         return(redirect(url_for("main.index")))
     # Don't send any objects yet -- they'll be requested by the client (current_user)
-    return(render_template("play.html"))
+    return(render_template("play.html", allowed_categories=allowed_categories, banned_categories=banned_categories, user=current_user))
 
 @game.route("/api/create_game", methods=["POST"])
 @login_required
 def create_game():
+
+    # DON'T unpack the categories here -- it's done in the helper :)
+    this_allowed_categories = []
+    if "allowed_categories" in request.form:
+        this_allowed_categories = request.form.getlist("allowed_categories")
+    this_banned_categories = []
+    if "banned_categories" in request.form:
+        this_banned_categories = request.form.getlist("banned_categories")
+
+    # Make sure there's no overlap
+    if len(this_allowed_categories) > 0 and len(this_banned_categories) > 0:
+        flash("You can't have both allowed and banned categories.")
+        return(redirect(url_for("main.index")))
+
     # I should have GameSettings a class :)
     game_settings = {
         # if-elses just in case (backwards compatibility? probably not)
@@ -40,8 +54,19 @@ def create_game():
         "show_cash": True if "show_cash" in request.form else False,
         "show_articles": True if "show_articles" in request.form else False,
         "show_number": True if "show_number" in request.form else False,
+        "allowed_categories": this_allowed_categories,
+        "banned_categories": this_banned_categories,
     }
-    new_game_id = Game.create_game(sanitize(request.form["game_name"]),
+
+    # Make sure only one of these is there (one category can / must have empty string)
+    if "allowed_categories" in game_settings and "banned_categories" in game_settings:
+        no_allowed = all([x == "" for x in game_settings["allowed_categories"]])
+        no_banned = all([x == "" for x in game_settings["banned_categories"]])
+        if not (no_allowed or no_banned):
+            flash("You can't have both a theme AND banned categories.")
+            return(redirect(url_for("main.index")))
+
+    new_game_id = Game.create_game(request.form["game_name"], # don't want to sanitize this for now :)
                                    current_user.user_id, 
                                    game_settings,
                                    True if "public_game" in request.form else False)
@@ -65,17 +90,29 @@ def change_settings():
         flash("You can't change the settings of this game.")
         return(redirect(url_for("game.play", game_id=game_id)))
     else:
-        # I hate that I have to hardcode these settings -- probably a work around, but this is fine for now
+
+        # I have to for checkboxes since they don't get sent if they're not checked
         new_game_settings = {
-            # if-elses just in case (backwards compatibility? probably not) (required for checkboxes)
-            # Can't change the game name (outside of game_settings dict) or starting_cash
-            "starting_cash": float(this_game.settings["starting_cash"]) if "starting_cash" in this_game.settings else 100000, # This is to fix a mistake -- whoops!
-            "views_limit": int(request.form["views_limit"]) if "views_limit" in request.form else this_game.settings["views_limit"],
             "show_cash": True if "show_cash" in request.form else False,
             "show_articles": True if "show_articles" in request.form else False,
             "show_number": True if "show_number" in request.form else False,
         }
-        this_game.change_settings(new_game_settings)
+
+        # Add the categories if they're there -- we have to do all this manually ugh
+        if "allowed_categories" in request.form:
+            new_game_settings["allowed_categories"] = request.form.getlist("allowed_categories")
+        if "banned_categories" in request.form:
+            new_game_settings["banned_categories"] = request.form.getlist("banned_categories")
+
+        # Make sure only one of these is there (one category can / must have empty string)
+        if "allowed_categories" in new_game_settings and "banned_categories" in new_game_settings:
+            no_allowed = all([x == "" for x in new_game_settings["allowed_categories"]])
+            no_banned = all([x == "" for x in new_game_settings["banned_categories"]])
+            if not (no_allowed or no_banned):
+                flash("You can't have both a theme AND banned categories.")
+                return(redirect(url_for("game.play", game_id=game_id)))
+
+        this_game.change_settings(new_game_settings) # This will only change what's been changed :)
         return(redirect(url_for("game.play", game_id=game_id)))
     
 @game.route("/api/join_game", methods=["POST"])
@@ -111,8 +148,8 @@ def new_transaction():
         bug_message += f"\n\n REAL -1 | time: {real_time_before} | price: {real_price_before}"
         bug_message += f"\n\n DIFFERENCE | {abs(abs(real_price) - abs(float(tx_data['price'])))}"
         flash(bug_message)
-
         return(jsonify({"success": False}))
+    
     # Make sure the article is allowed to be bought
     # I guess that you should be allowed to sell anything just in case it dips after you buy it
     if not this_game.allowed_article(tx_data["article"]) and tx_data["quantity"] > 0:
@@ -182,15 +219,23 @@ def get_play_info():
         flash("Could not find game!")
         return(jsonify({"error": True}))
     else:
-        this_player_props = vars(this_player)
+        # Removing transactions and chats from the game object
+        # To speed up data transfer I hope?
+        this_game_props = vars(this_game)
+        this_game_props.pop("transactions")
+        this_game_props.pop("chats")
+
+        # Getting the player's portfolio value :)
         # (@property not included in vars(), so I have to do this)
+        this_player_props = vars(this_player)
         this_player_props["today_value"] = this_player.portfolio_value
         this_player_props["yesterday_value"] = this_player.yesterday_value
-        return(jsonify({"game": vars(this_game), "player": this_player_props}))
+
+        return(jsonify({"game": this_game_props, "player": this_player_props}))
 
 @game.route("/api/leaderboard")
 @login_required
-@cache.cached(timeout=300, query_string=True) # this should only change once a day
+@cache.cached(timeout=300, query_string=True)
 def leaderboard():
     game_id = request.args.get("game_id")
     game = Game.get_by_game_id(game_id)
@@ -201,13 +246,6 @@ def leaderboard():
     # Sort by value so leaderboard is in order for JS
     players.sort(key=lambda x: x["value"], reverse=True)
     return(jsonify({"players": players}))
-
-@game.route("/api/leave_game", methods=["POST"])
-@login_required
-def leave_game():
-    game = Game.get_by_game_id(request.form["game_id"])
-    player = Player.get_by_user_id(request.form["game_id"], current_user.user_id)
-    return(redirect(url_for("main.index")))
 
 @game.route("/api/get_invite_info")
 def get_invite_info():

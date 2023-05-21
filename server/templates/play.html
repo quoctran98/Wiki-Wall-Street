@@ -119,7 +119,7 @@
     </div>
 
     <!-- MODAL BODY -->
-    <div class="modal-body">
+    <div class="modal-body" style="overflow-y: scroll; max-height: 70vh;">
 
         <!-- Mimic the new game form with some things disabled :) -->
         <!-- DISABLED FIELDS AREN'T BEING SENT! -->
@@ -149,22 +149,62 @@
                 <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                 <input class="form-control" type="number" name="views_limit" id="settings-views-limit" min="1" readonly="true" value="">
             </div>
+
+            <hr>
+
+            <label for="settings-allowed">Themes (only articles in these categories are allowed)</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <select class="form-control" name="allowed_categories" id="settings-allowed" multiple="multiple" readonly="true">
+                    {% for category in allowed_categories %}
+                        <option value="{{ category }}" id="allowed-option-{{ category }}" disabled="true">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <label for="settings-banned">Banned Categories (use Ctrl/Cmd to select multiple)</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <select class="form-control" name="banned_categories" id="settings-banned" multiple="multiple" readonly="true">
+                    {% for category in banned_categories %}
+                        <option value="{{ category }}" id="banned-option-{{ category }}" disabled="true">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <script type="text/javascript">
+                // Disable the banned categories if any of the allowed categories are selected
+                document.getElementById("settings-allowed").addEventListener("change", function() {
+                    if (this.value) {
+                        document.getElementById("settings-banned").setAttribute("readonly", true);
+                        document.getElementById("settings-banned").selectedIndex = 0;
+                    } else {
+                        document.getElementById("settings-banned").removeAttribute("readonly");
+                        document.getElementById("settings-banned").value = "Default-Banlist";
+                    }
+                });
+            </script>
   
             <hr>
             
             <h6> Show Other Players':</h6>
   
             <div class="checkbox">
-                <label><input type="checkbox" name="show_cash" id="settings-show-cash" readonly="true"> Cash</label>
+                <label>
+                    <input type="checkbox" name="show_cash" id="settings-show-cash" disabled="true">
+                    <span style="color: #E5E5E5;" id="settings-show-cash-label"> Cash</span>
+                </label>
             </div>
   
             <div class="checkbox">
-                <label><input type="checkbox" name="show_articles" id="settings-show-articles" readonly="true"> Articles Owned</label>
+                <label>
+                    <input type="checkbox" name="show_articles" id="settings-show-articles" disabled="true"> 
+                    <span style="color: #E5E5E5;" id="settings-show-articles-label"> Articles</span>
+                </label>
             </div>
   
             <div class="checkbox">
                 <label >
-                    <input type="checkbox" name="show_number" id="settings-show-number" readonly="true">
+                    <input type="checkbox" name="show_number" id="settings-show-number" disabled="true">
                     <span style="color: #E5E5E5;" id="settings-show-number-label"> Number of Each Article</span>
                 </label>
             </div>
@@ -175,11 +215,17 @@
                 <label>
                     <!-- WHY DOES READONLY NOT WORK HERE? -->
                     <input type="checkbox" name="public_game" id="settings-public-game" disabled="true"> 
-                    <span style="color: #E5E5E5;"> Make Game Public</span>
+                    <span style="color: #E5E5E5;" id="settings-public-game-label"> Make Game Public</span>
                 </label>
             </div>
         </form>
 
+        <hr>
+
+        <div class="center">
+            <button type="button" class="btn btn-danger" id="settings-modal-delete-button" disabled="true">Delete Game</button>
+        </div>
+        
     </div>
     
     <!-- MODAL FOOTER -->
@@ -351,7 +397,7 @@
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-10">
-                <h3>Are you sure you want to leave the game?</h3>
+                <b>Are you sure you want to leave the game?</b>
             </div>
             <div class="col-md-2"></div>
         </div>
@@ -365,6 +411,37 @@
         </form>
         <button type="submit" class="btn btn-danger" id="leave-confirm-modal-leave-button" form="leave-confirm-modal-form">Leave Game</button>
         <button type="button" class="btn btn-secondary" id="leave-confirm-modal-close-button">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal" id="delete-confirm-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content modal-rounder-corners">
+
+    <!-- MODAL BODY -->
+    <div class="modal-body">
+        
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-10">
+                <b>Are you sure you want to delete the game?</b>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <form action="{{ url_for('admin.delete_game') }}" method="POST" id="delete-confirm-modal-form">
+            <input type="hidden" name="game_id" id="delete-confirm-modal-game-id" value="">
+        </form>
+        <button type="submit" class="btn btn-danger" id="delete-confirm-modal-delete-button" form="delete-confirm-modal-form">Delete Game</button>
+        <button type="button" class="btn btn-secondary" id="delete-confirm-modal-close-button">Close</button>
     </div>
 
     </div>

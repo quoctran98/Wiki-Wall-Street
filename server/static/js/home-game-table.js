@@ -102,18 +102,22 @@ async function populate_public_games() {
         name_cell.innerHTML = this_game.name;
         players_cell.innerHTML = this_game.players.join(", ");
         action_cell.innerHTML = `<button class="btn btn-primary"
-            onclick="open_join_game_modal('${this_game.game_id}');">Join</button>`;
+            data-toggle="modal" data-target="#join-game-modal"
+            onclick="open_join_game_modal('${this_game.game_id}')"
+            >Join</button>`;
     }
 }
 
 function open_join_game_modal(game_id) {
-    document.getElementById(JOIN_GAME_MODAL_GAME_ID).value = game_id;
-    document.getElementById(JOIN_GAME_MODAL_ID).style.display = "block";
-    blur_background();
-
-    // Click the search button to populate the search results for the user
-    document.getElementById(JOIN_GAME_MODAL_SEARCH).click(); // Defined in home-game-modals.js
+    $("#join-game-modal #join-game-modal-game-id").val(game_id);
+    $("#join-game-modal #join-game-modal-search").click();
 }
 
-populate_joined_games();
-populate_public_games();
+$(document).ready(function() {
+    $("#join-game-modal").on('shown.bs.modal', function () {
+        
+    });
+
+    populate_joined_games();
+    populate_public_games();
+});
