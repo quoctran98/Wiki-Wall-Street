@@ -1,0 +1,149 @@
+<div class="modal" id="new-game-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content modal-rounder-corners">
+  
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h4 class="modal-title">Create a New Game</h4>
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+    </div>
+  
+    <!-- MODAL BODY -->
+    <div class="modal-body modal-scroll">
+        <form action="{{ url_for('game.create_game') }}" method="POST" id="new-game-form">
+            <input type="hidden" name="user_id" value="{{ current_user.id }}">
+
+            <label for="game-name">Game Name</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi-card-text"></i></span>
+                <input class="form-control" type="text" name="game_name" placeholder="New Game" autofocus="" id="game-name">
+            </div>
+            
+            <label for="starting-cash">Starting Cash</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi-cash-coin"></i></span>
+                <input class="form-control" type="number" name="starting_cash" id="starting-cash" value="100000">
+            </div>
+  
+            <label for="views-limit">Pageviews Lower Limit</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi-eye"></i></span>
+                <input class="form-control" type="number" name="views_limit" id="views-limit" min="1" value="10">
+            </div>
+  
+            <hr>
+  
+            <label for="allowed">Themes (only articles in these categories are allowed)</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <select class="form-control" name="allowed_categories" id="allowed" multiple="multiple">
+                    {% for category in allowed_categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <script type="text/javascript">
+              // Select the first (blank) option by default
+              $(document).ready(function() {
+                    $("#new-game-modal #allowed").val("");
+              });
+            </script>
+  
+            <br>
+  
+            <label for="banned">Banned Categories (use Ctrl/Cmd to select multiple)</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <select class="form-control" name="banned_categories" id="banned" multiple="multiple">
+                    {% for category in banned_categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <script type="text/javascript">
+              // Select the "Default-Banlist" option by default
+              $(document).ready(function() {
+                    $("#new-game-modal #banned").val("Default-Banlist");
+              });
+
+              // Disable the banned categories if any of the allowed categories are selected
+              $(document).ready(function() {
+                $("#allowed").change(function() {
+                    console.log($("#allowed").val());
+                    if ($("#new-game-modal #allowed").val()[0] == "") {
+                        $("#new-game-modal #banned").val("");
+                        $("#new-game-modal #banned").prop("disabled", true);
+                    } else {
+                        $("#new-game-modal #banned").prop("disabled", false);
+                        $("#new-game-modal #banned").val("Default-Banlist");
+                    }
+                });
+              });
+            </script>
+  
+            <hr>
+            
+            <h6> Show Other Players':</h6>
+  
+            <div class="checkbox">
+                <label><input type="checkbox" name="show_cash"> Cash</label>
+            </div>
+  
+            <div class="checkbox">
+                <label><input type="checkbox" name="show_articles" id="show-articles"> Articles Owned</label>
+            </div>
+  
+            <div class="checkbox">
+                <label >
+                    <input type="checkbox" name="show_number" id="show-number" disabled="true">
+                    <span style="color: #E5E5E5;" id="show-number-label"> Number of Each Article</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+                // Disable the "Number of Each Article" checkbox if the "Articles Owned" checkbox is not checked
+                $(document).ready(function() {
+                    $('#show-articles').change(function() {
+                        if (this.checked) {
+                            $("#new-game-modal #show-number").prop("disabled", false);
+                            $("#new-game-modal #show-number-label").css("color", "#000000");
+                        } else {
+                            $("#new-game-modal #show-number").prop("checked", false);
+                            $("#new-game-modal #show-number").attr("disabled", true);
+                            $("#new-game-modal #show-number-label").css("color", "#E5E5E5");
+                        }
+                        });
+                });
+              </script>
+  
+            <hr>
+  
+            <div class="checkbox">
+                <label><input type="checkbox" name="public_game"> Make Game Public</label>
+            </div>
+      </form>
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="create-button" form="new-game-form" disabled="true">Create</button>
+        <script type="text/javascript">
+            // Disable the "Create" button if the game name is empty
+            $(document).ready(function() {
+                $("#new-game-modal #game-name").keyup(function() {
+                    if ($(this).val() != '') {
+                        $("#new-game-modal #create-button").removeAttr('disabled');
+                    } else {
+                        $("#new-game-modal #create-button").attr('disabled', true);
+                    }
+                });
+            });
+        </script>
+    </div>
+  
+    </div>
+    </div>
+</div>

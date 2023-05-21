@@ -49,22 +49,16 @@
 {% else %}
 
   {% if current_user.joined_games|length == 0 %}
+
     <h3>
       You're not in any games! Create a new game or join a public game to get started!
     </h3>
-
-    <p>
-      <button id="new-game-button" class="btn btn-primary" data-toggle="modal" data-target="#new-game-modal">Create a New Game</button>
-      <button id="join-game-button" class="btn btn-primary" data-toggle="modal" data-target="#join-game-modal">Join a Private Game</button>
-    </p>
-  
     <hr>
+
   {% else %}
 
   <div>
-
     <hr>
-
     <h2>Your Games!</h2>
     <table class="table table-striped" id="joined-games-table">
       <tr>
@@ -82,14 +76,14 @@
     </table>
   </div>
 
+  {% endif %}
+
   <p>
-    <button id="new-game-button" class="btn btn-primary" data-toggle="modal" data-target="#new-game-modal">Create a New Game</button>
-    <button id="join-game-button" class="btn btn-primary" data-toggle="modal" data-target="#join-game-modal">Join a Private Game</button>
+    <button id="new-game-button" class="btn btn-primary" data-toggle="modal" data-target="#new-game-modal"><i class="bi-joystick"></i>  Create a Game</button>
+    <button id="join-game-button" class="btn btn-primary" data-toggle="modal" data-target="#join-game-modal"><i class="bi-person-plus"></i> Join a Game</button>
   </p>
 
   <hr>
-
-  {% endif %}
 
   <div>
     <h2>Public Games!</h2>
@@ -108,179 +102,7 @@
 
 </div>
 
-<!-- NEW GAME MODAL -->
-<div class="modal" id="new-game-modal">
-  <div class="modal-dialog" role="document">
-  <div class="modal-content modal-rounder-corners">
-
-  <!-- MODAL HEADER -->
-  <div class="modal-header">
-      <h5 class="modal-title">CREATE NEW GAME!</h5>
-
-      <!-- CLOSE BUTTON -->
-      <button type="button" class="close" id="new-game-modal-close" data-dismiss="modal">
-        <span aria-hidden="true">&times;</span>
-      </button>
-  </div>
-
-  <!-- MODAL BODY -->
-  <div class="modal-body" style="max-height:70vh; overflow-y:scroll;">
-      <form action="{{ url_for('game.create_game') }}" method="POST" id="new-game-modal-form">
-          <input type="hidden" name="user_id" value="{{ current_user.id }}">
-
-          <label for="new-game-modal-game-name">Game Name</label>
-          <div class="input-group">
-              <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-              <input class="form-control" type="text" name="game_name" placeholder="New Game" autofocus="" id="new-game-modal-game-name">
-          </div>
-          
-          <label for="new-game-modal-starting-cash">Starting Cash</label>
-          <div class="input-group">
-              <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-              <input class="form-control" type="number" name="starting_cash" id="new-game-modal-starting-cash" value="1000000">
-          </div>
-
-          <label for="new-game-modal-views-limit">Pageviews Lower Limit</label>
-          <div class="input-group">
-              <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-              <input class="form-control" type="number" name="views_limit" id="new-game-modal-views-limit" min="1" value="10">
-          </div>
-
-          <hr>
-
-          <label for="new-game-modal-allowed">Themes (only articles in these categories are allowed)</label>
-          <div class="input-group">
-              <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-              <select class="form-control" name="allowed_categories" id="new-game-modal-allowed" multiple="multiple">
-                  {% for category in allowed_categories %}
-                      <option value="{{ category }}">{{ category }}</option>
-                  {% endfor %}
-              </select>
-          </div>
-          <script type="text/javascript">
-            document.getElementById("new-game-modal-allowed").selectedIndex = 0;
-          </script>
-
-          <label for="new-game-modal-banned">Banned Categories (use Ctrl/Cmd to select multiple)</label>
-          <div class="input-group">
-              <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-              <select class="form-control" name="banned_categories" id="new-game-modal-banned" multiple="multiple">
-                  {% for category in banned_categories %}
-                      <option value="{{ category }}" {{ 'selected' if category=='Default-Banlist' else '' }}>{{ category }}</option>
-                  {% endfor %}
-              </select>
-          </div>
-          <script type="text/javascript">
-            // Disable the banned categories if any of the allowed categories are selected (must be readonly!)
-            document.getElementById("new-game-modal-allowed").addEventListener("change", function() {
-              if (this.value) {
-                  document.getElementById("new-game-modal-banned").setAttribute("readonly", true);
-                  document.getElementById("new-game-modal-banned").selectedIndex = 0;
-              } else {
-                  document.getElementById("new-game-modal-banned").removeAttribute("readonly");
-                  document.getElementById("new-game-modal-banned").value = "Default-Banlist";
-              }
-            });
-          </script>
-
-          <hr>
-          
-          <h6> Show Other Players':</h6>
-
-          <div class="checkbox">
-              <label><input type="checkbox" name="show_cash"> Cash</label>
-          </div>
-
-          <div class="checkbox">
-              <label><input type="checkbox" name="show_articles" id="new-game-show-articles"> Articles Owned</label>
-          </div>
-
-          <div class="checkbox">
-              <label >
-                  <input type="checkbox" name="show_number" id="new-game-show-number" disabled="true">
-                  <span style="color: #E5E5E5;" id="new-game-show-number-label"> Number of Each Article</span>
-              </label>
-          </div>
-
-          <hr>
-
-          <div class="checkbox">
-              <label><input type="checkbox" name="public_game"> Make Game Public</label>
-          </div>
-    </form>
-  </div>
-  
-  <!-- MODAL FOOTER -->
-  <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" id="new-game-modal-cancel" data-dismiss="modal">Cancel</button>
-      <button type="submit" class="btn btn-primary" id="new-game-modal-create" form="new-game-modal-form" disabled="true">Create</button>
-  </div>
-
-  </div>
-  </div>
-  <script type="text/javascript">
-    // Disable the "Number of Each Article" checkbox if the "Articles Owned" checkbox is not checked
-    document.getElementById("new-game-show-articles").addEventListener("change", function() {
-      if (this.checked) {
-          document.getElementById("new-game-show-number").removeAttribute("disabled");
-          document.getElementById("new-game-show-number-label").style.color = "black";
-      } else {
-          document.getElementById("new-game-show-number").setAttribute("disabled", true);
-          document.getElementById("new-game-show-number-label").style.color = "#E5E5E5";
-          document.getElementById("new-game-show-number").checked = false
-      }
-    });
-
-    // Disable the "Create" button if the game name is empty
-    document.getElementById("new-game-modal-game-name").addEventListener("input", function() {
-    if (this.value) {
-        document.getElementById("new-game-modal-create").disabled = false;
-    } else {
-        document.getElementById("new-game-modal-create").disabled = true;
-    }
-});
-  </script>
-</div>
-
-<!-- JOIN GAME MODAL -->
-<div class="modal" id="join-game-modal">
-  <div class="modal-dialog" role="document">
-  <div class="modal-content modal-rounder-corners">
-
-  <!-- MODAL HEADER -->
-  <div class="modal-header">
-      <h5 class="modal-title">JOIN GAME!</h5>
-
-      <!-- CLOSE BUTTON -->
-      <button type="button" class="close" id="join-game-modal-close" data-dismiss="modal">
-        <span aria-hidden="true">&times;</span>
-      </button>
-  </div>
-
-  <!-- MODAL BODY -->
-  <div class="modal-body">
-      <form action="{{ url_for('game.join_game') }}" method="POST" id="join-game-modal-form">
-          <input type="hidden" name="user_id" value="{{ current_user.id }}">
-          <input type="text" name="game_id" id="join-game-modal-game-id" placeholder="Game ID">
-          <button id="join-game-modal-search" type="button" class="btn btn-primary">Search</button>
-      </form>
-
-      <div id="join-game-modal-info">
-          <p>Enter a game ID!</p>
-      </div>
-  </div>
-  
-  <!-- MODAL FOOTER -->
-  <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" id="join-game-modal-cancel" data-dismiss="modal">Cancel</button>
-      <button type="submit" class="btn btn-primary" id="join-game-modal-join" form="join-game-modal-form" disabled="true">Join</button>
-  </div>
-
-  </div>
-  </div>
-  <script type="text/javascript" src="{{url_for('static', filename='js/home-join-modal.js')}}"></script>
-</div>
-
-<!-- <script src="{{url_for('static', filename='js/home-game-modals.js')}}"></script> -->
+{% include "modals/new-game.html" %}
+{% include "modals/join-game.html" %}
 
 {% endblock %}

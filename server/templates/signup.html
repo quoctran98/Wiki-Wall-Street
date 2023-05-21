@@ -9,26 +9,29 @@
 
     <div class="col-md-4">
         <h3 class="title">Sign Up</h3>
+        <br>
         <div class="box">
             <form method="POST" action="/signup">
 
                 <input type="hidden" id="next" name="next" value="">
 
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                    <span class="input-group-text"><i class="bi-envelope"></i></span>
                     <input class="form-control" type="email" name="email" placeholder="Email" autofocus="">
                 </div>
                 
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <span class="input-group-text"><i class="bi-person"></i></span>
                     <input class="form-control" type="text" name="name" placeholder="Username">
                     <!-- CALLING IT A USERNAME, BUT IT'S "NAME" EVERYWHERE ELSE IN THE CODE-->
                 </div>
 
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    <span class="input-group-text"><i class="bi-lock"></i></span>
                     <input class="form-control" type="password" name="password" placeholder="Password">
                 </div>
+
+                <br>
                 
                 <button class="btn btn-primary">Sign Up</button>
                 

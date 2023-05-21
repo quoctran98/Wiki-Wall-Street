@@ -40,7 +40,8 @@ async function add_game_row (game_id, joined_games_table, total_games) {
     players_cell.innerHTML = game.players.join(", ");
     change_cell.innerHTML = `${(daily_change > 0)? "📈" : "📉"} ${daily_change}%`
     action_cell.innerHTML = `<button class="btn btn-primary" 
-        onclick="window.location.href='/play?game_id=${game.game_id}'">Play</button>`;
+        onclick="window.location.href='/play?game_id=${game.game_id}'">
+    <i class="bi-joystick"></i> Play</button>`;
     
     // Remove the loading row if this is the last game
     if (n_rows == total_games + 1) {
@@ -101,23 +102,16 @@ async function populate_public_games() {
 
         name_cell.innerHTML = this_game.name;
         players_cell.innerHTML = this_game.players.join(", ");
-        action_cell.innerHTML = `<button class="btn btn-primary"
+        action_cell.innerHTML = `
+        <button class="btn btn-primary"
             data-toggle="modal" data-target="#join-game-modal"
-            onclick="open_join_game_modal('${this_game.game_id}')"
-            >Join</button>`;
+            onclick="preload_join_game('${this_game.game_id}')" // Defined in modals/join-game.html>
+        <i class="bi-person-plus"></i> Join</button>`;
     }
 }
 
-function open_join_game_modal(game_id) {
-    $("#join-game-modal #join-game-modal-game-id").val(game_id);
-    $("#join-game-modal #join-game-modal-search").click();
-}
 
 $(document).ready(function() {
-    $("#join-game-modal").on('shown.bs.modal', function () {
-        
-    });
-
     populate_joined_games();
     populate_public_games();
 });

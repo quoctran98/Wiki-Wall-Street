@@ -1,0 +1,106 @@
+<div class="modal" id="join-game-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content modal-rounder-corners">
+  
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h4 class="modal-title">Join a game</h4>
+  
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+  
+    <!-- MODAL BODY -->
+    <div class="modal-body modal-scroll">
+
+        <!-- FORM FOR SEARCHING FOR A GAME -->
+        <form action="{{ url_for('game.join_game') }}" method="POST" id="join-game-form">
+            <input type="hidden" name="user_id" value="{{ current_user.id }}">
+            <div class="input-group" style="display:flex;">
+                <span class="input-group-text"><i class="bi-joystick"></i></span>
+                <input type="text" name="game_id" id="game-id" placeholder="Enter a game ID" style="flex:1;" autofocus="">
+                <button id="search-button" type="button" class="btn btn-primary"><i class="bi-search"></i> Search</button>
+            </div>
+        </form>
+
+        <hr>
+
+        <!-- GAME INFO -->
+        <div id="game-info"></div>
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="join-button" form="join-game-form" disabled="true">Join</button>
+    </div>
+  
+    </div>
+    </div>
+
+    <!-- GAME INFO LOGIC -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Search for a game when the search button is clicked
+            $("#join-game-modal #search-button").click(function() {
+                search_game($("#join-game-modal #game-id").val());
+            });
+            // or the enter key is pressed in the search box
+            $("#join-game-modal #game-id").keypress(function(e) {
+                if (e.which == 13) { // Enter key
+                    search_game($("#join-game-modal #game-id").val());
+                }
+            });
+            // Disable the join button if the game ID is changed (and renable search button)
+            $("#join-game-modal #game-id").on("input", function() {
+                $("#join-game-modal #search-button").prop("disabled", false);
+                $("#join-game-modal #join-button").prop("disabled", true);
+            });
+        });
+    </script>
+
+    <!-- FUNCTIONS FOR POPULATING THE MODAL :) -->
+    <script type="text/javascript">
+
+        // Search for a game 
+        function search_game(game_id) {
+            // Replace the game info with a loading icon
+            $("#game-info").html(`Loading game information <img class="inline-image" src="/static/img/loading.gif" alt="Loading spinner">`);
+            // Get the game information from the server (this should work for the join game and invite game pages -- same modal!)
+            fetch("/api/get_invite_info?game_id=" + game_id)
+            .then((response) => response.json())
+            .then((game_res) => {
+                const game = game_res.game;
+                if (game) {
+                    $("#join-game-modal #game-info").html(render_game_info(game)); // defined in server/templates/js/main.js
+                    $("#join-game-modal #join-button").prop("disabled", false);
+                    $("#join-game-modal #search-button").prop("disabled", true);
+                } else {
+                    $("#join-game-modal #game-info").html(`<p><span class="text-danger">No game found with Game ID:</span> <ins>${game_id}</ins></p>`);
+                    $("#join-game-modal #join-button").prop("disabled", true);
+                    $("#join-game-modal #search-button").prop("disabled", true);
+                }
+            });
+        }
+        
+        // Load a game into the modal
+        // Should this be in the main.js file?
+        function preload_join_game(game_id) {
+            $("#join-game-modal #game-id").val(game_id);
+            $("#join-game-modal #search-button").click();
+        }
+
+
+        // Reset everything when the modal is closed
+        $("#join-game-modal").on("hidden.bs.modal", function() {
+            $("#join-game-modal #game-id").val("");
+            $("#join-game-modal #game-info").html("");
+            $("#join-game-modal #join-button").prop("disabled", true);
+            $("#join-game-modal #search-button").prop("disabled", true);
+        });
+
+</script>
+</div>

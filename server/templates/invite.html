@@ -25,7 +25,7 @@
 
 {% if current_user.is_authenticated %}
 
-<button id="join-game-button" class="btn btn-primary" disabled="true">Join Game</button>
+<button id="join-game-button" class="btn btn-primary" disabled="true" data-toggle="modal" data-target="#join-game-modal"><i class="bi-person-plus"></i> Join Game</button>
 
 {% else %}
 
@@ -37,44 +37,10 @@
 
 </div>
 
-<!-- JOIN GAME MODAL -->
-<div class="modal" id="join-game-modal">
-    <div class="modal-dialog" role="document">
-    <div class="modal-content modal-rounder-corners">
-  
-    <!-- MODAL HEADER -->
-    <div class="modal-header">
-        <h5 class="modal-title">JOIN GAME!</h5>
-  
-        <!-- CLOSE BUTTON -->
-        <button type="button" class="close" id="join-game-modal-close" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-  
-    <!-- MODAL BODY -->
-    <!-- slightly different than the main page :) -->
-    <div class="modal-body">
-        <form action="{{ url_for('game.join_game') }}" method="POST" id="join-game-modal-form">
-            <input type="hidden" name="user_id" value="{{ current_user.id }}">
-            <input type="text" name="game_id" id="join-game-modal-game-id" readonly="true" placeholder="Game ID">
-        </form>
-  
-        <div id="join-game-modal-info">
-            <p>Enter a game ID!</p>
-        </div>
-    </div>
-    
-    <!-- MODAL FOOTER -->
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="join-game-modal-cancel">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="join-game-modal-join" form="join-game-modal-form">Join</button>
-    </div>
-  
-    </div>
-    </div>
-  </div>
+{% include "modals/join-game.html" %}
 
+<!-- SCRIPT FOR REDIRECTS AND LOADING GAME INFO ON THE PAGE :) -->
+<!-- modals/join-game.html also contains its own logic -->
 <script src="{{ url_for('static', filename='js/invite-page.js') }}"></script>
 
 {% endblock %}

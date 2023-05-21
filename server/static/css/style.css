@@ -50,13 +50,11 @@
   white-space: nowrap;
 }
 
-
 .portfolio-card:hover {
   border-color: #000000;
   color: #ffffff;
   background-color: #4668ff;
 }
-
 
 .trending-card {
   position: relative;
@@ -118,4 +116,9 @@
 .modal-rounder-corners {
   border-radius: 1.5rem;
   border: 2px solid;
+}
+
+.modal-scroll {
+  max-height: 70vh;
+  overflow-y: scroll;
 }

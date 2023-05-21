@@ -9,14 +9,27 @@
     
     <div class="col-md-4">
         <h3 class="title">Login</h3>
+        <br>
         <div class="box">
             <form method="POST" action="/login">
                 <input type="hidden" id="next" name="next" value="{{ next }}">
-                <input class="form-control" type="email" name="email" placeholder="Email" autofocus="">
-                <input class="form-control" type="password" name="password" placeholder="Password">
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi-envelope"></i></span>
+                    <input class="form-control" type="email" name="email" placeholder="Email" autofocus="">
+                </div>
+                
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi-lock"></i></span>
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+
                 <div class="checkbox">
                     <label><input type="checkbox" name="remember"> Remember me</label>
                 </div>
+
+                <br>
+                
                 <button class="btn btn-primary">Login</button>
             </form>
         </div>
