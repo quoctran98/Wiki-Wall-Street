@@ -240,8 +240,8 @@ class Player():
 
         # Add daily and weekly values to the public dictionary
         # Use today_wiki() so these values also only update at UPDATE_HOUR_UTC
-        yesterday = today_wiki() - timedelta(days=1)
-        last_week = today_wiki() - timedelta(days=7)
+        yesterday = today_wiki() - timedelta(days=2)
+        last_week = today_wiki() - timedelta(days=8)
         yesterday_value = None
         last_week_value = None
         for value in self.value_history:
