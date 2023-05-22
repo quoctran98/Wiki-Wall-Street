@@ -297,7 +297,7 @@ class Player():
         if len(self.value_history) == 0:
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}})
-        elif self.value_history[-1]["timestamp"] < this_value["timestamp"]:
+        elif self.value_history[-1]["timestamp"].timestamp() < this_value["timestamp"].timestamp():
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}})   
 
