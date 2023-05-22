@@ -108,3 +108,9 @@ function render_game_info(game) {
 
     return(game_info_html);
 }
+
+// Ugh, this is such a bad way to prevent XSS attacks
+// Used mainly when rendering chat messages
+function escape_html(unsafe) {
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}

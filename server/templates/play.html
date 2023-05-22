@@ -18,7 +18,7 @@
     <div class="col-md-4">
         <button class="btn btn-primary float-right" style="margin:0.1rem;" onclick="show_game_settings_modal();" id="game-settings-open-button" disabled="true"><i class="bi-gear"></i></button>
         <button class="btn btn-primary float-right" style="margin:0.1rem;" onclick="show_players_modal();" id="players-modal-open-button" disabled="true"><i class="bi-people"></i></button>
-        <button class="btn btn-primary float-right" style="margin:0.1rem;" onclick="show_chat_modal();" id="chat-modal-open-button" disabled="true"><i class="bi-chat-dots"></i></button>
+        <button class="btn btn-primary float-right" style="margin:0.1rem;" data-toggle="modal" data-target="#chat-modal"  id="chat-modal-open-button" disabled="true"><i class="bi-chat-dots"></i></button>
     </div> 
 </div>
 
@@ -285,65 +285,7 @@
     </div>
 </div>
 
-<!-- CHAT MODAL -->
-<div class="modal" id="chat-modal">
-    <div class="modal-dialog" role="document">
-    <div class="modal-content modal-rounder-corners">
-
-    <!-- MODAL HEADER -->
-    <div class="modal-header">
-        <h5 id="chat-modal-title">CHAT!</h5>
-
-        <!-- CLOSE BUTTON -->
-        <button type="button" class="close" id="chat-modal-close-symbol" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-
-    <!-- MODAL BODY -->
-    <div class="modal-body">
-        
-        <div class="row">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-                <div class="chat-container" id="chat-modal-main">
-                    
-                </div>
-            </div>
-            <div class="col-md-1"></div>
-        </div>
-
-        <hr>
-
-        <!-- FORM FOR CHAT -->
-        <!-- will be handled with javascript not by the form POST action :) -->
-        <div class="row">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-            <form id="chat-form">
-                <input type="hidden" name="user_id" id="chat-form-user-id" value="{{ current_user.user_id }}">
-                <input type="hidden" name="game_id" id="chat-form-game-id" value="">
-                <input type="hidden" name="name" id="chat-form-name" value="">
-
-                <input type="text" name="message" id="chat-form-message" placeholder="Type a message...">
-                <button type="submit" class="btn btn-primary" id="chat-form-send-button">Send</button>
-
-            </form>
-            </div>
-            <div class="col-md-1"></div>
-        </div>
-        
-
-    </div>
-    
-    <!-- MODAL FOOTER -->
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="chat-modal-close-button">Close</button>
-    </div>
-
-    </div>
-    </div>
-</div>
+{% include "modals/chat.html" %}
 
 <!-- PLAYERS MODAL -->
 <div class="modal" id="players-modal">

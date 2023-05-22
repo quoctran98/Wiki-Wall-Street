@@ -1,0 +1,60 @@
+<div class="modal" id="chat-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content modal-rounder-corners">
+
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h5 id="title">Chat!</h5>
+
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- MODAL BODY -->
+    <!-- Not using modal scroll here because the message send form should stay visible -->
+    <div class="modal-body">
+        
+        <!-- CHAT MESSAGES -->
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <div class="chat-container" id="main-messages"></div>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+        <hr>
+
+        <!-- FORM FOR SENDING MESSAGE -->
+        <!-- will be handled with javascript not by the form POST action :) -->
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+            <form id="chat-form">
+                <input type="hidden" name="user_id" id="user-id" value="{{ current_user.user_id }}">
+                <input type="hidden" name="game_id" id="game-id" value="">
+                <input type="hidden" name="name" id="name" value="">
+            
+                <div class="input-group" style="display:flex;">
+                    <input type="text" name="message" id="message" placeholder="Type a message..." style="flex:1">
+                    <button type="submit" class="btn btn-primary" id="send-button"><i class="bi-send-fill"></i></button>
+                </div>
+
+            </form>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+        
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>

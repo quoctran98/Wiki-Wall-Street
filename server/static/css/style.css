@@ -97,12 +97,26 @@
   text-overflow: ellipsis;
 }
 
-.chat-message-timestamp {
+.chat-timestamp {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  padding: 0.25rem 1rem;
-  margin: 0.25rem 0rem;
+  color: gray;
+  font-size: 60%;
+  
+  top: 0.25rem;
+  right: 0.7rem;
+}
+
+.chat-options {
+  position: absolute;
+  float: right;
+
+  bottom: 0.25rem;
+  right: 0.7rem;
+}
+
+.chat-options:hover {
+  color: #c13030;
+  cursor: pointer;
 }
 
 .blurred-container{

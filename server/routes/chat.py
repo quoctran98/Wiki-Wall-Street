@@ -24,9 +24,12 @@ def see_chat():
     # Get the chat messages and sort them :)
     chat_messages = chat_coll.find().sort("timestamp", -1).limit(100)
     chat_messages = list(chat_messages)[::-1]
+    # Filter out the deleted messages (if that key exists and is True)
+    chat_messages = [m for m in chat_messages if not m.get("deleted", False)]
     chat_messages = [{"name": m["name"], 
-                      "message": m["message"], 
-                      "timestamp": m["timestamp"].strftime("%Y-%m-%d %H:%M:%S")} for m in chat_messages]
+                      "message": m["message"],
+                      "timestamp": m["timestamp"].strftime("%Y-%m-%d %H:%M:%S"),
+                      "chat_id": m["chat_id"]} for m in chat_messages]
     # Turn the list of dicts into a way to send to the client
     return(jsonify({"messages": chat_messages}))
 
@@ -41,3 +44,15 @@ def send_chat():
         return(jsonify({"error": "You're not in this game. You must join it first."}))
     chat_id = Chat.send_chat(game_id, current_user.user_id, request.form["message"])
     return(jsonify({"chat_id": chat_id}))
+
+@chat.route("/api/delete_chat", methods=["DELETE"])
+@login_required
+def delete_chat():
+    data = json.loads(request.data.decode("utf-8"))
+    chat_id = data["chat_id"]
+    game_id = data["game_id"]
+    this_chat = Chat.get_by_chat_id(game_id, chat_id)
+    if this_chat.user_id != current_user.user_id:
+        return(jsonify({"error": "You can only delete your own messages."}))
+    this_chat.delete_chat(game_id, chat_id)
+    return(jsonify({"success": True}))

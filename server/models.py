@@ -478,13 +478,22 @@ class Transaction():
         return(tx_id)
 
 class Chat():
-    def __init__(self, chat_id, game_id, user_id, name, message, timestamp):
+    def __init__(self, chat_id, user_id, name, message, timestamp, game_id=None, deleted=False):
         self.chat_id = chat_id
-        self.game_id = game_id
+        self.game_id = game_id # Whoops a lot of messages don't have this
         self.user_id = user_id
         self.name = name
         self.message = message
         self.timestamp = timestamp
+        self.deleted = deleted
+
+    @classmethod
+    def delete_chat(cls, game_id, chat_id):
+        """Delete a chat from the game."""
+        # Update the chat in the chats collection
+        chats_db[game_id].update_one({"chat_id": chat_id}, {"$set": {"deleted": True}})
+        # Remove the chat from the game's chats list
+        active_games_coll.update_one({"game_id": game_id}, {"$pull": {"chats": chat_id}})
 
     @classmethod
     def get_by_chat_id(cls, game_id, chat_id):
@@ -509,6 +518,9 @@ class Chat():
             "name": User.get_by_user_id(user_id).name if name is None else name,
             "message": message,
             "timestamp": datetime.now(timezone.utc),
+            "game_id": game_id,
+            "deleted": False,
         })
         return(chat_id)
+    
     
