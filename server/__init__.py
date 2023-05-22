@@ -10,7 +10,7 @@ from flask import Flask
 from flask_login import LoginManager
 from datetime import datetime, timezone
 
-from server.helper import settings, cache_config, cache, scheduler, active_games_coll, players_db
+from server.helper import settings, cache_config, cache, scheduler, active_games_coll, players_db, today_wiki
 from server.models import User, Player
 
 def create_app():
@@ -39,8 +39,8 @@ def create_app():
                 this_player = Player.get_by_player_id(game["game_id"], player["player_id"])
                 this_player.update_value_history()
                 n_players += 1
-        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-        print(f"Updated value history for {n_players} players in {n_games} games at {timestamp} ⏰")
+        timestamp = today_wiki().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time) ⏰")
 
     # Set up scheduler
     scheduler.init_app(app)
@@ -54,6 +54,8 @@ def create_app():
         # Run every 12 hours even though today_wiki() should make it so it won't actually update a player's value more than once a day :)
         scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="interval", hours=12)
         print("Scheduler started! ⏰")
+        # Let's run it once right now to make sure it works
+        update_all_portfolio_vals()
 
     # Blueprint for auth routes from routes/auth.py
     from .routes.auth import auth as auth_blueprint
