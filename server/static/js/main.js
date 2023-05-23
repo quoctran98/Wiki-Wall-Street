@@ -21,6 +21,7 @@ function format_price(p, imprecise=false) {
             return("<i class='bi-cash-coin'></i> " + (p / 1000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "M")
         } else if (p < 1000000000000) {
             return("<i class='bi-cash-coin'></i> " + (p / 1000000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "B")
+        }
     }
     return("<i class='bi-piggy-bank-fill'></i> " + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 }
@@ -43,6 +44,7 @@ function format_value(p, imprecise=false) {
             return("<i class='bi-piggy-bank-fill'></i> " + (p / 1000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "M")
         } else if (p < 1000000000000) {
             return("<i class='bi-piggy-bank-fill'></i> " + (p / 1000000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "B")
+        }
     }
     return("<i class='bi-piggy-bank-fill'></i> " + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 }
