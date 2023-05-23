@@ -47,7 +47,7 @@ function generate_trending_card(article, index) {
         <div class="card trending-card">
             <div id="${graph_div_id}" style="width: 100%; height: 3em;"></div>
             <h5 class="card-title">${article.article}</h5>
-            <p class="card-text">${Math.round(article.today_views/1000)}k 
+            <p class="card-text">${format_price(article.today_views, imprecise=true)}
             (${(weekly_change > 0)? "📈" : "📉"} ${weekly_change}%)
             </p>
         </div>

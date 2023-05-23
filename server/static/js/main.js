@@ -4,22 +4,45 @@
 */
 
 // This is used a lot, so let's just define it here
-function format_price(p) {
+function format_price(p, imprecise=false) {
     // Round the price to the nearest integer or at least 3 significant figures
     if (p < 1000) {
         p = Math.round(p);
     } else {
         p = Math.round(p / 100) * 100;
     }
-    return("<i class='bi-cash-coin'></i> " + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+    // If the value can be imprecise, use k, M, B, T, etc.
+    if (imprecise) {
+        if (p < 1000) {
+            return("<i class='bi-cash-coin'></i> " + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+        } else if (p < 1000000) {
+            return("<i class='bi-cash-coin'></i> " + (p / 1000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "k")
+        } else if (p < 1000000000) {
+            return("<i class='bi-cash-coin'></i> " + (p / 1000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "M")
+        } else if (p < 1000000000000) {
+            return("<i class='bi-cash-coin'></i> " + (p / 1000000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "B")
+    }
+    return("<i class='bi-piggy-bank-fill'></i> " + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 }
 
-function format_value(p) {
+function format_value(p, imprecise=false) {
     // Round the price to the nearest integer or at least 3 significant figures
     if (p < 1000) {
         p = Math.round(p);
     } else {
         p = Math.round(p / 100) * 100;
+    }
+
+    // If the value can be imprecise, use k, M, B, T, etc.
+    if (imprecise) {
+        if (p < 1000) {
+            return("<i class='bi-piggy-bank-fill'></i> " + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+        } else if (p < 1000000) {
+            return("<i class='bi-piggy-bank-fill'></i> " + (p / 1000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "k")
+        } else if (p < 1000000000) {
+            return("<i class='bi-piggy-bank-fill'></i> " + (p / 1000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "M")
+        } else if (p < 1000000000000) {
+            return("<i class='bi-piggy-bank-fill'></i> " + (p / 1000000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "B")
     }
     return("<i class='bi-piggy-bank-fill'></i> " + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 }

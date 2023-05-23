@@ -112,7 +112,7 @@ function leaderboard_card (player) {
         <div class="leaderboard-card lb-${(daily_change > 0)? "up" : "down"}" role="alert">
             ${player.name}
             <br>
-            ${format_price(Math.round(player.value))}
+            ${format_value(player.value, imprecise=true)}
             (${(daily_change > 0)? "📈" : "📉"} ${daily_change}%)
         </div>
         </a>
