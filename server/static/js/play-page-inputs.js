@@ -106,6 +106,9 @@ async function search_article() {
 
 // Used when the user presses a button that loads an article into the tx-nav
 function load_into_search(article, timespan=CURRENT_TIMESPAN) {
+
+    // Close all Bootstrap modals
+    $(".modal").modal("hide");
     
     // Set global variables! This is important!
     CURRENT_ARTICLE = article;

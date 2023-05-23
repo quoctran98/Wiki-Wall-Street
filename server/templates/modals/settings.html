@@ -1,0 +1,178 @@
+<!-- THIS IS ADAPTED FROM "modals/new-game.html" -->
+<div class="modal" id="settings-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content modal-rounder-corners">
+  
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h4 class="modal-title">Game Settings</h4>
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+    </div>
+  
+    <!-- MODAL BODY -->
+    <div class="modal-body modal-scroll">
+        <form action="{{ url_for('game.change_settings') }}" method="POST" id="change-settings-form">
+            <input type="hidden" name="user_id" value="{{ current_user.id }}">
+
+            <label for="game-name">Game ID</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi-joystick"></i></span>
+                <input class="form-control" type="text" name="game_id" id="game-id" readonly="true" value="">
+            </div>
+
+            <label for="game-name">Game Name</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi-card-text"></i></span>
+                <input class="form-control" type="text" name="game_name" id="game-name" readonly="true" value="">
+            </div>
+            
+            <label for="starting-cash">Starting Cash</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi-cash-coin"></i></span>
+                <input class="form-control" type="number" name="starting_cash" id="starting-cash" readonly="true" min="1" value="">
+            </div>
+  
+            <label for="views-limit">Pageviews Lower Limit</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi-eye"></i></span>
+                <input class="form-control" type="number" name="views_limit" id="views-limit" readonly="true" min="1" value="">
+            </div>
+  
+            <hr>
+  
+            <label for="allowed">Themes (only articles in these categories are allowed)</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <select class="form-control" name="allowed_categories" id="allowed" multiple="multiple" readonly="true">
+                    {% for category in allowed_categories %}
+                        <option disabled="true" value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+  
+            <br>
+  
+            <label for="banned">Banned Categories (use Ctrl/Cmd to select multiple)</label>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <select class="form-control" name="banned_categories" id="banned" multiple="multiple" readonly="true">
+                    {% for category in banned_categories %}
+                        <option disabled="true" value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <script type="text/javascript">
+              // Disable the banned categories if any of the allowed categories are selected
+              // This should be fine copied over from the new-game modal -- hopefully normal users won't be able to change this
+              $(document).ready(function() {
+                $("#allowed").change(function() {
+                    if ($("#settings-modal #allowed").val()[0] !== "") {
+                        $("#settings-modal #banned").val("");
+                        $("#settings-modal #banned").prop("disabled", true);
+                    } else {
+                        $("#settings-modal #banned").prop("disabled", false);
+                        $("#settingsmodal #banned").val("Default-Banlist");
+                    }
+                });
+              });
+            </script>
+  
+            <hr>
+            
+            <h6> Show Other Players':</h6>
+  
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="show_cash" id="show-cash" disabled="true"> 
+                    <span style="color: #E5E5E5;" id="show-cash-label"> Cash</span>
+                </label>
+            </div>
+  
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="show_articles" id="show-articles" disabled="true">
+                    <span style="color: #E5E5E5;" id="show-articles-label"> Articles Owned</span>
+                </label>
+            </div>
+  
+            <div class="checkbox">
+                <label >
+                    <input type="checkbox" name="show_number" id="show-number" disabled="true">
+                    <span style="color: #E5E5E5;" id="show-number-label"> Number of Each Article</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+                // Disable the "Number of Each Article" checkbox if the "Articles Owned" checkbox is not checked
+                // Again, hopefully normal users won't be able to change this
+                $(document).ready(function() {
+                    $('#show-articles').change(function() {
+                        if (this.checked) {
+                            $("#settings-modal #show-number").prop("disabled", false);
+                            $("#settings-modal #show-number-label").css("color", "#000000");
+                        } else {
+                            $("#settings-modal #show-number").prop("checked", false);
+                            $("#settings-modal #show-number").attr("disabled", true);
+                            $("#settings-modal #show-number-label").css("color", "#E5E5E5");
+                        }
+                        });
+                });
+              </script>
+  
+            <hr>
+  
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="public_game" id="public-game" disabled="true">
+                    <span style="color: #E5E5E5;" id="public-game-label"> Make Game Public</span>
+                </label>
+            </div>
+
+            <div class="center">
+                <button type="button" class="btn btn-danger" id="delete-game-button" disabled="true"><i class="bi-trash3-fill"></i> Delete Game</button>
+            </div>
+      </form>
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="change-settings-button" form="change-settings-form" disabled="true"><i class="bi-gear-fill"></i> Change Settings</button>
+    </div>
+  
+    </div>
+    </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal" id="delete-confirm-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content modal-rounder-corners">
+
+    <!-- MODAL BODY -->
+    <div class="modal-body"> 
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 text-center">
+                <p class="text-danger"><b>Are you sure you want to delete this game?</b></p>
+                <hr>
+                <p>All players will be kicked out of the game and all game data will be lost.</p>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <form action="{{ url_for('admin.delete_game') }}" method="POST" id="delete-confirm-form">
+            <input type="hidden" name="game_id" id="game-id" value="">
+        </form>
+        <button type="submit" class="btn btn-danger" form="delete-confirm-form"><i class="bi-door-trash3-fill"></i> Delete Game</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>

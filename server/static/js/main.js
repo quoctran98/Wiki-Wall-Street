@@ -11,7 +11,17 @@ function format_price(p) {
     } else {
         p = Math.round(p / 100) * 100;
     }
-    return(p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+    return("<i class='bi-cash-coin'></i> " + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+}
+
+function format_value(p) {
+    // Round the price to the nearest integer or at least 3 significant figures
+    if (p < 1000) {
+        p = Math.round(p);
+    } else {
+        p = Math.round(p / 100) * 100;
+    }
+    return("<i class='bi-piggy-bank-fill'></i> " + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 }
 
 // Call this function to close all modals
@@ -90,7 +100,9 @@ function render_game_info(game) {
 
     // Add theme(s) to the HTML (allowed categories)
     if ("allowed_categories" in game.settings) {
-        if (game.settings["allowed_categories"][0]!= "") {
+        console.log(game.settings["allowed_categories"])
+        // The server SHOULD store it as an empty array and remove the empty string, but just in case
+        if (game.settings["allowed_categories"][0]!== "" && game.settings["allowed_categories"].length > 0) {
             const allowed_categories = game.settings["allowed_categories"].filter((category) => category != "");
             const theme_list = allowed_categories.map((category) => `<ins>${category}</ins>`).join(", ");
             game_info_html += `<p> 📚 Only buy articles from the ${theme_list} Wikipedia ${allowed_categories.length > 1 ? "categories" : "category"} </p>`;   
@@ -99,7 +111,7 @@ function render_game_info(game) {
 
     // Add banned categories to the HTML
     if ("banned_categories" in game.settings) {
-        if (game.settings["banned_categories"][0]!= "") {
+        if (game.settings["banned_categories"][0]!== "" && game.settings["banned_categories"].length > 0) {
             const banned_categories = game.settings["banned_categories"].filter((category) => category != "");
             const ban_list = banned_categories.map((category) => `<ins>${category}</ins>`).join(", ");
             game_info_html += `<p> 🚫 Don't buy articles from the ${ban_list} Wikipedia ${banned_categories.length > 1 ? "categories" : "category"} </p>`;

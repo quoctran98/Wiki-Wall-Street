@@ -3,29 +3,9 @@
     And also to load in the player information modal
 */
 
-// IDS FOR HTML ELEMENTS
-
-// Leaderboard banner and player information modal elements
+// Leaderboard banner and elements
 const LEADERBOARD_BANNER = "leaderboard-banner";
-const PLAYER_INFO_MODAL = "player-leaderboard-modal";
-const PLAYER_INFO_MODAL_TITLE = "player-leaderboard-modal-title";
-const PLAYER_INFO_MODAL_SENTENCE = "player-leaderboard-modal-sentence";
-const PLAYER_INFO_MODAL_ARTICLES = "player-leaderboard-modal-articles";
-
-const PLAYER_INFO_MODAL_CLOSE_SYMBOL = "player-leaderboard-modal-close-symbol";
-const PLAYER_INFO_MODAL_CLOSE_BUTTON = "player-leaderboard-modal-close-button";
-
 const TITLE_RANK_SPAN = "title-rank";
-
-// Add event listener to close symbol and button :)
-document.getElementById(PLAYER_INFO_MODAL_CLOSE_SYMBOL).onclick = (() => {
-    document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
-    unblur_background();
-});
-document.getElementById(PLAYER_INFO_MODAL_CLOSE_BUTTON).onclick = (() => {
-    document.getElementById(PLAYER_INFO_MODAL).style.display = "none";
-    unblur_background();
-});
 
 // Called when the leaderboard is loading
 function loading_leaderboard() {
@@ -49,7 +29,6 @@ function get_rank_suffix(rank) {
     if (rank === 11 || rank === 12 || rank === 13) {
         return("th");
     }
-
     const last_num = rank % 10;
     if (last_num === 1) {
         return("st");
@@ -70,24 +49,29 @@ function show_player_info_modal(player_id) {
     const rank = ALL_PLAYERS.indexOf(this_player) + 1;
 
     // Set the info in the modal!
-    document.getElementById(PLAYER_INFO_MODAL_TITLE).innerHTML = this_player.name;
+    $("#leaderboard-modal .modal-title").html(`<ins>${this_player.name}</ins>'s Portfolio`);
 
+    // Calculate the daily and weekly change
     let yesterday_change = (this_player.value - this_player.yesterday_value) / this_player.yesterday_value;
     yesterday_change = Math.round(yesterday_change * 10000) / 100;
-
     let last_week_change = (this_player.value - this_player.last_week_value) / this_player.last_week_value;
     last_week_change = Math.round(last_week_change * 10000) / 100;
 
     // Set the summary in the modal! (with cash if it exists and articles if they exist)
-    document.getElementById(PLAYER_INFO_MODAL_SENTENCE).innerHTML = `
+    $("#leaderboard-modal #summary-sentence").html(`
         ${this_player.name} is in <ins>${rank}${get_rank_suffix(rank)}</ins> place
-        with a portfolio value of <ins>${format_price(this_player.value)}</ins>
+        with a portfolio value of <ins>${format_value(this_player.value)}</ins>
+        
         ${this_player.cash? "and <ins>" + format_price(this_player.cash) + "</ins> in cash" : ""}!
-        <br><br>
+
+        <br>
+        <br>
+
         Their portfolio has gone <ins>${(yesterday_change > 0)? "up" : "down"} by ${Math.abs(yesterday_change)}%</ins> in the last day
         and <ins>${(last_week_change > 0)? "up" : "down"} by ${Math.abs(last_week_change)}%</ins> in the last week.
-        ${this_player.articles? `<div style="max-height=50vh;overflow-y:scoll;><hr>Here's what they own:` : ""}
-    `;
+        
+        ${this_player.articles? `<hr> Here are the articles they own:` : ""}
+    `);
 
     // Set the articles if they exist
     if (this_player.articles) {
@@ -108,12 +92,11 @@ function show_player_info_modal(player_id) {
             }
         }
         articles_html += "</ul></div>";
-        document.getElementById(PLAYER_INFO_MODAL_ARTICLES).innerHTML = articles_html;
+        $("#leaderboard-modal #articles-list").html(articles_html);
     }
     
     // Show the modal!
-    document.getElementById(PLAYER_INFO_MODAL).style.display = "block";
-    blur_background();
+    $("#leaderboard-modal").modal("show");
 }
 
 // Generates HTML for a single player's card on the leaderboard

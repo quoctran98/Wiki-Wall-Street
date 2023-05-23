@@ -302,7 +302,7 @@ class Player():
                                                 {"$push": {"value_history": this_value}})   
 
     def leave_game(self):
-        """Remove the player from the game."""
+        """Remove the player from the game (called by leave_game and kick_player methods!)."""
 
         # Remove the player from the game's players list and user_ids list
         active_games_coll.update_one({"game_id": self.game_id}, {"$pull": {"players": self.name}})
@@ -355,6 +355,16 @@ class Player():
         if data is not None:
             data.pop("_id", None) # Remove the MongoDB _id field
             return cls(**data)
+        
+    @classmethod
+    def get_by_player_name(cls, game_id, player_name):
+        data = players_db[game_id].find({"name": player_name})
+        if data is not None and data.count() > 0:
+            data = data[0]
+            data.pop("_id", None) # Remove the MongoDB _id field
+            return cls(**data)
+        else:
+            return None
 
     @classmethod
     def join_game(cls, user_id, game_id):

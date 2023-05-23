@@ -2,81 +2,80 @@
     This script handles the players modal that pops up when you click on the players button
 */
 
-// ID(S) FOR HTML ELEMENTS
-const PLAYERS_MODAL_OPEN_BUTTON = "players-modal-open-button";
-const PLAYERS_MODAL = "players-modal";
-const PLAYERS_MODAL_CLOSE_SYMBOL = "players-modal-close-symbol";
-const PLAYERS_MODAL_CLOSE_BUTTON = "players-modal-close-button";
-const PLAYERS_MODAL_TITLE = "players-modal-title";
-const PLAYER_MODAL_INVITE = "players-modal-invite";
-const PLAYERS_MODAL_MAIN = "players-modal-main";
-
-const PLAYERS_MODAL_LEAVE = "players-modal-leave-button";
-const LEAVE_CONFIRM_MODAL = "leave-confirm-modal";
-const LEAVE_CONFIRM_MODAL_GAME_ID = "leave-confirm-modal-game-id";
-const LEAVE_CONFIRM_MODAL_CLOSE_BUTTON = "leave-confirm-modal-close-button";
-
 function copy_link(div_id) {
     const text = document.getElementById(div_id);
     text.select(); 
     text.setSelectionRange(0, 99999); // For mobile devices
     navigator.clipboard.writeText(text.value);
-  }
+}
 
-function show_players_modal(game=GAME_OBJECT) {
-    // Show modal
-    document.getElementById(PLAYERS_MODAL).style.display = "block";
-    blur_background();
+async function kick_player(player_name) {
+    $("#players-modal #players-list").css("color", "gray");
+    $("#players-modal #players-list").css("pointer-events", "none");
 
-    // Fill out the modal
-    let invite_link_html = document.getElementById(PLAYER_MODAL_INVITE);
-    let players_list_html = document.getElementById(PLAYERS_MODAL_MAIN);
+    const delete_body = {
+        game_id: GAME_OBJECT.game_id,
+        player_name: player_name,
+    };
+    let kick_res = await fetch("/api/kick_player",{
+            method: "DELETE",
+            headers: {"Content-Type": "application/json",},
+            body: JSON.stringify(delete_body)}
+    );
 
-    // Add an invite link that copies to clipboard
-    const invite_link = window.location.origin + "/invite?game_id=" + game.game_id;
-    invite_link_html.innerHTML = `
-    <button class="btn btn-primary" onclick="copy_link('game-invite-link')">🔗</button>
-    <input readonly="true" type="text" id="game-invite-link" value="${invite_link}"> 
-    `;
+    if (kick_res.status !== 200) {
+        console.log("Error kicking player");
+        console.log(kick_res);
+    } else {
+        window.location.reload();
+    }
+}
 
-    players_list_html.innerHTML = "<ul></ul>";
+function render_players_list(game) {
+    const is_owner = game.owner_id == THIS_PLAYER.user_id;
+    const players_list = $("#players-modal #players-list")[0];
+    players_list.innerHTML = "";
+
+    // Add the players to the list
     for (let i = 0; i < game.players.length; i++) {
+        const is_self = game.players[i] == THIS_PLAYER.name;
         let player_html = `
-            <li> ${game.players[i]} </li>
-        `;
-        players_list_html.insertAdjacentHTML("beforeend", player_html);
+        <li> 
+            ${(is_owner && !is_self) ? `<i class="bi-x-circle-fill players-kick-player" onclick="kick_player('${game.players[i]}')"></i>` : ""}
+            <i class="bi-person-plus-fill players-add-friend"></i>
+            ${game.players[i]} 
+        </li>
+        `; // Bad! That I'm doing this with player name and not ID, but those should be unique anyway
+
+        players_list.innerHTML += player_html;
     }
 }
 
 function init_players() {
-    // Add event listeners
-    document.getElementById(PLAYERS_MODAL_CLOSE_BUTTON).onclick = (() => {
-        document.getElementById(PLAYERS_MODAL).style.display = "none";
-        unblur_background();
-    });
-    document.getElementById(PLAYERS_MODAL_CLOSE_SYMBOL).onclick = (() => {
-        document.getElementById(PLAYERS_MODAL).style.display = "none";
-        unblur_background();
+    // Fill out the modal title
+    $("#players-modal .modal-title").html(`Players in <ins>${GAME_OBJECT.name}</ins>`);
+
+    // Add event listener when the players modal is open
+    $("#players-modal").on("show.bs.modal", function() {
+
+        // Add an invite link that copies to clipboard
+        const invite_link = window.location.origin + "/invite?game_id=" + GAME_OBJECT.game_id;
+        $("#players-modal #invite-link").val(invite_link);
+
+        // Render the players list
+        render_players_list(GAME_OBJECT);
+
     });
 
     // Add event listener to leave game button
-    document.getElementById(PLAYERS_MODAL_LEAVE).onclick = (() => {
+    $("#players-modal #leave-game-button").on("click", function() {
         // Fill out the confirm modal info
-        // No user id from client because it's stored in the session
-        document.getElementById(LEAVE_CONFIRM_MODAL_GAME_ID).value = GAME_OBJECT.game_id;
-
-        // Close this modal and open the confirm modal
-        document.getElementById(PLAYERS_MODAL).style.display = "none";
-        document.getElementById(LEAVE_CONFIRM_MODAL).style.display = "block";
-        blur_background();
+        $("#leave-confirm-modal #leave-confirm-form #game-id").val(GAME_OBJECT.game_id);
+        // Hide this modal and open the confirm modal
+        $("#players-modal").modal("hide");
+        $("#leave-confirm-modal").modal("show");
     });
 
-    // Add event listener to confirm leave game button
-    document.getElementById(LEAVE_CONFIRM_MODAL_CLOSE_BUTTON).onclick = (() => {
-        document.getElementById(LEAVE_CONFIRM_MODAL).style.display = "none";
-        unblur_background();
-    });
-
-    // Enable the players button
-    document.getElementById(PLAYERS_MODAL_OPEN_BUTTON).removeAttribute("disabled");
+    // Enable the players button (make sure there's no ID collision)
+    $("#players-modal-open-button:not(:has(#modal-container))").prop("disabled", false);
 }

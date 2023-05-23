@@ -25,7 +25,7 @@
             <label for="starting-cash">Starting Cash</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi-cash-coin"></i></span>
-                <input class="form-control" type="number" name="starting_cash" id="starting-cash" value="100000">
+                <input class="form-control" type="number" name="starting_cash" id="starting-cash" min="1" value="100000">
             </div>
   
             <label for="views-limit">Pageviews Lower Limit</label>
@@ -73,7 +73,7 @@
               $(document).ready(function() {
                 $("#allowed").change(function() {
                     console.log($("#allowed").val());
-                    if ($("#new-game-modal #allowed").val()[0] == "") {
+                    if ($("#new-game-modal #allowed").val()[0] !== "") {
                         $("#new-game-modal #banned").val("");
                         $("#new-game-modal #banned").prop("disabled", true);
                     } else {

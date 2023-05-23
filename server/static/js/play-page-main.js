@@ -39,6 +39,9 @@ fetch("/api/get_play_info?game_id=" + GAME_ID, {method: 'GET'})
     GAME_OBJECT = data["game"];
     THIS_PLAYER = data["player"];
 
+    console.log(GAME_OBJECT);
+    console.log(THIS_PLAYER);
+
     // Set game title to the game name!
     document.getElementById(GAME_NAME_ID).innerHTML = ` to ${GAME_OBJECT["name"]}`;
 

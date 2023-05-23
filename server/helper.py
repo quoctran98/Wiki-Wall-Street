@@ -5,6 +5,9 @@ from flask_apscheduler import APScheduler
 from datetime import datetime, timezone, timedelta
 import os
 
+from functools import wraps
+from flask import request
+
 # Load settings from .env file
 class Settings(BaseSettings):
     MONGODB_CONNECTION_STRING:str
@@ -105,11 +108,11 @@ def sanitize(string):
 def today_wiki():
     # All times should be in UTC (the server's been doing that by default but I should be explicit)
     now = datetime.now(timezone.utc)
-    now = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    floor_today = now.replace(hour=0, minute=1, second=0, microsecond=0)
     if now.hour < settings.UPDATE_HOUR_UTC:
-        return(now - timedelta(days=1))
+        return(floor_today - timedelta(days=1))
     else:
-        return(now)
+        return(floor_today)
 
 # Don't rely on this!
 # There are already currently usernames that have spaces
@@ -122,3 +125,19 @@ def username_is_valid(username):
         if char not in allowed_chars:
             return(False)
     return(True)
+
+def print_cache_key(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        cache_key = f.make_cache_key(*args, **kwargs)
+        print("Cache key:", cache_key)
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+# Custom make_cache_key function to include query string separator
+def make_cache_key(*args, **kwargs):
+    path = request.path
+    args = str(hash(frozenset(request.args.items())))
+    cache_key = f"{path}?{args}"
+    return cache_key

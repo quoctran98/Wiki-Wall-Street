@@ -1,0 +1,80 @@
+<div class="modal" id="players-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content modal-rounder-corners">
+
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+        <h4 class="modal-title">Players</h4>
+        <!-- CLOSE BUTTON -->
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!-- MODAL BODY -->
+    <div class="modal-body modal-scroll">
+        
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+
+                <div class="input-group" style="display:flex;">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Invite Link</span>
+                    </div>
+                    <input type="text" id="invite-link" readonly="true" style="flex:1">
+                    <button class="btn btn-primary" id="send-button" onclick="copy_link('invite-link');"><i class="bi-clipboard"></i></button>
+                </div>
+
+                <hr>
+                
+                <ul id="players-list" class="no-bullets">
+                </ul>
+
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="leave-game-button"><i class="bi-door-open-fill"></i> Leave Game</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>
+
+<!-- LEAVE CONFIRM MODAL -->
+<div class="modal" id="leave-confirm-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content modal-rounder-corners">
+
+    <!-- MODAL BODY -->
+    <div class="modal-body"> 
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 text-center">
+                <p class="text-danger"><b>Are you sure you want to leave the game?</b></p>
+                <hr>
+                <p>Your progress will be lost!</p>
+                <p>You will not be able to rejoin without an invite link.</p>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <form action="{{ url_for('admin.leave_game') }}" method="POST" id="leave-confirm-form">
+            <input type="hidden" name="game_id" id="game-id" value="">
+        </form>
+        <button type="submit" class="btn btn-danger" form="leave-confirm-form"><i class="bi-door-open-fill"></i> Leave Game</button>
+        <button type="button" class="btn btn-secondary" id="close-button" data-dismiss="modal">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>

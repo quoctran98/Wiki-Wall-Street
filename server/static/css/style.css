@@ -36,6 +36,12 @@
   background-color: #f8f9fa;
 }
 
+.leaderboard-card:hover {
+  border-color: #000000;
+  color: #000000;
+  background-color: #f8f9fa;
+}
+
 .portfolio-card {
   position: relative;
   padding: 0.25rem 1rem;
@@ -75,7 +81,7 @@
   padding: 0rem;
   margin: 0rem;
 
-  max-height: 60vh;
+  max-height: 50vh;
   overflow-y: scroll;
 }
 
@@ -106,7 +112,7 @@
   right: 0.7rem;
 }
 
-.chat-options {
+.chat-delete {
   position: absolute;
   float: right;
 
@@ -114,7 +120,27 @@
   right: 0.7rem;
 }
 
-.chat-options:hover {
+.chat-delete:hover {
+  color: #c13030;
+  cursor: pointer;
+}
+
+.no-bullets {
+  list-style-type: none;
+}
+
+.players-add-friend {
+  color: #000000;
+}
+.players-add-friend:hover {
+  color: #4668ff;
+  cursor: pointer;
+}
+
+.players-kick-player {
+  color: #000000;
+}
+.players-kick-player:hover {
   color: #c13030;
   cursor: pointer;
 }

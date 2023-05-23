@@ -34,7 +34,7 @@ function render_messages(message_array, force_reset=false) {
 
             if (message.name == THIS_PLAYER.name) {
                 message_html += `
-                    <span class="chat-options"><i class="bi-trash" onclick="delete_message('${message.chat_id}');"></i></span>
+                    <span class="chat-delete"><i class="bi-trash3-fill" onclick="delete_message('${message.chat_id}');"></i></span>
                 `;
             }
 
@@ -119,6 +119,8 @@ async function send_message(chat_form) {
 }
 
 function init_chat() {
+    // Fill out the modal title
+    $("#chat-modal .modal-title").html(`Chat with <ins>${GAME_OBJECT.name}</ins> players`);
 
     // Start the chat update loop when the modal is opened (and fill out the form)
     $("#chat-modal").on("shown.bs.modal", () => {
@@ -149,10 +151,9 @@ function init_chat() {
     // Intercept the send button so we can do extra stuff
     $("#chat-modal #chat-form").submit((event) => {
         event.preventDefault();
-        console.log($("#chat-modal #chat-form")[0]);
         send_message($("#chat-modal #chat-form")[0]);
     });
 
     // Enable the chat button
-    $("#chat-modal-open-button").prop("disabled", false);
+    $("#chat-modal-open-button:not(:has(#modal-container))").prop("disabled", false);
 }

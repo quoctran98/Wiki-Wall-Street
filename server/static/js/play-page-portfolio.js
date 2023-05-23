@@ -31,7 +31,7 @@ function portfolio_card(article_name, n_owned, avg_buy_price) {
         <div class="portfolio-card" role="alert">
             ${article_name}
             <br>
-            ${n_owned} bought @ ${format_price(avg_buy_price)}
+            ${n_owned} owned (${format_price(avg_buy_price)})
         </div>
         </a>
     `;

@@ -3,7 +3,7 @@ from flask import request, Blueprint, render_template, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from datetime import datetime, timezone
 
-from server.helper import settings, cache, active_games_coll, sanitize, allowed_categories, banned_categories
+from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories, print_cache_key, make_cache_key
 from server.models import Game, Player, Transaction
 
 import server.WikiAPI as WikiAPI
@@ -230,7 +230,8 @@ def get_play_info():
 
 @game.route("/api/leaderboard")
 @login_required
-@cache.cached(timeout=300, query_string=True)
+@print_cache_key
+@cache.cached(timeout=300, query_string=True, make_cache_key=make_cache_key)
 def leaderboard():
     game_id = request.args.get("game_id")
     game = Game.get_by_game_id(game_id)

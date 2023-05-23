@@ -3,83 +3,19 @@
     It also updates the game settings if the user changes them.
 */
 
-// IDS FOR HTML ELEMENTS
+// // Add event listeners to the delete game button
+// document.getElementById(SETTINGS_MODAL_DELETE).onclick = (() => {
+//     document.getElementById(GAME_SETTINGS_MODAL).style.display = "none";
+//     document.getElementById(DELETE_CONFIRM_MODAL_GAME_ID).value = GAME_OBJECT.game_id;
+//     document.getElementById(DELETE_CONFIRM_MODAL).style.display = "block";
+//     blur_background();
+// });
 
-// Game settings modal elements
-const GAME_SETTINGS_OPEN_BUTTON = "game-settings-open-button";
-const GAME_SETTINGS_MODAL = "game-settings-modal";
-const GAME_SETTINGS_MODAL_TITLE = "game-settings-modal-title";
-
-const GAME_SETTINGS_MODAL_CLOSE_SYMBOL = "game-settings-modal-close-symbol";
-const GAME_SETTINGS_CLOSE_BUTTON = "game-settings-modal-close-button";
-const GAME_SETTINGS_SAVE_BUTTON = "game-settings-modal-save-button";
-
-// Game settings form elements
-const SETTINGS_FORM = "settings-form";
-const SETTING_GAME_ID = "settings-game-id";
-const SETTINGS_GAME_NAME = "settings-game-name";
-const SETTINGS_STARTING_CASH = "settings-starting-cash";
-const SETTINGS_VIEWS_LIMIT = "settings-views-limit";
-const SETTINGS_SHOW_CASH_LABEL = "settings-show-cash-label";
-const SETTINGS_SHOW_CASH = "settings-show-cash";
-const SETTINGS_SHOW_ARTICLES_LABEL = "settings-show-articles-label";
-const SETTINGS_SHOW_ARTICLES = "settings-show-articles";
-const SETTINGS_SHOW_NUMBER_LABEL = "settings-show-number-label";
-const SETTINGS_SHOW_NUMBER = "settings-show-number";
-const SETTINGS_PUBLIC_GAME = "settings-public-game";
-const SETTINGS_ALLOWED = "settings-allowed";
-const SETTINGS_BANNED = "settings-banned";
-
-// Deleting a game modal elements
-const SETTINGS_MODAL_DELETE = "settings-modal-delete-button";
-const DELETE_CONFIRM_MODAL = "delete-confirm-modal";
-const DELETE_CONFIRM_MODAL_GAME_ID = "delete-confirm-modal-game-id";
-const DELETE_CONFIRM_MODAL_CLOSE_BUTTON = "delete-confirm-modal-close-button";
-
-// Add event listeners to the delete game button
-document.getElementById(SETTINGS_MODAL_DELETE).onclick = (() => {
-    document.getElementById(GAME_SETTINGS_MODAL).style.display = "none";
-    document.getElementById(DELETE_CONFIRM_MODAL_GAME_ID).value = GAME_OBJECT.game_id;
-    document.getElementById(DELETE_CONFIRM_MODAL).style.display = "block";
-    blur_background();
-});
-
-// Add event listeners to the delete game confirm modal
-document.getElementById(DELETE_CONFIRM_MODAL_CLOSE_BUTTON).onclick = (() => {
-    document.getElementById(DELETE_CONFIRM_MODAL).style.display = "none";
-    show_game_settings_modal();
-});
-
-// Add event listener to close symbol and button :)
-document.getElementById(GAME_SETTINGS_MODAL_CLOSE_SYMBOL).onclick = (() => {
-    document.getElementById(GAME_SETTINGS_MODAL).style.display = "none";
-    unblur_background();
-});
-document.getElementById(GAME_SETTINGS_CLOSE_BUTTON).onclick = (() => {
-    document.getElementById(GAME_SETTINGS_MODAL).style.display = "none";
-    unblur_background();
-});
-
-// Add event listener to disable number of articles if show articles is not checked
-// Same logic as in home-game-modals.js
-document.getElementById(SETTINGS_SHOW_ARTICLES).addEventListener("change", function() {
-    if (this.checked) {
-        document.getElementById(SETTINGS_SHOW_NUMBER).disabled = false;
-        document.getElementById(SETTINGS_SHOW_NUMBER_LABEL).style.color = "black";
-    } else {
-        document.getElementById(SETTINGS_SHOW_NUMBER).disabled = true;
-        document.getElementById(SETTINGS_SHOW_NUMBER_LABEL).style.color = "#E5E5E5";
-        document.getElementById(SETTINGS_SHOW_NUMBER).checked = false;
-    }
-});
-
-// Add event listener to enable the save button when the form is changed
-// Ideally should only enable the save button if the form is DIFFERENT from the game settings
-document.getElementById(SETTINGS_FORM).addEventListener("change", function() {
-    if (THIS_PLAYER.user_id === GAME_OBJECT.owner_id) {
-        document.getElementById(GAME_SETTINGS_SAVE_BUTTON).removeAttribute("disabled");
-    }
-});
+// // Add event listeners to the delete game confirm modal
+// document.getElementById(DELETE_CONFIRM_MODAL_CLOSE_BUTTON).onclick = (() => {
+//     document.getElementById(DELETE_CONFIRM_MODAL).style.display = "none";
+//     show_game_settings_modal();
+// });
 
 // Show the modal when the settings button is clicked
 function show_game_settings_modal(game=GAME_OBJECT) {
@@ -91,80 +27,96 @@ function show_game_settings_modal(game=GAME_OBJECT) {
     blur_background();
 }
 
-// Fill out the modal on page load
-function init_settings(game=GAME_OBJECT) {
-    document.getElementById(GAME_SETTINGS_MODAL_TITLE).innerHTML = `Settings for ${game.name}`;
-
-    // Fill out the game id
-    document.getElementById(SETTING_GAME_ID).value = game.game_id;
-
+function fill_settings_modal(game=GAME_OBJECT) {
     // Fill out the form with the current game settings
-    document.getElementById(SETTINGS_GAME_NAME).value = game.name;
-    
-    document.getElementById(SETTINGS_STARTING_CASH).value = game.settings.starting_cash;
-    document.getElementById(SETTINGS_VIEWS_LIMIT).value = game.settings.views_limit;
-    document.getElementById(SETTINGS_SHOW_CASH).checked = game.settings.show_cash;
-    document.getElementById(SETTINGS_SHOW_ARTICLES).checked = game.settings.show_articles;
-    document.getElementById(SETTINGS_SHOW_NUMBER).checked = game.settings.show_number;
-    document.getElementById(SETTINGS_PUBLIC_GAME).checked = game.public;
+    $("#settings-modal #game-id").val(game.game_id);
+    $("#settings-modal #game-name").val(game.name);
+    $("#settings-modal #starting-cash").val(game.settings.starting_cash);
+    $("#settings-modal #views-limit").val(game.settings.views_limit);
+    $("#settings-modal #show-cash").prop("checked", game.settings.show_cash);
+    $("#settings-modal #show-articles").prop("checked", game.settings.show_articles);
+    $("#settings-modal #show-number").prop("checked", game.settings.show_number);
+    $("#settings-modal #public-game").prop("checked", game.public);
 
     // Select the allowed and banned categories in the select elements
-    if (game.settings.allowed_categories) {
-        for (let category of game.settings.allowed_categories) {
-            option_id = `allowed-option-${category}`;
-            try { // In case we delete a category and it's still in the game settings
-                document.getElementById(option_id).selected = true;
-            }
-            catch (err) {
-                console.log(err);
-            }
+    $("#settings-modal #allowed-categories").val(game.settings.allowed_categories);
+    $("#settings-modal #banned-categories").val(game.settings.banned_categories);
+    let allowed_options = $("#settings-modal #allowed").find("option").filter(function() {
+        if (game.settings.allowed_categories === undefined) {
+            return($(this).val() === "");
         }
-    }
-    if (game.settings.banned_categories) {
-        for (let category of game.settings.banned_categories) {
-            option_id = `banned-option-${category}`;
-            try { // In case we delete a category and it's still in the game settings
-                document.getElementById(option_id).selected = true;
-            }
-            catch (err) {
-                console.log(err);
-            }
+        return(game.settings.allowed_categories.includes($(this).val()));
+    });
+    $("#settings-modal #allowed").prop("selectedIndex", -1)
+    allowed_options.prop('selected', true);
+    let banned_options = $("#settings-modal #banned").find("option").filter(function() {
+        if (game.settings.banned_categories === undefined) {
+            return($(this).val() === "");
         }
-    }
+        return(game.settings.banned_categories.includes($(this).val()));
+    });
+    $("#settings-modal #banned").prop("selectedIndex", -1)
+    banned_options.prop('selected', true);
+
+    // Fake trigger the change event in the allowed select elements to update banned :)
+    $("#settings-modal #allowed").trigger("change");
+}
+
+// Fill out the modal on page load
+function init_settings(game=GAME_OBJECT) {
+    // Set the modal-title class
+    $("#settings-modal .modal-title").html(`Settings for <ins>${game.name}</ins>`);
+
+    // Fill out the form with the current game settings
+    fill_settings_modal(game);
 
     // Enable form elements if the user is the game creator
-    // USE READONLY ATTRIBUTE INSTEAD OF DISABLED (disabled elements don't get sent in the form!)
-    // select options only work with DISABLED!
-    // It doesn't matter in the new game modal for now, but keep this in mind!
+    // Not wrapping this in a function because it's only called once per page load
     if (THIS_PLAYER.user_id === game.owner_id) {
-        document.getElementById(SETTINGS_VIEWS_LIMIT).removeAttribute("readonly");
-        document.getElementById(SETTINGS_SHOW_CASH_LABEL).style.color = "black";
-        document.getElementById(SETTINGS_SHOW_CASH).removeAttribute("disabled");
-        document.getElementById(SETTINGS_SHOW_ARTICLES_LABEL).style.color = "black";
-        document.getElementById(SETTINGS_SHOW_ARTICLES).removeAttribute("disabled");
-        // Users can't change public game status after the game is created! Maybe
-        
-        // Enable the number of articles checkbox if it's already checked :)
-        if (document.getElementById(SETTINGS_SHOW_ARTICLES).checked) {
-            document.getElementById(SETTINGS_SHOW_NUMBER_LABEL).style.color = "black";
-            document.getElementById(SETTINGS_SHOW_NUMBER).removeAttribute("disabled");
-        } 
+        $("#settings-modal #views-limit").prop("readonly", false);
+        $("#settings-modal #show-cash-label").css("color", "black");
+        $("#settings-modal #show-cash").prop("disabled", false);
+        $("#settings-modal #show-articles-label").css("color", "black");
+        $("#settings-modal #show-articles").prop("disabled", false);
 
-        // Enable the select elements and options within :)
-        document.getElementById(SETTINGS_ALLOWED).removeAttribute("readonly");
-        document.getElementById(SETTINGS_BANNED).removeAttribute("readonly");
-        for (let option of document.getElementById(SETTINGS_ALLOWED).options) {
-            option.removeAttribute("disabled");
-        }
-        for (let option of document.getElementById(SETTINGS_BANNED).options) {
-            option.removeAttribute("disabled");
-        }
+        // Enable the number of articles checkbox if it's already checked :)
+        $("#settings-modal #show-number-label").css("color", `${game.settings.show_articles ? "black" : "#E5E5E5"}`);
+        $("#settings-modal #show-number").prop("disabled", !game.settings.show_articles);
+
+        // Enable the select elements and their options
+        $("#settings-modal #allowed").removeAttr("readonly");
+        $("#settings-modal #banned").removeAttr("readonly");
+        let allowed_options = $("#settings-modal #allowed").find("option");
+        let banned_options = $("#settings-modal #banned").find("option");
+        allowed_options.prop("disabled", false);
+        banned_options.prop("disabled", false);
 
         // Enable the delete game button
-        document.getElementById(SETTINGS_MODAL_DELETE).removeAttribute("disabled");
+        $("#settings-modal #delete-game-button").prop("disabled", false);
+
+        // Add an event listener to the form to enable the change settings button
+        $("#settings-modal form").on("change", function() {
+            $("#settings-modal #change-settings-button").prop("disabled", false);
+        });
     }
+
+    // Add event listener to the modal opening
+    $("#settings-modal").on("shown.bs.modal", function() {
+        fill_settings_modal(game); 
+        $("#settings-modal #change-settings-button").prop("disabled", true);
+        // Refill the form with the current game settings and disable the save button
+    });
+
+    // Add event listener to delete game button
+    $("#settings-modal #delete-game-button").on("click", function() {
+        // Fill out the confirm modal info
+        $("#delete-confirm-modal #delete-confirm-form #game-id").val(GAME_OBJECT.game_id);
+        // Hide this modal and open the confirm modal
+        // (we can't do data-dismiss="modal" because we need to fill out the form)
+        $("#settings-modal").modal("hide");
+        $("#delete-confirm-modal").modal("show");
+    });
     
     // Enable the settings button now :)
-    document.getElementById(GAME_SETTINGS_OPEN_BUTTON).removeAttribute("disabled");
-    console.log(game);
+    $("#settings-modal-open-button:not(:has(#modal-container))").prop("disabled", false);
 }
