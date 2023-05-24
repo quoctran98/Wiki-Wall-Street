@@ -266,7 +266,7 @@ class Player():
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}})
             return(None)
-        elif self.value_history[-1]["timestamp"].timestamp() < this_value["timestamp"].timestamp():
+        elif self.value_history[-1]["timestamp"].timestamp() < today_wiki().timestamp():
             this_value = {"timestamp": today_wiki(), "value": self.portfolio_value}
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}}) 
