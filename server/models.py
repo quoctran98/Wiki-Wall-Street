@@ -220,76 +220,46 @@ class Player():
         self.transactions = transactions
         self.value_history = value_history
 
-    def update_player(self):
-        """Update the player in the MongoDB."""
-        # I don't think this is ever used?
-        players_db[self.game_id].update_one({"player_id": self.player_id}, {"$set": self.__dict__})
-
-    def get_public_dict(self):
+    def get_info(self):
         """Return a dictionary with only the public information about the player."""
         game_settings = Game.get_by_game_id(self.game_id).settings
-        public_dict = {
+        info_dict = {
             "player_id": self.player_id,
             "user_id": self.user_id,
             "game_id": self.game_id,
             "name": self.name,
-
-            "value": self.portfolio_value,
-            # Don't send full value history -- it's a lot
+            "value": self.value_history[-1]["value"],
+            "yesterday_value": self.yesterday_value,
+            "last_week_value": self.last_week_value,
         }
 
-        # Add daily and weekly values to the public dictionary
-        # Use today_wiki() so these values also only update at UPDATE_HOUR_UTC
-        yesterday = today_wiki() - timedelta(days=2)
-        last_week = today_wiki() - timedelta(days=8)
-        yesterday_value = None
-        last_week_value = None
-        for value in self.value_history:
-            # today_wiki() should make it so it's all the same time of day :)
-            # But we'll just scan through the whole list just in case
-            if value["timestamp"].timestamp() >= last_week.timestamp() and last_week_value is None:
-                last_week_value = value["value"]
-            if value["timestamp"].timestamp() >= yesterday.timestamp() and yesterday_value is None:
-                # Shouldn't need the "is None" part because of the break?
-                yesterday_value = value["value"]
-                break
-        if yesterday_value is not None:
-            public_dict["yesterday_value"] = yesterday_value
-            public_dict["last_week_value"] = last_week_value
-        else:
-            # If there's no yesterday value, just use the first value in the history
-            public_dict["yesterday_value"] = self.value_history[0]["value"]
-            public_dict["last_week_value"] = self.value_history[0]["value"]
-
         # Some games don't have these visibility (ugh!), so check if they exist first
-        # Remove 0s from the articles dictionary (previously owned articles)
         if "show_cash" in game_settings:
             if game_settings["show_cash"]:
-                public_dict["cash"] = self.cash
+                info_dict["cash"] = self.cash
         if "show_articles" in game_settings:
             if game_settings["show_articles"]:
-                public_dict["articles"] = {}
-                for article, amount in self.articles.items():
-                    try:
-                        if amount > 0:
-                            public_dict["articles"][article] = amount
-                    except TypeError:
-                        public_dict["articles"][article] = 0
-                        # Cirstyn found a weird bug and somehow "'Chateau Ste': {' Michelle': 10}" is in her articles dictionary
+                info_dict["articles"] = {art: amt for art, amt in self.articles.items() if amt > 0}
         if "show_number" in game_settings:
-            if game_settings["show_number"]:
-                # Overwrite the above if show_number is True
-                # Remove 0s from the articles dictionary (previously owned articles)
-                public_dict["articles"] = {article: amount for article, amount in self.articles.items() if amount > 0} 
-        return(public_dict)
+            if not game_settings["show_number"]:
+                info_dict["articles"] = {art: True for art in info_dict["articles"].keys()} 
+
+        return(info_dict)
     
     def update_value_history(self):
-        """Update the player's value history in the MongoDB."""
+        """Update the player's value history in the MongoDB (should only be run by the scheduled task)."""
+        new_value = self.cash
+        for article, amount in self.articles.items():
+            res = WikiAPI.normalized_views(article)
+            if res is not None:
+                this_price = res[-1]["views"]
+                new_value += this_price * amount
+
         this_value = {
             # Value history only updates at UPDATE_HOUR_UTC!
             # This means all update times are the same time!
             "timestamp": today_wiki(), 
-            "value": self.portfolio_value
+            "value": new_value
         }
 
         # Insert a new value into the value history if the timestamp doesn't exist
@@ -297,9 +267,14 @@ class Player():
         if len(self.value_history) == 0:
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}})
+            return(None)
         elif self.value_history[-1]["timestamp"].timestamp() < this_value["timestamp"].timestamp():
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
-                                                {"$push": {"value_history": this_value}})   
+                                                {"$push": {"value_history": this_value}}) 
+            return(self.value_history[-1]["value"] != this_value) # For debugging purposes
+        else:
+            return(None)
+        
 
     def leave_game(self):
         """Remove the player from the game (called by leave_game and kick_player methods!)."""
@@ -320,27 +295,20 @@ class Player():
     @property
     def yesterday_value(self):
         """Return the value of the player's portfolio yesterday."""
-        # This is only used by game.get_play_info route (should roll this into public_dict)
         yesterday = today_wiki() - timedelta(days=1)
         for value in reversed(self.value_history):
-            # We can scan from newest to oldest probably!
-            # Ideally it's in order so this is fast/accurate :)
-            # Eventually I want to phase this out and just use == because of the UPDATE_HOUR_UTC thing
             if value["timestamp"].timestamp() <= yesterday.timestamp():
                 return(value["value"])
-        # Return the first value if there's no yesterday value
         return(self.value_history[0]["value"])
-
+    
     @property
-    def portfolio_value(self):
-        """Return the value of the player's portfolio (cash + articles)."""
-        value = self.cash
-        for article, amount in self.articles.items():
-            res = WikiAPI.normalized_views(article)
-            if res is not None:
-                this_price = res[-1]["views"]
-                value += this_price * amount
-        return(value)
+    def last_week_value(self):
+        """Return the value of the player's portfolio last week."""
+        last_week = today_wiki() - timedelta(days=7)
+        for value in reversed(self.value_history):
+            if value["timestamp"].timestamp() <= last_week.timestamp():
+                return(value["value"])
+        return(self.value_history[0]["value"])
     
     @classmethod
     def get_by_user_id(cls, game_id, user_id):

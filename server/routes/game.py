@@ -203,8 +203,8 @@ def get_public_games():
 
 @game.route("/api/get_play_info")
 @login_required
-# Don't cache! This is used for a lot of things that should be real-time-ish
-# Kind of a monolith of a route, but it's fine :)
+#@cache.cached(timeout=60, query_string=True, make_cache_key=make_cache_key)
+@cache.cached(timeout=60, query_string=True)
 def get_play_info():
     # This should only be called by the player themselves
     game_id = request.args.get("game_id")
@@ -221,24 +221,23 @@ def get_play_info():
         this_game_props.pop("chats")
 
         # Getting the player's portfolio value :)
-        # (@property not included in vars(), so I have to do this)
         this_player_props = vars(this_player)
-        this_player_props["today_value"] = this_player.portfolio_value
+        this_player_props["today_value"] = this_player.value_history[-1]["value"]
         this_player_props["yesterday_value"] = this_player.yesterday_value
 
         return(jsonify({"game": this_game_props, "player": this_player_props}))
 
 @game.route("/api/leaderboard")
 @login_required
-@print_cache_key
-@cache.cached(timeout=300, query_string=True, make_cache_key=make_cache_key)
+#@cache.cached(timeout=300, query_string=True, make_cache_key=make_cache_key)
+@cache.cached(timeout=300, query_string=True)
 def leaderboard():
     game_id = request.args.get("game_id")
     game = Game.get_by_game_id(game_id)
     players = []
     for user_id in game.user_ids:
         player = Player.get_by_user_id(game_id, user_id)
-        players.append(player.get_public_dict())
+        players.append(player.get_info())
     # Sort by value so leaderboard is in order for JS
     players.sort(key=lambda x: x["value"], reverse=True)
     return(jsonify({"players": players}))

@@ -31,16 +31,25 @@ def create_app():
     # Run Player.update_value_history() for every player in every active game
     # I'm defining this function here because it needs access to a few models :)
     def update_all_portfolio_vals():
+        start_time = datetime.now(timezone.utc)
         n_games = 0
         n_players = 0
+        changed_vals = 0
+        added_vals = 0
         for game in active_games_coll.find():
             n_games += 1
             for player in players_db[game["game_id"]].find():
                 this_player = Player.get_by_player_id(game["game_id"], player["player_id"])
-                this_player.update_value_history()
+                res = this_player.update_value_history()
                 n_players += 1
+                if res is not None: # Returns none when the day hasn't changed
+                    changed_vals += res # Returns True if the value changed, False if it didn't
+                    added_vals += 1
         timestamp = today_wiki().strftime("%Y-%m-%d %H:%M:%S")
-        print(f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time) ⏰")
+        end_time = datetime.now(timezone.utc)
+        elapsed_time = end_time - start_time
+        print(f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time), taking {elapsed_time.total_seconds()} seconds ⏰")
+        print(f"Added {added_vals} new values, of which {changed_vals} changed 📈")
 
     # Set up scheduler
     scheduler.init_app(app)
@@ -51,8 +60,8 @@ def create_app():
     if settings.ENVIRONMENT == "local":
         print("Not starting scheduler in local environment ⏰")
     else:
-        # Run every 12 hours even though today_wiki() should make it so it won't actually update a player's value more than once a day :)
-        scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="interval", hours=12)
+        # Run every hour even though today_wiki() should make it so it won't actually update a player's value more than once a day :)
+        scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="cron", minute="1", hour="*")
         print("Scheduler started! ⏰")
         # Let's run it once right now to make sure it works
         update_all_portfolio_vals()
