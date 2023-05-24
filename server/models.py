@@ -246,29 +246,28 @@ class Player():
 
         return(info_dict)
     
-    def update_value_history(self):
-        """Update the player's value history in the MongoDB (should only be run by the scheduled task)."""
-        new_value = self.cash
+    @property
+    def portfolio_value(self):
+        value = self.cash
         for article, amount in self.articles.items():
             res = WikiAPI.normalized_views(article)
             if res is not None:
                 this_price = res[-1]["views"]
-                new_value += this_price * amount
-
-        this_value = {
-            # Value history only updates at UPDATE_HOUR_UTC!
-            # This means all update times are the same time!
-            "timestamp": today_wiki(), 
-            "value": new_value
-        }
-
+                value += this_price * amount
+        return(value)
+    
+    def update_value_history(self):
+        """Update the player's value history in the MongoDB (should only be run by the scheduled task)."""
         # Insert a new value into the value history if the timestamp doesn't exist
         # There should always be at least one since it's initialized with the starting cash :)
         if len(self.value_history) == 0:
+            this_value = {"timestamp": today_wiki(), "value": self.portfolio_value}
+            # Don't call self.portfolio_value unless it's needed -- I don't want to make unnecessary API calls
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}})
             return(None)
         elif self.value_history[-1]["timestamp"].timestamp() < this_value["timestamp"].timestamp():
+            this_value = {"timestamp": today_wiki(), "value": self.portfolio_value}
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}}) 
             return(self.value_history[-1]["value"] != this_value) # For debugging purposes
