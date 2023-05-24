@@ -297,9 +297,10 @@ class Player():
         """Return the value of the player's portfolio yesterday."""
         yesterday = today_wiki() - timedelta(days=1)
         for value in reversed(self.value_history):
-            if value["timestamp"].timestamp() <= yesterday.timestamp():
+            if value["timestamp"].timestamp() == yesterday.timestamp():
                 return(value["value"])
-        return(self.value_history[0]["value"])
+        # Return second to last value or first value if yesterday's value doesn't exist exactly
+        return(self.value_history[-2]["value"] if len(self.value_history) > 1 else self.value_history[0]["value"])
     
     @property
     def last_week_value(self):
@@ -307,8 +308,9 @@ class Player():
         last_week = today_wiki() - timedelta(days=7)
         for value in reversed(self.value_history):
             if value["timestamp"].timestamp() <= last_week.timestamp():
+                # I want to eventually phase out the <= for == here :)
                 return(value["value"])
-        return(self.value_history[0]["value"])
+        return(self.value_history[0]["value"]) # Return first value
     
     @classmethod
     def get_by_user_id(cls, game_id, user_id):
