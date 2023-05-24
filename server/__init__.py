@@ -10,7 +10,7 @@ from flask import Flask
 from flask_login import LoginManager
 from datetime import datetime, timezone
 
-from server.helper import settings, cache_config, cache, scheduler, active_games_coll, players_db, today_wiki
+from server.helper import settings, cache_config, cache, scheduler, active_games_coll, players_db, today_wiki, log_update
 from server.models import User, Player
 
 def create_app():
@@ -48,15 +48,8 @@ def create_app():
         timestamp = today_wiki().strftime("%Y-%m-%d %H:%M:%S")
         end_time = datetime.now(timezone.utc)
         elapsed_time = end_time - start_time
-        log_out = f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time), taking {elapsed_time.total_seconds()} seconds ⏰"
-        log_out += f"\nMade {api_calls} API calls and changed {changed_vals} values 📈"
-        print(log_out)
-        # Save this to an output log file
-        filename = f"./server/logs/portfolio_updates/{end_time.strftime('%Y%m%d-%H%M%S')}.txt"
-        with open(filename, "w") as f:
-            f.write(log_out)
-
-
+        # Ugh bad workaround
+        log_update(end_time, elapsed_time, n_games, n_players, api_calls, changed_vals, timestamp)
 
     # Set up scheduler
     scheduler.init_app(app)

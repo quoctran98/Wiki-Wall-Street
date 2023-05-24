@@ -141,3 +141,16 @@ def make_cache_key(*args, **kwargs):
     args = str(hash(frozenset(request.args.items())))
     cache_key = f"{path}?{args}"
     return cache_key
+
+# This is to log the update portfolio function -- workaround for now until I move the whole thing
+def log_update(end_time, elapsed_time, n_games, n_players, api_calls, changed_vals, timestamp):
+    log_out = f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time), taking {elapsed_time.total_seconds()} seconds ⏰"
+    log_out += f"\nMade {api_calls} API calls and changed {changed_vals} values 📈"
+    print(log_out)
+    # Save this to an output log file
+    filename = f"./server/logs/portfolio_updates/{end_time.strftime('%Y%m%d-%H%M%S')}.txt"
+    try:
+        with open(filename, "w") as f:
+            f.write(log_out)
+    except:
+        print("Couldn't write to log file!")
