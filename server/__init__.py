@@ -52,7 +52,7 @@ def create_app():
         log_out += f"\nMade {api_calls} API calls and changed {changed_vals} values 📈"
         print(log_out)
         # Save this to an output log file
-        filename = f"logs/portfolio_updates/{end_time.strftime('%Y%m%d-%H%M%S')}.txt"
+        filename = f"./server/logs/portfolio_updates/{end_time.strftime('%Y%m%d-%H%M%S')}.txt"
         with open(filename, "w") as f:
             f.write(log_out)
 
