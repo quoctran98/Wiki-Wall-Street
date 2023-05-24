@@ -48,8 +48,8 @@ def create_app():
         timestamp = today_wiki().strftime("%Y-%m-%d %H:%M:%S")
         end_time = datetime.now(timezone.utc)
         elapsed_time = end_time - start_time
-        log_out = f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time), taking {elapsed_time.total_seconds()} seconds ⏰")
-        log_out += f"\nMade {api_calls} API calls and changed {changed_vals} values 📈")
+        log_out = f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time), taking {elapsed_time.total_seconds()} seconds ⏰"
+        log_out += f"\nMade {api_calls} API calls and changed {changed_vals} values 📈"
         print(log_out)
         # Save this to an output log file
         filename = f"logs/portfolio_updates/{end_time.strftime('%Y%m%d-%H%M%S')}.txt"
