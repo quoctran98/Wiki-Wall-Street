@@ -34,22 +34,29 @@ def create_app():
         start_time = datetime.now(timezone.utc)
         n_games = 0
         n_players = 0
+        api_calls = 0
         changed_vals = 0
-        added_vals = 0
         for game in active_games_coll.find():
             n_games += 1
             for player in players_db[game["game_id"]].find():
-                this_player = Player.get_by_player_id(game["game_id"], player["player_id"])
-                res = this_player.update_value_history()
                 n_players += 1
-                if res is not None: # Returns none when the day hasn't changed
-                    changed_vals += res # Returns True if the value changed, False if it didn't
-                    added_vals += 1
+                this_player = Player.get_by_player_id(game["game_id"], player["player_id"])
+                api, change = this_player.update_value_history()
+                api_calls += api
+                changed_vals += change
+                
         timestamp = today_wiki().strftime("%Y-%m-%d %H:%M:%S")
         end_time = datetime.now(timezone.utc)
         elapsed_time = end_time - start_time
-        print(f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time), taking {elapsed_time.total_seconds()} seconds ⏰")
-        print(f"Added {added_vals} new values, of which {changed_vals} changed 📈")
+        log_out = f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time), taking {elapsed_time.total_seconds()} seconds ⏰")
+        log_out += f"\nMade {api_calls} API calls and changed {changed_vals} values 📈")
+        print(log_out)
+        # Save this to an output log file
+        filename = f"logs/portfolio_updates/{end_time.strftime('%Y%m%d-%H%M%S')}.txt"
+        with open(filename, "w") as f:
+            f.write(log_out)
+
+
 
     # Set up scheduler
     scheduler.init_app(app)

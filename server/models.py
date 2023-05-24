@@ -257,22 +257,24 @@ class Player():
         return(value)
     
     def update_value_history(self):
-        """Update the player's value history in the MongoDB (should only be run by the scheduled task)."""
-        # Insert a new value into the value history if the timestamp doesn't exist
-        # There should always be at least one since it's initialized with the starting cash :)
-        if len(self.value_history) == 0:
+        """
+        Update the player's value history in the MongoDB (should only be run by the scheduled task).
+        Let's try to make as few API calls as possible!
+        Returns two booleans -- if the portfolio_value @property was called and if the value changed.
+        """
+        if len(self.value_history) == 0: # Should always have at least one!
             this_value = {"timestamp": today_wiki(), "value": self.portfolio_value}
             # Don't call self.portfolio_value unless it's needed -- I don't want to make unnecessary API calls
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}})
-            return(None)
+            return(True, True) # For debugging purposes
         elif self.value_history[-1]["timestamp"].timestamp() < today_wiki().timestamp():
             this_value = {"timestamp": today_wiki(), "value": self.portfolio_value}
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}}) 
-            return(self.value_history[-1]["value"] != this_value) # For debugging purposes
+            return(True, self.value_history[-1]["value"] != this_value["value"]) # For debugging purposes
         else:
-            return(None)
+            return(False, False) # For debugging purposes
         
 
     def leave_game(self):
