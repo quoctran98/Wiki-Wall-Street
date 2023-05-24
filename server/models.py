@@ -241,7 +241,7 @@ class Player():
             if game_settings["show_articles"]:
                 info_dict["articles"] = {art: amt for art, amt in self.articles.items() if amt > 0}
         if "show_number" in game_settings:
-            if not game_settings["show_number"]:
+            if not game_settings["show_number"] and "articles" in info_dict:
                 info_dict["articles"] = {art: True for art in info_dict["articles"].keys()} 
 
         return(info_dict)
