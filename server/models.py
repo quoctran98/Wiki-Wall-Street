@@ -260,19 +260,19 @@ class Player():
         """
         Update the player's value history in the MongoDB (should only be run by the scheduled task).
         Let's try to make as few API calls as possible!
-        Returns two booleans -- if the portfolio_value @property was called and if the value changed.
+        Returns an int and a bool -- how many times the wiki api was called and if the value changed.
         """
         if len(self.value_history) == 0: # Should always have at least one!
             this_value = {"timestamp": today_wiki(), "value": self.portfolio_value}
             # Don't call self.portfolio_value unless it's needed -- I don't want to make unnecessary API calls
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}})
-            return(True, True) # For debugging purposes
+            return(len(self.articles), True) # For debugging purposes
         elif self.value_history[-1]["timestamp"].timestamp() < today_wiki().timestamp():
             this_value = {"timestamp": today_wiki(), "value": self.portfolio_value}
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}}) 
-            return(True, self.value_history[-1]["value"] != this_value["value"]) # For debugging purposes
+            return(len(self.articles), self.value_history[-1]["value"] != this_value["value"]) # For debugging purposes
         else:
             return(False, False) # For debugging purposes
         
