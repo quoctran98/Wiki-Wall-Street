@@ -20,9 +20,11 @@ def help():
 
 @main.route("/invite/<game_id>")
 def invite(game_id):
-    # game = Game.get_by_game_id(game_id)
-    # ^ not needed but could be good for Open Graph
-    return(render_template("invite.html"))
+    game = Game.get_by_game_id(game_id)
+    custom_og = {
+        "title": f"Join my {game.name} Wiki Wall Street Game!",
+    }
+    return(render_template("invite.html", custom_og=custom_og))
 
 @main.route("/profile/<name>")
 def profile(name):
