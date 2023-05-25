@@ -22,6 +22,7 @@ let PAGEVIEWS_DATA_OBJECT;
 let CURRENT_TIMESPAN = "month";
 let PRICE_CHANGE;
 let ARTICLE_ALLOWED = true;
+let ALLOWED_REASON = "";
 
 // Used by the leaderboard mainly -- contains player objects :)
 let ALL_PLAYERS = [];

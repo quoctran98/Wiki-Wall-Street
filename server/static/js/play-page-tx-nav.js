@@ -13,6 +13,7 @@ const SEARCH_DATALIST_ID = "search-datalist";
 const GRAPH_TIME_BUTTON_IDS = ["graph-week-button", "graph-month-button", "graph-year-button", "graph-all-button"];
 const GRAPH_DIV_ID = "transaction-graph";
 const GRAPH_TITLE_ID = "graph-title";
+const GRAPH_PRICE_ID = "graph-price";
 const GRAPH_DESC_ID = "graph-desc";
 
 // Transaction div elements (when the player owns an article)
@@ -195,7 +196,10 @@ function update_graph(pageviews_data=PAGEVIEWS_DATA_OBJECT, timespan="month") {
 
     // Plot the graph with Plotly
     const plot_data = [{x: timestamps, y: views, type: "scatter"}];
-    const plot_layout = {margin:{t: 10},xaxis: {type: "date",},yaxis: {title: "Page Views",},};
+    const plot_layout = {
+        margin:{t: 10},
+        xaxis: {type: "date",},
+        yaxis: {title: "Page Views",},};
     const graph_div = document.getElementById(GRAPH_DIV_ID);
 
     // Clear the div (of loading gif) and plot the graph
@@ -217,18 +221,32 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
 
     const wikipedia_url = `http://en.wikipedia.org/wiki?curid=${article_data.pageid}`;
     let title_html = `<a href="${wikipedia_url}" target="_blank" rel="noopener noreferrer">${article_data.title}</a>:`
-    title_html += ` ${format_price(CURRENT_PRICE)} (${(PRICE_CHANGE > 0)? "📈" : "📉"} ${PRICE_CHANGE}%)`;
+    
     if (allowed == false) {
-        title_html = `<s>${title_html}</s>`;
-    }
-    let short_desc = article_data.short_desc;
-    if (allowed == false) {
-        short_desc = (short_desc === null)? "<p style='color:Tomato'>Article is not allowed in this game!</p>" : `
-            <s>${short_desc}</s> <p style='color:Tomato'>Article is not allowed in this game!</p>`;
+        let banned_reason;
+        if (ALLOWED_REASON == "banned_categories") {
+            banned_reason = "in banlist";
+        } else if (ALLOWED_REASON == "views_limit") {
+            banned_reason = "too few views";
+        } else if (ALLOWED_REASON == "allowed_categories") {
+            banned_reason = "not in game theme";
+        } else {
+            banned_reason = "citation needed";
+        }
+        citation_needed_html = `
+            <sup data-toggle="tooltip" title data-original-title="quoc">
+                <a href="/help"><span style="color:red;">[<em>${banned_reason}</em>]</span></a>
+            </sup>
+        `;
+        title_html += citation_needed_html;
     }
     
+    let price_html = `${format_price(CURRENT_PRICE)} (${(PRICE_CHANGE > 0)? "📈" : "📉"} ${PRICE_CHANGE}%)`;
+    let short_desc = article_data.short_desc;
+
     // Update the title and description
     document.getElementById(GRAPH_TITLE_ID).innerHTML = title_html;
+    document.getElementById(GRAPH_PRICE_ID).innerHTML = price_html;
     document.getElementById(GRAPH_DESC_ID).innerHTML = short_desc;
 }
 
@@ -268,6 +286,7 @@ async function load_article (article_name=null) {
 
         // Update the global variables
         ARTICLE_ALLOWED = allowed_res.allowed;
+        ALLOWED_REASON = allowed_res.reason;
         PAGEVIEWS_DATA_OBJECT = price_res;
         CURRENT_PRICE = price_res.views[price_res.views.length-1]; // DON'T ROUND THIS! It's used for calculations!
         PRICE_CHANGE = Math.round(((price_res.views[price_res.views.length-1] - price_res.views[0]) / price_res.views[0]) * 1000) / 10;

@@ -179,7 +179,8 @@ def allowed_article():
     game_id = request.args.get("game_id")
     article = request.args.get("article")
     this_game = Game.get_by_game_id(game_id)
-    return(jsonify({"allowed": this_game.allowed_article(article)}))
+    allowed, reason =  this_game.allowed_article(article)
+    return(jsonify({"allowed": allowed, "reason": reason}))
 
 @game.route("/api/get_joined_games")
 @login_required

@@ -3,6 +3,11 @@
     Use it to define functions that are used in multiple pages.
 */
 
+// Enable bootstrap tooltips
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+
 // This is used a lot, so let's just define it here
 function format_price(p, imprecise=false) {
     // Round the price to the nearest integer or at least 3 significant figures

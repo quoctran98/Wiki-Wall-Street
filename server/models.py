@@ -109,6 +109,7 @@ class Game():
         })
     
     def allowed_article(self, article_name):
+        """Returns a boolean and a string (reason)"""
         # Sucks that I have to make this call twice per article but it's probably fine
         article_categories = WikiAPI.article_information(article_name)["categories"]
         
@@ -118,7 +119,7 @@ class Game():
             for c in self.settings["allowed_categories"]:
                 unpacked_allowed.extend(allowed_categories[c])
             if len(unpacked_allowed) > 0: # if there's an explicit list of allowed categories
-                return(any([cat in unpacked_allowed for cat in article_categories]) or article_name in unpacked_allowed)
+                return(any([cat in unpacked_allowed for cat in article_categories]) or article_name in unpacked_allowed, "allowed_categories")
 
         # Check if the game has any banned categories
         if "banned_categories" in self.settings:
@@ -126,15 +127,15 @@ class Game():
             for c in self.settings["banned_categories"]:
                 unpacked_banned.extend(banned_categories[c])
             if any([cat in unpacked_banned for cat in article_categories]) or article_name in unpacked_banned:
-                return(False) # not necessarily allowed yet but definitely not allowed
+                return(False, "banned_categories") # not necessarily allowed yet but definitely not allowed
 
         # Check if the article is below the minimum views limit
         if "views_limit" in self.settings:
             lowest_this_month = float(min([x["views"] for x in WikiAPI.normalized_views(article_name)]))
             if (float(self.settings["views_limit"]) > lowest_this_month):
-                return(False)
+                return(False, "views_limit")
 
-        return(True)
+        return(True, "ok")
 
     def change_settings(self, new_settings):
         """Change the settings of the game."""
