@@ -125,7 +125,7 @@ function leaderboard_card (player) {
 async function init_leaderboard() {
 
     // Make a request to the server to get the leaderboard
-    const lboard_url = "/api/leaderboard?game_id=" + GAME_ID;
+    const lboard_url = "/api/leaderboard/" + GAME_ID;
     let lboard_res = await fetch(lboard_url, {method:"GET"});
     lboard_res = await lboard_res.json();
     ALL_PLAYERS = lboard_res.players;

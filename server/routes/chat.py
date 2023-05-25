@@ -10,10 +10,9 @@ import server.WikiAPI as WikiAPI
 
 chat = Blueprint("chat", __name__)
 
-@chat.route("/api/see_chat")
+@chat.route("/api/see_chat/<game_id>")
 @login_required
-def see_chat():
-    game_id = request.args.get("game_id")
+def see_chat(game_id):
     this_game = Game.get_by_game_id(game_id)
     if this_game is None:
         return(jsonify({"error": "Game not found."}))

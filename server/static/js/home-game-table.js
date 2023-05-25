@@ -11,7 +11,7 @@ const PUBLIC_GAMES_TABLE_ID = "public-games-table";
 async function add_game_row (game_id, joined_games_table, total_games) {
 
     // Get game object and this player's object from the server
-    const play_info_url = `/api/get_play_info?game_id=${game_id}`;
+    const play_info_url = `/api/get_play_info/${game_id}`;
     let play_info_res = await fetch(play_info_url);
     play_info_res = await play_info_res.json();
     const game = play_info_res.game; // Redundant, since we already have this_game
@@ -40,7 +40,7 @@ async function add_game_row (game_id, joined_games_table, total_games) {
     players_cell.innerHTML = game.players.join(", ");
     change_cell.innerHTML = `${(daily_change > 0)? "📈" : "📉"} ${daily_change}%`
     action_cell.innerHTML = `<button class="btn btn-primary" 
-        onclick="window.location.href='/play?game_id=${game.game_id}'">
+        onclick="window.location.href='/play/${game.game_id}'">
     <i class="bi-joystick"></i> Play</button>`;
     
     // Remove the loading row if this is the last game

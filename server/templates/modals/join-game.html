@@ -70,7 +70,7 @@
             // Replace the game info with a loading icon
             $("#game-info").html(`Loading game information <img class="inline-image" src="/static/img/loading.gif" alt="Loading spinner">`);
             // Get the game information from the server (this should work for the join game and invite game pages -- same modal!)
-            fetch("/api/get_invite_info?game_id=" + game_id)
+            fetch("/api/get_invite_info/" + game_id)
             .then((response) => response.json())
             .then((game_res) => {
                 const game = game_res.game;

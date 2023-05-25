@@ -39,11 +39,12 @@ function render_players_list(game) {
     // Add the players to the list
     for (let i = 0; i < game.players.length; i++) {
         const is_self = game.players[i] == THIS_PLAYER.name;
+        const profile_link = window.location.origin + "/profile/" + encodeURI(game.players[i]);
         let player_html = `
         <li> 
             ${(is_owner && !is_self) ? `<i class="bi-x-circle-fill players-kick-player" onclick="kick_player('${game.players[i]}')"></i>` : ""}
             <i class="bi-person-plus-fill players-add-friend"></i>
-            ${game.players[i]} 
+            <a href="${profile_link}">${game.players[i]}</a>
         </li>
         `; // Bad! That I'm doing this with player name and not ID, but those should be unique anyway
 
@@ -59,7 +60,7 @@ function init_players() {
     $("#players-modal").on("show.bs.modal", function() {
 
         // Add an invite link that copies to clipboard
-        const invite_link = window.location.origin + "/invite?game_id=" + GAME_OBJECT.game_id;
+        const invite_link = window.location.origin + "/invite/" + GAME_OBJECT.game_id;
         $("#players-modal #invite-link").val(invite_link);
 
         // Render the players list

@@ -84,7 +84,7 @@
                             {{ current_user.name }}
                         </a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Profile (not yet)</a>
+                            <a class="dropdown-item" href="{{ url_for('main.profile', name=current_user.name) }}">Profile</a>
                             <a class="dropdown-item" href="#">Account Settings (not yet)</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>

@@ -41,7 +41,7 @@ def kick_player():
         return(redirect(url_for("game.play", game_id=game_id)))
     player.leave_game()
     # Clear cache for the game leaderboard (THIS DOESN'T WORK)
-    cache.delete(f"/api/leaderboard?game_id={game_id}")
+    cache.delete(f"/api/leaderboard/game_id={game_id}")
     flash(f"Player '{player_name}' has been kicked from the game")
     return(jsonify({"success": True}))
 

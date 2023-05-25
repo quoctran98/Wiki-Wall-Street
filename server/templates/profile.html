@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="gets-blurred">
+
+<div class="row">
+
+<!-- COLUMN FOR PROFILE INFORMATION -->
+<div class="col-md-4 text-center">
+  <h2><ins>{{ user.name }}</ins></h2>
+  <br>
+  <img src="{{ url_for('static', filename='img/default-profile.png') }}" class="profile-pic" alt="Profile Picture">
+  <hr>
+  <p><strong>Wiki Wall Streeter Since</strong>
+  <br>
+  {{ user.signup_time.strftime('%b %d, %Y') }}</p>
+</div>
+
+<!-- COLUMN FOR GAMES TABLE -->
+<div class="col-md-8">
+  <h2>{{ user.name }}'s Games!</h2>
+  <table class="table table-striped" id="profile-games-table">
+    <tr>
+      <th><i class="bi-card-text"></i> Game Name</th>
+      <th><i class="bi-piggy-bank-fill"></i> Total Value</th>
+      <th><i class="bi-calendar-fill"></i> Date Joined</th>
+    </tr>
+    <tr id="joined-games-loading">
+      <th>Loading <img class="inline-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading..."></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </table>
+</div>
+
+
+</div>
+
+<script src="{{url_for('static', filename='js/profile-game-table.js')}}"></script>
+
+{% endblock %}

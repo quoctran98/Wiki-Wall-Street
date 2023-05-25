@@ -10,7 +10,7 @@
 const GAME_NAME_ID = "game-name";
 
 // Global variables for the current game and player
-let GAME_ID = window.location.search.split("=")[1].split("&")[0];
+let GAME_ID = window.location.pathname.split("/")[2];
 let GAME_OBJECT;
 let THIS_PLAYER;
 
@@ -34,7 +34,7 @@ loading_portfolio();
 loading_trending();
 
 // Call api/get_play_info to get the game and player objects -- this is also used globally!
-fetch("/api/get_play_info?game_id=" + GAME_ID, {method: 'GET'})
+fetch("/api/get_play_info/" + GAME_ID, {method: 'GET'})
 .then(response => response.json())
 .then(data => {
     GAME_OBJECT = data["game"];

@@ -126,22 +126,6 @@ def username_is_valid(username):
             return(False)
     return(True)
 
-def print_cache_key(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        cache_key = f.make_cache_key(*args, **kwargs)
-        print("Cache key:", cache_key)
-        return f(*args, **kwargs)
-
-    return decorated_function
-
-# Custom make_cache_key function to include query string separator
-def make_cache_key(*args, **kwargs):
-    path = request.path
-    args = str(hash(frozenset(request.args.items())))
-    cache_key = f"{path}?{args}"
-    return cache_key
-
 # This is to log the update portfolio function -- workaround for now until I move the whole thing
 def log_update(end_time, elapsed_time, n_games, n_players, api_calls, changed_vals, timestamp):
     log_out = f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time), taking {elapsed_time.total_seconds()} seconds ⏰"

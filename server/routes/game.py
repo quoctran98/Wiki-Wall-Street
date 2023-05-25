@@ -3,22 +3,21 @@ from flask import request, Blueprint, render_template, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from datetime import datetime, timezone
 
-from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories, print_cache_key, make_cache_key
+from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories
 from server.models import Game, Player, Transaction
 
 import server.WikiAPI as WikiAPI
 
 game = Blueprint("game", __name__)
 
-@game.route("/games")
-@login_required
-def games():
-    return(render_template("games.html", user=current_user))
+# @game.route("/games")
+# @login_required
+# def games():
+#     return(render_template("games.html", user=current_user))
 
-@game.route("/play")
+@game.route("/play/<game_id>")
 @login_required
-def play():
-    game_id = request.args.get("game_id")
+def play(game_id):
     this_game = Game.get_by_game_id(game_id)
     if this_game is None:
         flash("Game not found.")
@@ -26,7 +25,7 @@ def play():
     if not current_user.user_id in this_game.user_ids:
         flash("You're not in this game. You must join it first.")
         return(redirect(url_for("main.index")))
-    # Don't send any objects yet -- they'll be requested by the client (current_user)
+    # Don't send any objects yet -- they'll be requested by the client :)
     return(render_template("play.html", allowed_categories=allowed_categories, banned_categories=banned_categories, user=current_user))
 
 @game.route("/api/create_game", methods=["POST"])
@@ -172,12 +171,10 @@ def new_transaction():
     else:
         return(jsonify({"success": True}))
     
-@game.route("/api/allowed_article")
+@game.route("/api/allowed_article/<game_id>/<article>")
 @login_required
-@cache.cached(timeout=300, query_string=True)
-def allowed_article():
-    game_id = request.args.get("game_id")
-    article = request.args.get("article")
+@cache.cached(timeout=60)
+def allowed_article(game_id, article):
     this_game = Game.get_by_game_id(game_id)
     allowed, reason =  this_game.allowed_article(article)
     return(jsonify({"allowed": allowed, "reason": reason}))
@@ -202,12 +199,11 @@ def get_public_games():
             games.append(vars(this_game))
     return(jsonify({"games": games}))
 
-@game.route("/api/get_play_info")
+@game.route("/api/get_play_info/<game_id>")
 @login_required
 # DON'T CACHE! IT MAKES TRANSACTIONS WEIRD
-def get_play_info():
+def get_play_info(game_id):
     # This should only be called by the player themselves
-    game_id = request.args.get("game_id")
     this_game = Game.get_by_game_id(game_id)
     this_player = Player.get_by_user_id(game_id, current_user.user_id)
     if this_game is None or this_player is None:
@@ -227,13 +223,12 @@ def get_play_info():
 
         return(jsonify({"game": this_game_props, "player": this_player_props}))
 
-@game.route("/api/leaderboard")
+@game.route("/api/leaderboard/<game_id>")
 @login_required
 #@cache.cached(timeout=300, query_string=True, make_cache_key=make_cache_key)
 #@cache.cached(timeout=300, query_string=True)
 # FAST ENOUGH THAT WE DON'T NEED TO CACHE
-def leaderboard():
-    game_id = request.args.get("game_id")
+def leaderboard(game_id):
     game = Game.get_by_game_id(game_id)
     players = []
     for user_id in game.user_ids:
@@ -243,12 +238,26 @@ def leaderboard():
     players.sort(key=lambda x: x["value"], reverse=True)
     return(jsonify({"players": players}))
 
-@game.route("/api/get_invite_info")
-def get_invite_info():
-    game_id = request.args.get("game_id")
+@game.route("/api/get_invite_info/<game_id>")
+def get_invite_info(game_id):
     this_game = Game.get_by_game_id(game_id)
     if this_game is None:
         flash("Could not find game!")
         return(jsonify({"error": True}))
     else:
         return(jsonify({"game": vars(this_game)}))
+    
+@game.route("/api/get_profile_game/<game_id>/<user_name>")
+def get_game_info(game_id, user_name):
+    this_game = Game.get_by_game_id(game_id)
+    this_player = Player.get_by_player_name(game_id, user_name)
+    if this_player is None:
+        return(jsonify({"error": True}))
+    else:
+        return_dict = {
+            "game": this_game.name,
+            "value": this_player.value_history[-1]["value"],
+            "date_joined": this_player.value_history[0]["timestamp"]
+        }
+        print(return_dict)
+        return(jsonify(return_dict))

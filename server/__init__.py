@@ -90,6 +90,10 @@ def create_app():
     from .routes.admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint)
 
+    # # Blueprint for profile routes from routes/profile.py
+    # from .routes.profile import profile as profile_blueprint
+    # app.register_blueprint(profile_blueprint)
+
     # Make sure the app is running with the correct settings
     print("Routes registered! 🌐")
     print(f"Game set up with average en.wikipedia project views of {settings.EN_WIKI_AVERAGE_DAILY_PROJECT_VIEWS} 📈")

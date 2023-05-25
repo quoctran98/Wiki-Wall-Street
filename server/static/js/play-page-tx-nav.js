@@ -275,9 +275,9 @@ async function load_article (article_name=null) {
 
    // Do all the API calls up top, then update the page at the end
    Promise.all([
-        fetch(`/api/allowed_article?game_id=${GAME_OBJECT.game_id}&article=${article_name}`),
-        fetch(`/api/article_price?article=${article_name}&timespan=${CURRENT_TIMESPAN}`),
-        fetch(`/api/article_information?article=${article_name}`)
+        fetch(`/api/allowed_article/${GAME_OBJECT.game_id}/${article_name}`),
+        fetch(`/api/article_price/${article_name}/${CURRENT_TIMESPAN}`),
+        fetch(`/api/article_information/${article_name}`)
     ]).then(async function (responses) {
         // Get a JSON object from each of the responses
         const allowed_res = await responses[0].json();

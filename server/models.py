@@ -37,6 +37,14 @@ class User(UserMixin):
         """Update the user's information in MongoDB"""
         active_users_coll.update_one({"user_id": self.user_id}, {"$set": self.__dict__})
 
+    def get_profile(self):
+        """Get the user's profile information from (public information)"""
+        return({
+            "name": self.name,
+            "signup_time": self.signup_time,
+            "joined_games": self.joined_games,
+        })
+
     @classmethod
     def get_by_email(cls, email):
         data = active_users_coll.find_one({"email": email})

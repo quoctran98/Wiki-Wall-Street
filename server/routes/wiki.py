@@ -12,14 +12,14 @@ import server.WikiAPI as WikiAPI
 
 wiki = Blueprint("wiki", __name__)
 
-@wiki.route("/api/search_article")
-@cache.cached(timeout=3600, query_string=True) 
+@wiki.route("/api/search_article/<game_id>/<query>")
+@login_required
+@cache.cached(timeout=3600) 
 # Long time if the settings change but hopefully they don't
-def search_article():
-    query = request.args.get("query")
-    game = Game.get_by_game_id(request.args.get("game_id"))
-
+def search_article(game_id, query):
+    
     # Try to use the search lists
+    game = Game.get_by_game_id(game_id)
     if "allowed_categories" in game.settings:
         if "" not in game.settings["allowed_categories"]:
             suggestions = []
@@ -43,19 +43,9 @@ def search_article():
         return(jsonify(suggestions=[]))
     return(jsonify(suggestions=[]))
 
-@wiki.route("/api/current_price")
-def current_price():
-    # THIS DOESN'T ACTUALLY GET THE LATEST PRICE because normalized_views() uses today_wiki()
-    article = request.args.get("article")
-    normalized_views = WikiAPI.normalized_views(article)
-    price = normalized_views[-1]["views"]
-    return(jsonify(price=price))
-
-@wiki.route("/api/article_price")
-@cache.cached(timeout=300, query_string=True)
-def monthly_views():
-    article = request.args.get("article")
-    timespan = request.args.get("timespan")
+@wiki.route("/api/article_price/<article>/<timespan>")
+@cache.cached(timeout=300)
+def article_price(article, timespan):
     # Shouldn't actually need to use today_wiki() here, but it'll make sure the frontend is consistent :)
     if timespan == "week":
         start = today_wiki() - timedelta(days=7)
@@ -74,10 +64,10 @@ def monthly_views():
     views = [x["views"] for x in normalized_views]
     return(jsonify(timestamps=timestamps, views=views))
 
-@wiki.route("/api/article_information")
-@cache.cached(timeout=86400, query_string=True) # This should never change (maybe)
-def article_description():
-    article = request.args.get("article")
+@wiki.route("/api/article_information/<article>")
+@cache.cached(timeout=86400) # This should never change (maybe)
+def article_description(article):
+    print("⭐️", article)
     info = WikiAPI.article_information(article)
     return(jsonify(title=info["title"], pageid=info["pageid"], short_desc=info["short_desc"], categories=info["categories"]))
 

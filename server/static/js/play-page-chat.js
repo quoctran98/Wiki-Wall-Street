@@ -74,7 +74,7 @@ async function delete_message(chat_id) {
 }
 
 async function get_messages(game_id) {
-    const chat_url = "/api/see_chat?game_id=" + game_id;
+    const chat_url = "/api/see_chat/" + game_id;
     let chat_res = await fetch(chat_url);
     chat_res = await chat_res.json();
     return(chat_res.messages);

@@ -57,8 +57,7 @@ async function new_tx(n, tx_type) {
 
     // Reload the page if the transaction was successful!
     let reload_url = window.location.href;
-    reload_url = window.location.href.split("?")[0];
-    reload_url += `?game_id=${GAME_OBJECT.game_id}&article=${encodeURIComponent(CURRENT_ARTICLE)}`;
+    reload_url += `?article=${encodeURIComponent(CURRENT_ARTICLE)}`;
     window.location.href = reload_url;
 }
 
@@ -88,7 +87,7 @@ async function search_article() {
 
     // Get search suggestions from the server
     const search_input = document.getElementById(SEARCH_ID).value;
-    const search_url = "/api/search_article?query=" + search_input + "&game_id=" + GAME_OBJECT.game_id;
+    const search_url = "/api/search_article/" + GAME_OBJECT.game_id + "/" + search_input;
     let serach_res = await fetch(search_url, { method: "GET" })
     if (serach_res.status !== 200) {
         console.log("Something went wrong!");

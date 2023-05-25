@@ -162,3 +162,11 @@
   max-height: 70vh;
   overflow-y: scroll;
 }
+
+.profile-pic {
+  border-radius: 50%;
+  border: 3px solid;
+  border-color: #000000;
+  width: 60%;
+  height: auto;
+}
