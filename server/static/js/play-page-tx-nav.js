@@ -71,8 +71,9 @@ function loading_graph(article="Article", timespan="month") {
             views.push(new_view);
         }
     }
-
-    const plot_data = [{x: timestamps, y: views, type: "scatter"}];
+    // make color change based on whether the views are going up or down
+    let color = (views[0] > views[views.length-1])? "#c13030" : "#4668ff";
+    const plot_data = [{x: timestamps, y: views, type: "scatter", line:{color: color}}];
     const plot_layout = {margin:{t: 10},xaxis: {type: "date",},yaxis: {title: "Page Views",},};
     const graph_div = document.getElementById(GRAPH_DIV_ID);
 
@@ -195,7 +196,8 @@ function update_graph(pageviews_data=PAGEVIEWS_DATA_OBJECT, timespan="month") {
     }
 
     // Plot the graph with Plotly
-    const plot_data = [{x: timestamps, y: views, type: "scatter"}];
+    let color = (views[0] > views[views.length-1])? "#c13030" : "#4668ff";
+    const plot_data = [{x: timestamps, y: views, type: "scatter", line:{color: color}}];
     const plot_layout = {
         margin:{t: 10},
         xaxis: {type: "date",},
@@ -235,7 +237,7 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
         }
         citation_needed_html = `
             <sup data-toggle="tooltip" title data-original-title="quoc">
-                <a href="/help"><span style="color:red;">[<em>${banned_reason}</em>]</span></a>
+                <a href="/help"><span style="color:#c13030;">[<em>${banned_reason}</em>]</span></a>
             </sup>
         `;
         title_html += citation_needed_html;

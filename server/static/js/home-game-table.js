@@ -28,16 +28,16 @@ async function add_game_row (game_id, joined_games_table, total_games) {
     let action_cell = row.insertCell(3);
 
     // Make the player cell shorten to ellipses if it's too long
+    // Ugh should move this to CSS
     players_cell.style = `
         overflow: hidden; 
-        text-overflow: ellipsis;
-        max-width: 30vw;
-        white-space: nowrap;
+        max-width: 20vw;
     `;
+
 
     // Populate the cells with the game info
     name_cell.innerHTML = game.name;
-    players_cell.innerHTML = game.players.join(", ");
+    players_cell.innerHTML = format_players_list(game.players); // defined in main.js (should be in utils.js)
     change_cell.innerHTML = `${(daily_change > 0)? "📈" : "📉"} ${daily_change}%`
     action_cell.innerHTML = `<button class="btn btn-primary" 
         onclick="window.location.href='/play/${game.game_id}'">
@@ -101,7 +101,7 @@ async function populate_public_games() {
         let action_cell = row.insertCell(2);
 
         name_cell.innerHTML = this_game.name;
-        players_cell.innerHTML = this_game.players.join(", ");
+        players_cell.innerHTML = format_players_list(this_game.players);
         action_cell.innerHTML = `
         <button class="btn btn-primary"
             data-toggle="modal" data-target="#join-game-modal"

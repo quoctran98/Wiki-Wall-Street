@@ -26,7 +26,8 @@ function loading_trending() {
             // No need for the random walk like in center graph because for 7 days it's pretty random
             views.push(Math.round(Math.random() * 1000) + 1000);
         }
-        let plot_data = [{x: timestamps, y: views, type: "line"}];
+        let color = (views[0] > views[views.length-1])? "#c13030" : "#4668ff";
+        const plot_data = [{x: timestamps, y: views, type: "line", marker:{color: color}}];
         let plot_layout = {autosize: true, margin:{t: 0, b: 0, l: 0, r: 1}, xaxis: {type: "date",},yaxis: {title: "",}};
         Plotly.newPlot(`trending-loading-graph-${i}`, plot_data, plot_layout, {staticPlot: true, responsive: true});
     }
@@ -72,8 +73,9 @@ function add_graph(graph_div_id, article) {
         timestamps.push(new Date(year, month-1, day));
     }
 
+    let color = (views[0] > views[views.length-1])? "#c13030" : "#4668ff";
     // Call Plotly to make the graph
-    let plot_data = [{x: timestamps, y: views, type: "line"}];
+    let plot_data = [{x: timestamps, y: views, type: "line", marker:{color: color}}];
     let plot_layout = {
         autosize: true,
         // height: 70,

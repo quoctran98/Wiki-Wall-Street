@@ -49,7 +49,9 @@ function show_player_info_modal(player_id) {
     const rank = ALL_PLAYERS.indexOf(this_player) + 1;
 
     // Set the info in the modal!
-    $("#leaderboard-modal .modal-title").html(`<ins>${this_player.name}</ins>'s Portfolio`);
+    $("#leaderboard-modal .modal-title").html(`
+        <ins><a href="/profile/${encodeURIComponent(this_player.name)}">${this_player.name}</a></ins>'s Portfolio
+    `);
 
     // Calculate the daily and weekly change
     let yesterday_change = (this_player.value - this_player.yesterday_value) / this_player.yesterday_value;
@@ -59,7 +61,8 @@ function show_player_info_modal(player_id) {
 
     // Set the summary in the modal! (with cash if it exists and articles if they exist)
     $("#leaderboard-modal #summary-sentence").html(`
-        ${this_player.name} is in <ins>${rank}${get_rank_suffix(rank)}</ins> place
+        <a href="/profile/${encodeURIComponent(this_player.name)}">${this_player.name}</a>
+         is in <ins>${rank}${get_rank_suffix(rank)}</ins> place
         with a portfolio value of <ins>${format_value(this_player.value)}</ins>
         
         ${this_player.cash? "and <ins>" + format_price(this_player.cash) + "</ins> in cash" : ""}!

@@ -14,6 +14,10 @@ def index():
                            allowed_categories=allowed_categories.keys(), 
                            banned_categories=banned_categories.keys()))
 
+# @main.route("/robots.txt")
+# def robots():
+#     return(render_template("robots.txt"))
+
 @main.route("/help")
 def help():
     return(render_template("help.html"))
@@ -43,4 +47,10 @@ def get_users_games(name):
     user = User.get_by_name(name)
     if user is None:
         return({"error": "User not found"})
+    # public_joined_games = []
+    # for game_id in user.joined_games:
+    #     game = Game.get_by_game_id(game_id)
+    #     if game is not None and game.public:
+    #         public_joined_games.append(game.game_id)
+    # return({"games": public_joined_games})
     return({"games": user.joined_games})

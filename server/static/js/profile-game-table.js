@@ -1,7 +1,7 @@
 // This loads the table on the profile page with a player's joined games
 
 const PROFILE_GAMES_TABLE_ID = "profile-games-table";
-const USER_NAME = window.location.pathname.split("/")[2];
+const USER_NAME = decodeURIComponent(window.location.pathname.split("/")[2]);
 
 // This function adds a row to the profile games table
 async function add_game_row (game_id, profile_games_table, total_games) {
@@ -20,7 +20,7 @@ async function add_game_row (game_id, profile_games_table, total_games) {
 
     // Populate the cells with the game info
     name_cell.innerHTML = this_game_res.game;
-    value_cell.innerHTML = format_value(this_game_res.value, include_icon=false);
+    value_cell.innerHTML = format_value(this_game_res.value, imprecise=false, include_icon=false);
     date_cell.innerHTML = new Date(this_game_res.date_joined).toLocaleDateString();
 
     // Remove the loading row if this is the last game

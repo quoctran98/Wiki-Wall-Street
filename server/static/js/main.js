@@ -103,26 +103,42 @@ function unblur_background() {
     }
 }
 
-// Makes an HTML sentence out of the game information 
-function render_game_info(game) {
+function format_players_list(players, order="random") {
+    // Order the players
+    if (order == "random") {
+        // Shuffle the players
+        for (let i = players.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [players[i], players[j]] = [players[j], players[i]];
+        }
+    } else if (order == "alphabetical") {
+        players.sort();
+    }
 
     // Format the player list
-    let player_list = "";
-    for (let i = 0; i < game.players.length; i++) {
-        // Could be more elegant, but this lets me underline everything
-        if (i === game.players.length - 1) {
-            player_list += ", and ";
+    let players_list = "";
+    for (let i = 0; i < players.length; i++) {
+        players_list += `
+            <a href="/profile/${encodeURIComponent(players[i])}">${players[i]}</a>`;
+        if (i < players.length - 1 && players.length > 2) {
+            players_list += ", ";
         }
-        player_list += `<ins>${game.players[i]}</ins>`;
-        if (i < game.players.length - 2) {
-            player_list += ", ";
+        if (i == players.length - 2 && players.length > 2) {
+            players_list += "and ";
+        } else if (i == players.length - 2 && players.length > 1) {
+            players_list += " and ";
         }
     }
+    return(players_list);
+}
+
+// Makes an HTML sentence out of the game information 
+function render_game_info(game) {
 
     // Create the HTML with players and some settings
     let game_info_html = `
         <h2>Join <ins>${game.name}</ins>!</h2>
-        <p> 👥 Play with ${player_list} </p>
+        <p> 👥 Play with ${format_players_list(game.players)} </p>
         <p> ⚙️ You'll start with <ins>${format_price(game.settings.starting_cash)}</ins> cash
     `;
 

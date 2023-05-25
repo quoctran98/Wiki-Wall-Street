@@ -170,3 +170,19 @@
   width: 60%;
   height: auto;
 }
+
+.a {
+  color: #4668ff;
+}
+
+.btn-primary {
+  color: #ffffff;
+  background-color: #4668ff;
+  border-color: #4668ff;
+}
+
+.btn-danger {
+  color: #ffffff;
+  background-color: #c13030;
+  border-color: #c13030;
+}
