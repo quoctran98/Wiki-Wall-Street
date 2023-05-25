@@ -35,4 +35,4 @@ Once you're in a game, you can **buy and sell Wikipedia articles** using your **
 7.  **Trending Articles** Look at Wikipedia's trending articles for the day! Click on one to see its pageview trends!
 8.  **More Stuff** Click on these buttons to open the game chat, see players in the game (or leave the game), and check the game's settings!
 
-![](https://github.com/quoctran98/Wiki-Wall-Street/blob/master/server/static/img/tutorial/tutorial-main.png)
+![](https://github.com/quoctran98/Wiki-Wall-Street/blob/master/server/static/img/tutorial.png)

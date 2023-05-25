@@ -245,16 +245,7 @@ class Player():
                 info_dict["articles"] = {art: True for art in info_dict["articles"].keys()} 
 
         return(info_dict)
-    
-    @property
-    def portfolio_value(self):
-        value = self.cash
-        for article, amount in self.articles.items():
-            res = WikiAPI.normalized_views(article)
-            if res is not None:
-                this_price = res[-1]["views"]
-                value += this_price * amount
-        return(value)
+
     
     def update_value_history(self):
         """
@@ -267,12 +258,12 @@ class Player():
             # Don't call self.portfolio_value unless it's needed -- I don't want to make unnecessary API calls
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}})
-            return(len(self.articles), True) # For debugging purposes
+            return(len([x for x in self.articles.values() if x > 0]), True) # For debugging purposes
         elif self.value_history[-1]["timestamp"].timestamp() < today_wiki().timestamp():
             this_value = {"timestamp": today_wiki(), "value": self.portfolio_value}
             players_db[self.game_id].update_one({"player_id": self.player_id}, 
                                                 {"$push": {"value_history": this_value}}) 
-            return(len(self.articles), self.value_history[-1]["value"] != this_value["value"]) # For debugging purposes
+            return(len([x for x in self.articles.values() if x > 0]), self.value_history[-1]["value"] != this_value["value"]) # For debugging purposes
         else:
             return(False, False) # For debugging purposes
         
@@ -292,6 +283,17 @@ class Player():
 
         # Remove the player from the MongoDB
         players_db[self.game_id].delete_one({"player_id": self.player_id})
+
+    @property
+    def portfolio_value(self):
+        value = self.cash
+        for article, amount in self.articles.items():
+            if amount > 0:
+                res = WikiAPI.normalized_views(article)
+                if res is not None:
+                    this_price = res[-1]["views"]
+                    value += this_price * amount
+        return(value)
 
     @property
     def yesterday_value(self):

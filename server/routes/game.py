@@ -203,8 +203,7 @@ def get_public_games():
 
 @game.route("/api/get_play_info")
 @login_required
-#@cache.cached(timeout=60, query_string=True, make_cache_key=make_cache_key)
-@cache.cached(timeout=60, query_string=True)
+# DON'T CACHE! IT MAKES TRANSACTIONS WEIRD
 def get_play_info():
     # This should only be called by the player themselves
     game_id = request.args.get("game_id")
@@ -230,7 +229,8 @@ def get_play_info():
 @game.route("/api/leaderboard")
 @login_required
 #@cache.cached(timeout=300, query_string=True, make_cache_key=make_cache_key)
-@cache.cached(timeout=300, query_string=True)
+#@cache.cached(timeout=300, query_string=True)
+# FAST ENOUGH THAT WE DON'T NEED TO CACHE
 def leaderboard():
     game_id = request.args.get("game_id")
     game = Game.get_by_game_id(game_id)
