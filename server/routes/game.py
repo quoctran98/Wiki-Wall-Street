@@ -190,7 +190,7 @@ def allowed_article(game_id, article):
     cache_key = f"allowed_article:{game_id}:{article}"
     cached_result = cache.get(cache_key)
     if cached_result:
-        print(f"⭐️ {cache_key} found in cache")
+        #print(f"⭐️ {cache_key} found in cache")
         return(cached_result)
     
     this_game = Game.get_by_game_id(game_id)

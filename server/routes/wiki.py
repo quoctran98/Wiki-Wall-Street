@@ -21,7 +21,7 @@ def search_article(game_id, query):
     cache_key = f"search_article:{game_id}:{query}"
     cached_result = cache.get(cache_key)
     if cached_result:
-        print(f"⭐️ {cache_key} found in cache")
+        #print(f"⭐️ {cache_key} found in cache")
         return(cached_result)
     
     suggestions = []
