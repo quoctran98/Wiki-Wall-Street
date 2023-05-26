@@ -38,11 +38,11 @@ def create_app():
     if settings.ENVIRONMENT == "local":
         print("Not starting scheduler in local environment ⏰")
     else:
-        # Run every hour even though today_wiki() should make it so it won't actually update a player's value more than once a day :)
-        scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="cron", minute="1", hour="*")
+        # This should run at UPDATE_HOUR:01 UTC every day and we should clear the cache the minute before
+        scheduler.add_job(id="clear_cache", func=cache.clear, trigger="cron", hour=settings.UPDATE_HOUR_UTC, minute=0, timezone=timezone.utc)
+        scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="cron", hour=settings.UPDATE_HOUR_UTC, minute=1, timezone=timezone.utc)
         print("Scheduler started! ⏰")
-        # Let's run it once right now to make sure it works
-        update_all_portfolio_vals()
+        update_all_portfolio_vals() # To make sure it works! And the server was down during the update time!
 
     # Blueprint for auth routes from routes/auth.py
     from .routes.auth import auth as auth_blueprint

@@ -3,6 +3,8 @@ from pymongo import MongoClient
 from flask_caching import Cache
 from flask_apscheduler import APScheduler
 from datetime import datetime, timezone, timedelta
+import fnmatch
+import pickle
 import os
 
 from functools import wraps
@@ -58,9 +60,7 @@ chats_db = client[settings.CHATS_DB_NAME]
 # Cache for later use
 cache_config = {
     "CACHE_DEBUG": 1,
-    #"CACHE_TYPE": "SimpleCache",
-    "CACHE_DEFAULT_TIMEOUT": 1800,
-    
+    "CACHE_DEFAULT_TIMEOUT": 84600, # 24 hours (most things are updated daily)
     "CACHE_TYPE": "FileSystemCache",
     "CACHE_THRESHOLD": 1000,
     "CACHE_DIR": "./server/temp/cache"
@@ -140,3 +140,23 @@ def log_update(end_time, elapsed_time, n_games, n_players, api_calls, changed_va
             f.write(log_out)
     except:
         print("Couldn't write to log file!")
+
+# Call this function to clear all the caches for a game
+# If settings are changed or whatever, delete all caches for a game
+GAME_PATHS_CACHED = ["search_article", "allowed_article"]
+def clear_game_caches(game_id, paths=GAME_PATHS_CACHED):
+    # I found a big issue!
+    # Filesystem caches store the hash of the key in the filename
+    # There's no way to retrieve the keys from the cache unless I write a function to do it
+    cache.clear()
+    # # We have to first get all the keys in the cache
+    # cache_keys = []
+    # for f in cache.cache._list_dir():
+    #     print(f)
+    #     cache_keys += os.path.split(f)[-1]
+    # # Now we can delete all the keys that match the pattern
+    # for path in paths:
+    #     pattern = f"{path}:{game_id}:*"
+    #     for k in cache_keys:
+    #         if fnmatch.fnmatch(k, pattern):
+    #             cache.delete(k)

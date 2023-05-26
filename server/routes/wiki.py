@@ -14,37 +14,47 @@ wiki = Blueprint("wiki", __name__)
 
 @wiki.route("/api/search_article/<game_id>/<query>")
 @login_required
-@cache.cached(timeout=3600) 
-# Long time if the settings change but hopefully they don't
 def search_article(game_id, query):
+
+    # Try to manually use cache 
+    # defining a cache key this way allows us to clear it later for this specific game
+    cache_key = f"search_article:{game_id}:{query}"
+    cached_result = cache.get(cache_key)
+    if cached_result:
+        print(f"⭐️ {cache_key} found in cache")
+        return(cached_result)
     
+    suggestions = []
+
     # Try to use the search lists
     game = Game.get_by_game_id(game_id)
     if "allowed_categories" in game.settings:
         if "" not in game.settings["allowed_categories"]:
-            suggestions = []
             unfound_search_lists = False
             for category in game.settings["allowed_categories"]:
                 if category in search_lists:
-                    suggestions += search_lists[category]
+                    query_in_list = [x for x in search_lists[category] if query.lower() in x.lower()]
+                    suggestions += query_in_list
                 else:
                     unfound_search_lists = True
-                    break 
-            if not unfound_search_lists: # Only return suggestions if ALL categories have search lists
-                suggestions = [x for x in suggestions if query.lower() in x.lower()]
+            if not unfound_search_lists: # If we found all the search lists, we can just return the results
                 suggestions = sorted(suggestions, key=len)
+                cache.set(cache_key, jsonify(suggestions=suggestions))
                 return(jsonify(suggestions=suggestions))
-
-    # Use the default Wikipedia search
+            
+    # If less than ALL the search lists were found, we can just use the API
     if len(query) > 0:
         results = WikiAPI.search_article(query)
         if results:
-            return(jsonify(suggestions=results["suggestions"]))
-        return(jsonify(suggestions=[]))
-    return(jsonify(suggestions=[]))
+            suggestions += results["suggestions"]
+
+    # Sort by length so that the shortest ones are first? then return
+    suggestions = sorted(suggestions, key=len)
+    cache.set(cache_key, jsonify(suggestions=suggestions))
+    return(jsonify(suggestions=suggestions))
 
 @wiki.route("/api/article_price/<article>/<timespan>")
-@cache.cached(timeout=300)
+@cache.cached(timeout=86400) # Should only change once a day (will be cleared when the stuff updates)
 def article_price(article, timespan):
     # Shouldn't actually need to use today_wiki() here, but it'll make sure the frontend is consistent :)
     if timespan == "week":
@@ -65,14 +75,13 @@ def article_price(article, timespan):
     return(jsonify(timestamps=timestamps, views=views))
 
 @wiki.route("/api/article_information/<article>")
-@cache.cached(timeout=86400) # This should never change (maybe)
+@cache.cached(timeout=86400) # Should only change once a day (will be cleared when the stuff updates)
 def article_description(article):
-    print("⭐️", article)
     info = WikiAPI.article_information(article)
     return(jsonify(title=info["title"], pageid=info["pageid"], short_desc=info["short_desc"], categories=info["categories"]))
 
 @wiki.route("/api/trending_articles")
-@cache.cached(timeout=3600) # This maybe changes once a day?
+@cache.cached(timeout=86400) # Should only change once a day (will be cleared when the stuff updates)
 def trending_articles():
     articles = WikiAPI.top_articles()["articles"][:100]
     trending = []

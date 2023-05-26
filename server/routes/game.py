@@ -3,7 +3,7 @@ from flask import request, Blueprint, render_template, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from datetime import datetime, timezone
 
-from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories
+from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories, clear_game_caches
 from server.models import Game, Player, Transaction
 
 import server.WikiAPI as WikiAPI
@@ -113,7 +113,10 @@ def change_settings():
                 flash("You can't have both a theme AND banned categories.")
                 return(redirect(url_for("game.play", game_id=game_id)))
 
-        this_game.change_settings(new_game_settings) # This will only change what's been changed :)
+        this_game.change_settings(new_game_settings)
+        # Clear the caches for this game
+        clear_game_caches(game_id)
+        flash("Settings changed.")
         return(redirect(url_for("game.play", game_id=game_id)))
     
 @game.route("/api/join_game", methods=["POST"])
@@ -180,10 +183,20 @@ def new_transaction():
     
 @game.route("/api/allowed_article/<game_id>/<article>")
 @login_required
-@cache.cached(timeout=60)
 def allowed_article(game_id, article):
+
+    # Try to manually use cache 
+    # defining a cache key this way allows us to clear it later for this specific game
+    cache_key = f"allowed_article:{game_id}:{article}"
+    cached_result = cache.get(cache_key)
+    if cached_result:
+        print(f"⭐️ {cache_key} found in cache")
+        return(cached_result)
+    
     this_game = Game.get_by_game_id(game_id)
     allowed, reason =  this_game.allowed_article(article)
+
+    cache.set(cache_key, jsonify({"allowed": allowed, "reason": reason}))
     return(jsonify({"allowed": allowed, "reason": reason}))
 
 @game.route("/api/get_joined_games")
@@ -232,9 +245,6 @@ def get_play_info(game_id):
 
 @game.route("/api/leaderboard/<game_id>")
 @login_required
-#@cache.cached(timeout=300, query_string=True, make_cache_key=make_cache_key)
-#@cache.cached(timeout=300, query_string=True)
-# FAST ENOUGH THAT WE DON'T NEED TO CACHE
 def leaderboard(game_id):
     game = Game.get_by_game_id(game_id)
     players = []
