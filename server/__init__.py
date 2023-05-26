@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 
 from server.helper import settings, cache_config, cache, scheduler, active_games_coll, players_db, today_wiki, log_update
 from server.models import User, Player
+from server.tasks import update_all_portfolio_vals
 
 def create_app():
     app = Flask(__name__)
@@ -27,29 +28,6 @@ def create_app():
     
     # Set up cache
     cache.init_app(app, config=cache_config)
-
-    # Run Player.update_value_history() for every player in every active game
-    # I'm defining this function here because it needs access to a few models :)
-    def update_all_portfolio_vals():
-        start_time = datetime.now(timezone.utc)
-        n_games = 0
-        n_players = 0
-        api_calls = 0
-        changed_vals = 0
-        for game in active_games_coll.find():
-            n_games += 1
-            for player in players_db[game["game_id"]].find():
-                n_players += 1
-                this_player = Player.get_by_player_id(game["game_id"], player["player_id"])
-                api, change = this_player.update_value_history()
-                api_calls += api
-                changed_vals += change
-                
-        timestamp = today_wiki().strftime("%Y-%m-%d %H:%M:%S")
-        end_time = datetime.now(timezone.utc)
-        elapsed_time = end_time - start_time
-        # Ugh bad workaround
-        log_update(end_time, elapsed_time, n_games, n_players, api_calls, changed_vals, timestamp)
 
     # Set up scheduler
     scheduler.init_app(app)

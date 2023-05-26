@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Account Settings for <ins>{{ user.name }}</ins></h2>
+<p><b>Email: </b>{{ user.email }}</p>
+<p><b>Signup Time: </b>{{ user.signup_time.strftime('%b %d, %Y @ %I:%M %p') }} UTC</p>
+
+<hr>
+
+<div class="row">
+    <!-- CHANGE PASSWORD -->
+    <form class="col-md-4" method="POST" action="{{ url_for('admin.change_password') }}"">
+
+        <h3>Change Password</h3>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi-lock"></i></span>
+            <input class="form-control" type="password" name="old_password" placeholder="Old Password">
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi-lock"></i></span>
+            <input class="form-control" type="password" name="new_password" placeholder="New Password">
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi-lock"></i></span>
+            <input class="form-control" type="password" name="confirmation" placeholder="Confirm New Password">
+        </div>
+        <p class="text-danger" id="password-error"></p>
+
+        <button class="btn btn-primary" id="change-password-button" type="submit" disabled>Change Password</button>
+
+        <script type="text/javascript">
+            invalid_password = false;
+            // Check if password and confirmation match
+            let new_password = document.getElementsByName("new_password")[0];
+            let confirmation = document.getElementsByName("confirmation")[0];
+            confirmation.addEventListener("keyup", function() {
+                if (new_password.value !== confirmation.value) {
+                    $("#password-error").html("New passwords do not match.");
+                    $("#change-password-button").prop("disabled", true);
+                } else {
+                    document.getElementById("password-error").innerHTML = "";
+                    $("#change-password-button").prop("disabled", false);
+                }
+            });
+            new_password.addEventListener("keyup", function() {
+                if (new_password.value !== confirmation.value) {
+                    $("#password-error").html("New passwords do not match.");
+                    $("#change-password-button").prop("disabled", true);
+                } else {
+                    document.getElementById("password-error").innerHTML = "";
+                    $("#change-password-button").prop("disabled", false);
+                }
+            });
+        </script>
+    </form>
+</div>
+
+{% endblock %}

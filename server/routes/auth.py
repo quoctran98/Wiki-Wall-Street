@@ -23,8 +23,14 @@ def login_post():
     # This is such a bad hack :( but it's fine!
     next_url = request.form.get("next")
 
-    # Check if user exists and password is correct
-    # Use the method from User class to check the password
+    if user is None:
+        flash("Email address isn't signed up")
+        return(redirect(url_for("auth.login")))
+    if not user.check_password(password):
+        flash("Password is incorrect")
+        return(redirect(url_for("auth.login")))
+
+    # Redundant but let's play it safe
     if user is not None and user.check_password(password):
         login_user(user, remember=remember)
         if next_url != "":
@@ -51,6 +57,10 @@ def signup_post():
         return(redirect(url_for("auth.signup")))
     if User.get_by_name(name) is not None:
         flash("Username already taken, please choose another (sorry this isn't handled better)")
+        return(redirect(url_for("auth.signup")))
+    # Make sure the passowrds match
+    if request.form.get("password") != request.form.get("confirm_password"):
+        flash("Passwords do not match")
         return(redirect(url_for("auth.signup")))
 
     # This is added by the JS on the frontend

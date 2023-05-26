@@ -44,6 +44,15 @@ class User(UserMixin):
             "signup_time": self.signup_time,
             "joined_games": self.joined_games,
         })
+    
+    def set_password(self, new_password):
+        """Set the user's password to a new password"""
+        self.password = generate_password_hash(new_password)
+        self.update_user()
+
+    def send_reset_email(self):
+        """Send a password reset email to the user"""
+        pass
 
     @classmethod
     def get_by_email(cls, email):

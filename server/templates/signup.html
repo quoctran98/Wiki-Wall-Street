@@ -25,15 +25,69 @@
                     <input class="form-control" type="text" name="name" placeholder="Username">
                     <!-- CALLING IT A USERNAME, BUT IT'S "NAME" EVERYWHERE ELSE IN THE CODE-->
                 </div>
+                
+                <br>
 
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi-lock"></i></span>
                     <input class="form-control" type="password" name="password" placeholder="Password">
                 </div>
 
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi-lock"></i></span>
+                    <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+                </div>
+                <p class="text-danger" id="username-error"></p>
+                <p class="text-danger" id="password-error"></p>
+
+                <script type="text/javascript">
+
+                    invalid_username = false;
+                    invalid_password = false;
+
+                    // Check if password and confirmation match
+                    let password = document.getElementsByName("password")[0];
+                    let confirmation = document.getElementsByName("confirmation")[0];
+                    function check_passwords() {
+                        if (password.value !== confirmation.value) {
+                            $("#password-error").html("Passwords do not match.");
+                            invalid_password = true;
+                        } else {
+                            document.getElementById("password-error").innerHTML = "";
+                            invalid_password = false;
+                        }
+                        $("#sign-up-button").prop("disabled", (invalid_username || invalid_password));
+                    }
+                    confirmation.addEventListener("keyup", check_passwords);
+                    password.addEventListener("keyup", check_passwords);
+
+                    // Check if username is valid
+                    const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+                    let username = document.getElementsByName("name")[0];
+                    username.addEventListener("keyup", function() {
+                        let username_value = username.value;
+                        has_invalid_char = false;
+                        for (let i = 0; i < username_value.length; i++) {
+                            if (!valid_chars.includes(username_value[i])) {
+                                has_invalid_char = true;
+                            }
+                        }
+                        if (has_invalid_char) {
+                            $("#username-error").html("Username can only contain letters, numbers, hyphens, and underscores");
+                            invalid_password = true;
+                        } else {
+                            document.getElementById("username-error").innerHTML = "";
+                            invalid_password = false;
+                        }
+                        $("#sign-up-button").prop("disabled", (invalid_username || invalid_password));
+                    });
+
+                    
+                </script>
+
                 <br>
                 
-                <button class="btn btn-primary">Sign Up</button>
+                <button class="btn btn-primary" id="sign-up-button" disabled="true">Sign Up</button>
                 
             </form>
         </div>

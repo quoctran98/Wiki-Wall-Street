@@ -90,7 +90,7 @@
                         </a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="{{ url_for('main.profile', name=current_user.name) }}">Profile</a>
-                            <a class="dropdown-item" href="#">Account Settings (not yet)</a>
+                            <a class="dropdown-item" href="{{ url_for('admin.account') }}">Account Settings</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
                         </div>
@@ -107,14 +107,33 @@
     <hr>
 
     <!-- FLASH MESSAGES -->
-    {% with messages = get_flashed_messages() %}
+    <!-- {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     {% for m in messages %}
+        {% if category is defined %}
+        <div class="container has-text-centered">
+            <div class="alert {{ category }}" role="alert">
+                {{ m }}
+            </div>
+        </div>
+        {% else %}
         <div class="container has-text-centered">
             <div class="alert alert-danger" role="alert">
                 {{ m }}
             </div>
         </div>
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endwith %} -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for m in messages %}
+    <div class="container has-text-centered">
+        <div class="alert alert-danger" role="alert">
+            {{ m }}
+        </div>
+    </div>
     {% endfor %}
     {% endif %}
     {% endwith %}

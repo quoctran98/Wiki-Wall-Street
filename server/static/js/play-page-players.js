@@ -13,22 +13,13 @@ async function kick_player(player_name) {
     $("#players-modal #players-list").css("color", "gray");
     $("#players-modal #players-list").css("pointer-events", "none");
 
-    const delete_body = {
-        game_id: GAME_OBJECT.game_id,
-        player_name: player_name,
-    };
-    let kick_res = await fetch("/api/kick_player",{
-            method: "DELETE",
-            headers: {"Content-Type": "application/json",},
-            body: JSON.stringify(delete_body)}
-    );
+    // Close this modal and open the confirm modal
+    $("#players-modal").modal("hide");
+    $("#kick-confirm-modal").modal("show");
 
-    if (kick_res.status !== 200) {
-        console.log("Error kicking player");
-        console.log(kick_res);
-    } else {
-        window.location.reload();
-    }
+    // Fill out the confirm modal info
+    $("#kick-confirm-modal #kick-confirm-form #game-id").val(GAME_OBJECT.game_id);
+    $("#kick-confirm-modal #kick-confirm-form #player-name").val(player_name);
 }
 
 function render_players_list(game) {

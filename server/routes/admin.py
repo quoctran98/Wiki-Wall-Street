@@ -3,9 +3,44 @@ from flask_login import login_user, login_required, logout_user, current_user
 import json
 
 from server.helper import settings, cache
-from server.models import Player, Game
+from server.models import Player, Game, User
 
 admin = Blueprint("admin", __name__)
+
+@admin.route("/account")
+@login_required
+def account():
+    return(render_template("account.html", user=current_user))
+
+@admin.route("/api/change_password", methods=["POST"])
+@login_required
+def change_password():
+    # Check if the old password is correct
+    old_password = request.form.get("old_password")
+    if not current_user.check_password(old_password):
+        flash("Old password is incorrect")
+        return(redirect(url_for("admin.account")))
+    # Check if the new password matches the confirm password
+    new_password = request.form.get("new_password")
+    confirm_password = request.form.get("confirmation")
+    if new_password != confirm_password:
+        flash("New password does not match confirm password")
+        return(redirect(url_for("admin.account")))
+    # Change the password
+    current_user.set_password(new_password)
+    flash("Password changed successfully")
+    return(redirect(url_for("admin.account")))
+
+@admin.route("/api/forgot_password", methods=["POST"])
+def forgot_password():
+    email = request.form.get("email")
+    user = User.get_by_email(email)
+    if not user:
+        flash("Email does not exist")
+        return(redirect(url_for("auth.login")))
+    user.send_reset_email()
+    flash("Reset email sent")
+    return(redirect(url_for("auth.login")))
 
 @admin.route("/api/leave_game", methods=["POST"])
 @login_required
@@ -24,13 +59,12 @@ def leave_game():
     flash("You have left the game")
     return(redirect(url_for("main.index")))
 
-@admin.route("/api/kick_player", methods=["DELETE"])
+@admin.route("/api/kick_player", methods=["POST"])
 @login_required
 def kick_player():
-    data = json.loads(request.data.decode("utf-8"))
-    game_id = data["game_id"]
+    game_id = request.form.get("game_id")
     # Sucks that we have to use the name instead of the user_id
-    player_name = data["player_name"]
+    player_name = request.form.get("player_name")
     game =  Game.get_by_game_id(game_id)
     player = Player.get_by_player_name(game_id, player_name)
     if not player or not game:
@@ -43,7 +77,7 @@ def kick_player():
     # Clear cache for the game leaderboard (THIS DOESN'T WORK)
     cache.delete(f"/api/leaderboard/game_id={game_id}")
     flash(f"Player '{player_name}' has been kicked from the game")
-    return(jsonify({"success": True}))
+    return(redirect(url_for("game.play", game_id=game_id)))
 
 @admin.route("/api/delete_game", methods=["POST"])
 @login_required

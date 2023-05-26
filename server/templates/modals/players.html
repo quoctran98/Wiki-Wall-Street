@@ -78,3 +78,36 @@
     </div>
     </div>
 </div>
+
+<!-- KICK CONFIRM MODAL -->
+<div class="modal" id="kick-confirm-modal">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content modal-rounder-corners">
+
+    <!-- MODAL BODY -->
+    <div class="modal-body"> 
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 text-center">
+                <p class="text-danger"><b>Are you sure you want to kick this player?</b></p>
+                <hr>
+                <p>Their progress will be lost!</p>
+                <p>They will not be able to rejoin without an invite link.</p>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+    
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+        <form action="{{ url_for('admin.kick_player') }}" method="POST" id="kick-confirm-form">
+            <input type="hidden" name="game_id" id="game-id" value="">
+            <input type="hidden" name="player_name" id="player-name" value="">
+        </form>
+        <button type="submit" class="btn btn-danger" form="kick-confirm-form"><i class="bi-x-circle-fill"></i> Kick Player</button>
+        <button type="button" class="btn btn-secondary" id="close-button" data-dismiss="modal">Close</button>
+    </div>
+
+    </div>
+    </div>
+</div>
