@@ -15,6 +15,13 @@ game = Blueprint("game", __name__)
 # def games():
 #     return(render_template("games.html", user=current_user))
 
+# Fallback "/play" route for autocomplete / legacy links
+@game.route("/play")
+@login_required
+def play_legacy():
+    game_id = request.args.get("game_id")
+    return(redirect(url_for("game.play", game_id=game_id)))
+
 @game.route("/play/<game_id>")
 @login_required
 def play(game_id):

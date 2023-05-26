@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, request, jsonify, Blueprint, render_template, flash
+from flask import Flask, request, jsonify, Blueprint, render_template, flash, redirect, url_for
 from flask_login import login_required, current_user
 from pymongo import MongoClient
 
@@ -21,6 +21,12 @@ def index():
 @main.route("/help")
 def help():
     return(render_template("help.html"))
+
+# Fallback "/invite" route for legacy links
+@main.route("/invite")
+def invite_legacy():
+    game_id = request.args.get("game_id")
+    return(redirect(url_for("main.invite", game_id=game_id)))
 
 @main.route("/invite/<game_id>")
 def invite(game_id):
