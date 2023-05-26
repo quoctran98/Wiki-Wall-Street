@@ -83,17 +83,23 @@
         <h3>BUY!</h3>
         <button id="buy-1-button" onclick="new_tx(1,'buy')" disabled="true">Buy 1</button> <br>
         <button id="buy-5-button" onclick="new_tx(5,'buy')" disabled="true">Buy 5</button> <br>
-        <input type="number" id="custom-buy-input" min="1" value="10"></input> <br>
-        <button id="buy-custom-button" onclick="new_tx(document.getElementById('custom-buy-input').value,'buy')" disabled="true">Buy</button>
-
+        <div class="input-group" style="display:flex;">
+            <span class="input-group-text">Buy</span>
+            <input type="number" id="custom-buy-input" min="1" value="10" style="flex:1;"></input>
+            <button id="buy-custom-button" onclick="new_tx(document.getElementById('custom-buy-input').value,'buy')" disabled="true">Buy</button>
+        </div>
+        
     <hr>
 
     <div id="sell-div">
         <h3>SELL!</h3>
         <p><span id="article-info"></span></p>
         <button id="sell-1-button" onclick="new_tx(1,'sell')" disabled="true">Sell 1</button> <br>
-        <input type="number" id="custom-sell-input" min="1" value="10"></input> <br>
-        <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')" disabled="true">Sell</button>
+        <div class="input-group" style="display:flex;">
+            <span class="input-group-text">Sell</span>
+            <input type="number" id="custom-sell-input" min="1" value="10"></input>
+            <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')" disabled="true">Sell</button>
+        </div>
     </div>
 
     </div>

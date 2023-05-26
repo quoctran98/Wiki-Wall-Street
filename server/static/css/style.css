@@ -161,6 +161,7 @@
 .modal-scroll {
   max-height: 70vh;
   overflow-y: scroll;
+  margin: 1rem;
 }
 
 .profile-pic {
@@ -171,7 +172,11 @@
   height: auto;
 }
 
-.a {
+a:link {
+  color: #4668ff;
+}
+
+a:visited {
   color: #4668ff;
 }
 

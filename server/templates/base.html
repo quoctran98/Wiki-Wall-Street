@@ -57,7 +57,7 @@
             <!-- TITLE -->
             <a href="{{ url_for('main.index') }}" style="all: unset;">
                 <h1 class="title" style="float: left;">
-                    <img src="{{ url_for('static', filename='img/wordmark.png') }}" alt="Wiki Wall Street Wordmark" style="height: 1.5em; max-width: 90vw;">
+                    <img src="{{ url_for('static', filename='img/wordmark.png') }}" alt="Wiki Wall Street Wordmark" style="max-height: 1.5em; max-width: 90vw;">
                 </h1>
                 <!-- <h1 class="title" style="float: left;">
                     Wiki Wall Street
@@ -65,7 +65,7 @@
             </a>
 
             <!-- NAVBAR -->
-            <nav class="navbar navbar-toggleable-lg navbar-expand-lg rounded" style="float: right;">
+            <nav class="navbar navbar-toggleable-lg navbar-expand rounded" style="float: right;">
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>

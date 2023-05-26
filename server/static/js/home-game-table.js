@@ -30,8 +30,9 @@ async function add_game_row (game_id, joined_games_table, total_games) {
     // Make the player cell shorten to ellipses if it's too long
     // Ugh should move this to CSS
     players_cell.style = `
-        overflow: hidden; 
+        overflow: scroll;
         max-width: 20vw;
+        white-space: nowrap;
     `;
 
 
@@ -90,7 +91,6 @@ async function populate_public_games() {
         action_cell.innerHTML = "";
     } 
 
-
     // Populate the table with the public games
     // We don't have to wrap this in an async function because it's not making any server calls
     for (let i = 0; i < public_games.length; i++) {
@@ -99,6 +99,13 @@ async function populate_public_games() {
         let name_cell = row.insertCell(0);
         let players_cell = row.insertCell(1);
         let action_cell = row.insertCell(2);
+
+        // Ugh should move this to CSS
+        players_cell.style = `
+            overflow: scroll;
+            max-width: 20vw;
+            white-space: nowrap;
+        `;
 
         name_cell.innerHTML = this_game.name;
         players_cell.innerHTML = format_players_list(this_game.players);
