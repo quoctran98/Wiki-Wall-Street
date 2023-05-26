@@ -9,6 +9,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from datetime import datetime, timezone
+import pytz
 
 from server.helper import settings, cache_config, cache, scheduler, active_games_coll, players_db, today_wiki, log_update
 from server.models import User, Player
@@ -39,8 +40,8 @@ def create_app():
         print("Not starting scheduler in local environment ⏰")
     else:
         # This should run at UPDATE_HOUR:01 UTC every day and we should clear the cache the minute before
-        scheduler.add_job(id="clear_cache", func=cache.clear, trigger="cron", hour=settings.UPDATE_HOUR_UTC, minute=0, timezone=timezone.utc)
-        scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="cron", hour=settings.UPDATE_HOUR_UTC, minute=1, timezone=timezone.utc)
+        scheduler.add_job(id="clear_cache", func=cache.clear, trigger="cron", hour=settings.UPDATE_HOUR_UTC, minute=0, timezone=pytz.timezone("UTC"))
+        scheduler.add_job(id="update_all_portfolio_vals", func=update_all_portfolio_vals, trigger="cron", hour=settings.UPDATE_HOUR_UTC, minute=1, timezone=pytz.timezone("UTC"))
         print("Scheduler started! ⏰")
         update_all_portfolio_vals() # To make sure it works! And the server was down during the update time!
 
