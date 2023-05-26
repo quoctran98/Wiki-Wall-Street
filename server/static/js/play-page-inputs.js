@@ -56,7 +56,7 @@ async function new_tx(n, tx_type) {
     }
 
     // Reload the page if the transaction was successful!
-    let reload_url = window.location.origin;
+    let reload_url = window.location.href.split("?")[0];
     reload_url += `?article=${encodeURIComponent(CURRENT_ARTICLE)}`;
     window.location.href = reload_url;
 }
