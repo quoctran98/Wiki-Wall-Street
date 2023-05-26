@@ -104,15 +104,17 @@ def sanitize(string):
 
 # This is called a lot in WikiAPI.py :)
 # Basically doesn't let the day change until UPDATE_HOUR_UTC
+# So at 6 AM UTC on Tusday, it will return Sunday midnight UTC
+# and at 7 AM UTC on Tuesday, it will return Monday midnight UTC -- is this right?
 # It's a little HACK to force a single update time :)
 def today_wiki():
     # All times should be in UTC (the server's been doing that by default but I should be explicit)
     now = datetime.now(timezone.utc)
     floor_today = now.replace(hour=0, minute=1, second=0, microsecond=0)
     if now.hour < settings.UPDATE_HOUR_UTC:
-        return(floor_today - timedelta(days=1))
+        return(floor_today - timedelta(days=2))
     else:
-        return(floor_today)
+        return(floor_today - timedelta(days=1))
 
 # Don't rely on this!
 # There are already currently usernames that have spaces
