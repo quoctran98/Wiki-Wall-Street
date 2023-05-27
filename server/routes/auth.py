@@ -59,7 +59,7 @@ def signup_post():
         flash("Username already taken, please choose another (sorry this isn't handled better)")
         return(redirect(url_for("auth.signup")))
     # Make sure the passowrds match
-    if request.form.get("password") != request.form.get("confirm_password"):
+    if request.form.get("password") != request.form.get("confirmation"):
         flash("Passwords do not match")
         return(redirect(url_for("auth.signup")))
 
