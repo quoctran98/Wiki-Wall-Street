@@ -195,3 +195,12 @@ a:visited {
 .bg-danger {
   background-color: #c13030;
 }
+
+.notif-badge {
+  position: relative; 
+  top: -1em;
+  left: -1em;
+  background-color: #c13030;
+  border-radius: 0.2em;
+  color: #ffffff;
+}

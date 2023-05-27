@@ -35,7 +35,6 @@ async function add_game_row (game_id, joined_games_table, total_games) {
         white-space: nowrap;
     `;
 
-
     // Populate the cells with the game info
     name_cell.innerHTML = game.name;
     players_cell.innerHTML = format_players_list(game.players); // defined in main.js (should be in utils.js)
@@ -45,28 +44,38 @@ async function add_game_row (game_id, joined_games_table, total_games) {
     let unchecked_events = [];
     for (ev in game.new_events) {
         new_event_time = new Date(Date.parse(game.new_events[ev]));
-        last_checked_time = new Date(Date.parse(player.last_checked[ev]));
-        // I probably should do a try/catch here in case the player doesn't have a last_checked
+        if (ev in player.last_checked) {
+            last_checked_time = new Date(Date.parse(player.last_checked[ev]));
+        } else {
+            last_checked_time = new Date(0);
+        }
         if (new_event_time > last_checked_time) {
             unchecked_events.push(ev);
         }
     }
+    console.log(game);
+    console.log(player);
 
-    badge_html = "";
+    let icon_html = `<i class="bi-joystick"></i>`;
+    let button_class = "btn-primary";
     if (unchecked_events.includes("daily")) {
-        badge_html += `<span class="badge badge-pill badge-warning"><i class="bi-graph-up-arrow"></i></span> `;
+        icon_html = `<i class="bi-exclamation-circle"></i>`;
+        button_class = "btn-info";
     } else if (unchecked_events.includes("chat")) {
-        badge_html += `<span class="badge badge-pill badge-warning"><i class="bi-chat-dots"></i></span> `;
+        icon_html = `<i class="bi-chat-dots"></i>`;
+        button_class = "btn-success";
+    } else if (unchecked_events.includes("player")) {
+        icon_html = `<i class="bi-person-circle"></i>`;
+        button_class = "btn-success";
     }
 
     button_html = `
-    <button class="btn btn-primary" onclick="window.location.href='/play/${game.game_id}'">
-        <i class="bi-joystick"></i>
-        Play
-        ${badge_html}
-    </button>`;
-
+    <button class="btn ${button_class}" id='play-${game.game_id}' onclick="window.location.href='/play/${game.game_id}'">
+        ${icon_html} Play
+    </button>
+    `;
     action_cell.innerHTML = button_html;
+
     
     // Remove the loading row if this is the last game
     if (n_rows == total_games + 1) {

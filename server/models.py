@@ -112,6 +112,7 @@ class Game():
             self.new_events = {
                 "daily": datetime.now(timezone.utc),
                 "chat": datetime.now(timezone.utc),
+                "player": datetime.now(timezone.utc),
             }
             # Write this to the MongoDB (for rolling this out)
             active_games_coll.update_one(
@@ -154,6 +155,7 @@ class Game():
             for c in self.settings["allowed_categories"]:
                 unpacked_allowed.extend(allowed_categories[c])
             if len(unpacked_allowed) > 0: # if there's an explicit list of allowed categories
+                # Check if the article is in the list of allowed categories or is the article itself is in the list
                 return(any([cat in unpacked_allowed for cat in article_categories]) or article_name in unpacked_allowed, "allowed_categories")
 
         # Check if the game has any banned categories
@@ -234,6 +236,7 @@ class Game():
             "new_events": {
                 "daily": datetime.now(timezone.utc),
                 "chat": datetime.now(timezone.utc),
+                "player": datetime.now(timezone.utc),
             }
         })
         return(game_id)
@@ -253,6 +256,7 @@ class Player():
             self.last_checked = {
                 "daily": datetime(1969, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
                 "chat": datetime(1969, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
+                "player": datetime(1969, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
             }
             # Write this to the MongoDB (for rolling out the feature)
             players_db[self.game_id].update_one(
@@ -430,6 +434,7 @@ class Player():
             "last_checked": {
                 "daily": datetime.now(timezone.utc),
                 "chat": datetime.now(timezone.utc),
+                "player": datetime.now(timezone.utc),
             }
         })
         return(player_id)

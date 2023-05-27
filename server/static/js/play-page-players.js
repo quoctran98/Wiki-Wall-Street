@@ -68,6 +68,34 @@ function init_players() {
         $("#leave-confirm-modal").modal("show");
     });
 
+    // Check if there are new players to diplay notif
+    // Sucks that I do this mutliple times, but who cares -- it's nothing
+    let unchecked_events = [];
+    for (ev in GAME_OBJECT.new_events) {
+        new_event_time = new Date(Date.parse(GAME_OBJECT.new_events[ev]));
+        if (ev in THIS_PLAYER.last_checked) {
+            last_checked_time = new Date(Date.parse(THIS_PLAYER.last_checked[ev]));
+        } else {
+            last_checked_time = new Date(0);
+        }
+        if (new_event_time > last_checked_time) {
+            unchecked_events.push(ev);
+        }
+    }
+
+    // Add the notif if there are new chats
+    if (unchecked_events.includes("player")) {
+        $("#players-modal-open-button").append(`
+            <span id="players-notif" class="badge bg-danger rounded-pill position-absolute top-0 end-0 p-10">!</span>
+        `);
+    }
+
+    // Add event listener to the player modal to remove the notif
+    $("#players-modal").on("show.bs.modal", function() {
+        $("#players-notif").remove();
+        fetch("/api/check_event/" + GAME_OBJECT.game_id + "/player", {method: "POST"});
+    });
+
     // Enable the players button (make sure there's no ID collision)
     $("#players-modal-open-button:not(:has(#modal-container))").prop("disabled", false);
 }

@@ -161,8 +161,11 @@ function init_chat() {
     let unchecked_events = [];
     for (ev in GAME_OBJECT.new_events) {
         new_event_time = new Date(Date.parse(GAME_OBJECT.new_events[ev]));
-        last_checked_time = new Date(Date.parse(THIS_PLAYER.last_checked[ev]));
-        // I probably should do a try/catch here in case the player doesn't have a last_checked
+        if (ev in THIS_PLAYER.last_checked) {
+            last_checked_time = new Date(Date.parse(THIS_PLAYER.last_checked[ev]));
+        } else {
+            last_checked_time = new Date(0);
+        }
         if (new_event_time > last_checked_time) {
             unchecked_events.push(ev);
         }

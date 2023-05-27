@@ -129,6 +129,8 @@ def change_settings():
 def join_game():
     success = Player.join_game(current_user.user_id, request.form["game_id"])
     if success:
+        this_game = Game.get_by_game_id(request.form["game_id"])
+        this_game.add_event("player")
         return(redirect(url_for("game.play", game_id=request.form["game_id"])))
     else:
         flash("Could not join game.")
@@ -283,3 +285,17 @@ def get_game_info(game_id, user_name):
         }
         print(return_dict)
         return(jsonify(return_dict))
+    
+@game.route("/api/add_event/<game_id>/<event_name>", methods=["POST"])
+@login_required
+def add_event(game_id, event_name):
+    this_game = Game.get_by_game_id(game_id)
+    this_game.add_event(event_name)
+    return(jsonify({"success": True}))
+
+@game.route("/api/check_event/<game_id>/<event_name>", methods=["POST"])
+@login_required
+def check_event(game_id, event_name):
+    this_player = Player.get_by_user_id(game_id, current_user.user_id)
+    this_player.add_event(event_name)
+    return(jsonify({"success": True}))
