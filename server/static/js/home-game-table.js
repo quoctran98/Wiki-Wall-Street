@@ -143,7 +143,7 @@ async function populate_public_games() {
         name_cell.innerHTML = this_game.name;
         players_cell.innerHTML = format_players_list(this_game.players);
         action_cell.innerHTML = `
-        <button class="btn btn-primary"
+        <button class="btn btn-success"
             data-toggle="modal" data-target="#join-game-modal"
             onclick="preload_join_game('${this_game.game_id}')" // Defined in modals/join-game.html>
         <i class="bi-person-plus"></i> Join</button>`;

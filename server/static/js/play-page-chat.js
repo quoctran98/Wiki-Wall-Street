@@ -20,6 +20,15 @@ function render_messages(message_array, force_reset=false) {
         for (let i = chat_box.children.length; i < message_array.length; i++) {
             let message = message_array[i];
 
+            // Convert the timestamp to local date tnd time like "May 22 3:30 PM"
+            const chat_timestamp = new Date(message.timestamp+"Z").toLocaleString(undefined, {
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+            });
+
             // Create a div for the message
             let message_div = document.createElement("div");
             message_div.className = "chat-message";
@@ -29,7 +38,7 @@ function render_messages(message_array, force_reset=false) {
                 <br>
                 ${escape_html(message.message)}
 
-                <span class="chat-timestamp">${message.timestamp}</span>
+                <span class="chat-timestamp">${chat_timestamp}</span>
             `;
 
             if (message.name == THIS_PLAYER.name) {

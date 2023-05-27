@@ -172,13 +172,13 @@
   height: auto;
 }
 
-a:link {
+/* a:link {
   color: #4668ff;
-}
+} */
 
-a:visited {
+/* a:visited {
   color: #4668ff;
-}
+} */
 
 .btn-primary {
   color: #ffffff;

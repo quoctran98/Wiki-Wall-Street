@@ -281,9 +281,16 @@ def get_game_info(game_id, user_name):
         return_dict = {
             "game": this_game.name,
             "value": this_player.value_history[-1]["value"],
-            "date_joined": this_player.value_history[0]["timestamp"]
+            "date_joined": this_player.value_history[0]["timestamp"],
+            "public": this_game.public,
+            "joined": False,
         }
-        print(return_dict)
+
+        # If user is logged in, we'll add a play button
+        if current_user.is_authenticated:
+            if current_user.user_id in this_game.user_ids:
+                return_dict["joined"] = True
+
         return(jsonify(return_dict))
     
 @game.route("/api/add_event/<game_id>/<event_name>", methods=["POST"])

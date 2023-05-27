@@ -17,11 +17,39 @@ async function add_game_row (game_id, profile_games_table, total_games) {
     let name_cell = row.insertCell(0);
     let value_cell = row.insertCell(1);
     let date_cell = row.insertCell(2);
+    let action_cell = row.insertCell(3);
 
     // Populate the cells with the game info
     name_cell.innerHTML = this_game_res.game;
     value_cell.innerHTML = format_value(this_game_res.value, imprecise=false, include_icon=false);
-    date_cell.innerHTML = new Date(this_game_res.date_joined).toLocaleDateString();
+    date_cell.innerHTML = new Date(this_game_res.date_joined).toLocaleDateString(undefined,
+        {year: "numeric", month: "short", day: "numeric"});
+
+    // Add the play button if current player is in the game or a join button if it's public
+    // Ugh, wish we could add notifs, here but that's a lot of owrk -- I should make a generic function
+    if (this_game_res.joined) {
+        action_cell.innerHTML = `
+            <a href="/play/${game_id}" class="btn btn-primary">
+            <i class="bi-joystick"></i>
+            Play
+            </a>
+        `;
+    } else if (this_game_res.public) {
+        // We'll do an invite link, so I don't have to make a modal!
+        action_cell.innerHTML = `
+            <a href="/invite/${game_id}" class="btn btn-success">
+            <i class="bi-person-plus"></i>
+            Join
+            </a>
+        `;
+    } else {
+        action_cell.innerHTML = `
+            <button class="btn btn-secondary" disabled>
+            <i class="bi-lock"></i>
+            Private
+            </button>
+        `;
+    }
 
     // Remove the loading row if this is the last game
     if (n_rows == total_games + 1) {
