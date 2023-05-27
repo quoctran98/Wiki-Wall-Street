@@ -40,9 +40,33 @@ async function add_game_row (game_id, joined_games_table, total_games) {
     name_cell.innerHTML = game.name;
     players_cell.innerHTML = format_players_list(game.players); // defined in main.js (should be in utils.js)
     change_cell.innerHTML = `${(daily_change > 0)? "📈" : "📉"} ${daily_change}%`
-    action_cell.innerHTML = `<button class="btn btn-primary" 
-        onclick="window.location.href='/play/${game.game_id}'">
-    <i class="bi-joystick"></i> Play</button>`;
+
+    // Change the action cell if there's an unchecked update from the game!
+    let unchecked_events = [];
+    for (ev in game.new_events) {
+        new_event_time = new Date(Date.parse(game.new_events[ev]));
+        last_checked_time = new Date(Date.parse(player.last_checked[ev]));
+        // I probably should do a try/catch here in case the player doesn't have a last_checked
+        if (new_event_time > last_checked_time) {
+            unchecked_events.push(ev);
+        }
+    }
+
+    badge_html = "";
+    if (unchecked_events.includes("daily")) {
+        badge_html += `<span class="badge badge-pill badge-warning"><i class="bi-graph-up-arrow"></i></span> `;
+    } else if (unchecked_events.includes("chat")) {
+        badge_html += `<span class="badge badge-pill badge-warning"><i class="bi-chat-dots"></i></span> `;
+    }
+
+    button_html = `
+    <button class="btn btn-primary" onclick="window.location.href='/play/${game.game_id}'">
+        <i class="bi-joystick"></i>
+        Play
+        ${badge_html}
+    </button>`;
+
+    action_cell.innerHTML = button_html;
     
     // Remove the loading row if this is the last game
     if (n_rows == total_games + 1) {

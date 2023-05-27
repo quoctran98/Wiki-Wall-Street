@@ -108,11 +108,16 @@ class Game():
         # Defaults in __init__ for backwards compatibility-ish
         self.chats = chats if chats is not None else ["chat_0"] # Default chat I guess
         self.public = public if public is not None else False
-        if new_events is None: # This makes it so we don't have to init this in game creation!
+        if new_events is None:
             self.new_events = {
                 "daily": datetime.now(timezone.utc),
                 "chat": datetime.now(timezone.utc),
             }
+            # Write this to the MongoDB (for rolling this out)
+            active_games_coll.update_one(
+                {"game_id": self.game_id},
+                {"$set": {"new_events": self.new_events}}
+            )
         else:
             self.new_events = new_events
         
@@ -185,17 +190,7 @@ class Game():
         """Delete the game from the MongoDB."""
 
         # Add the game to the old games collection
-        old_games_coll.insert_one({
-            "game_id": self.game_id,
-            "name": self.name,
-            "owner_id": self.owner_id,
-            "user_ids": self.user_ids,
-            "settings": self.settings,
-            "players": self.players,
-            "transactions": self.transactions,
-            "chats": self.chats,
-            "public": self.public,
-        })
+        old_games_coll.insert_one({vars(self)})
 
         # Remove the game from the users' joined_games lists
         for user_id in self.user_ids:
@@ -236,6 +231,10 @@ class Game():
             "transactions": [],
             "chats": [],
             "public": public,
+            "new_events": {
+                "daily": datetime.now(timezone.utc),
+                "chat": datetime.now(timezone.utc),
+            }
         })
         return(game_id)
     
@@ -250,12 +249,16 @@ class Player():
         self.avg_price = avg_price
         self.transactions = transactions
         self.value_history = value_history
-        if last_checked is None: # This makes it so we don't have to add it on creation too!
+        if last_checked is None:
             self.last_checked = {
-                # One year before epoch time so notifs appear as I roll out the feature
                 "daily": datetime(1969, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
                 "chat": datetime(1969, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
             }
+            # Write this to the MongoDB (for rolling out the feature)
+            players_db[self.game_id].update_one(
+                {"player_id": self.player_id},
+                {"$set": {"last_checked": self.last_checked}}
+            )
         else:
             self.last_checked = last_checked
 
@@ -423,7 +426,11 @@ class Player():
             "transactions": [],
             "value_history": [
                 {"timestamp": today_wiki(), "value": game.settings["starting_cash"]}
-            ]
+            ],
+            "last_checked": {
+                "daily": datetime.now(timezone.utc),
+                "chat": datetime.now(timezone.utc),
+            }
         })
         return(player_id)
             

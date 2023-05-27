@@ -4,7 +4,7 @@ This script defines the tasks that the server will run periodically.
 
 from datetime import datetime, timezone, timedelta
 from server.helper import today_wiki, log_update, active_games_coll, players_db
-from server.models import Player
+from server.models import Player, Game
 
 def update_all_portfolio_vals():
     start_time = datetime.now(timezone.utc)
@@ -14,12 +14,20 @@ def update_all_portfolio_vals():
     changed_vals = 0
     for game in active_games_coll.find():
         n_games += 1
+        this_game_changed = False
         for player in players_db[game["game_id"]].find():
             n_players += 1
             this_player = Player.get_by_player_id(game["game_id"], player["player_id"])
             api, change = this_player.update_value_history()
             api_calls += api
             changed_vals += change
+            this_game_changed = True if change > 0 else False
+
+        # Add an event so players get notified
+        # Should happen only once per day
+        if this_game_changed:
+            this_game = Game.get_by_game_id(game["game_id"])
+            this_game.add_event("daily")
             
     timestamp = today_wiki().strftime("%Y-%m-%d %H:%M:%S")
     end_time = datetime.now(timezone.utc)

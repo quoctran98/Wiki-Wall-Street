@@ -191,3 +191,7 @@ a:visited {
   background-color: #c13030;
   border-color: #c13030;
 }
+
+.bg-danger {
+  background-color: #c13030;
+}

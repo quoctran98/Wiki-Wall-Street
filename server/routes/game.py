@@ -32,6 +32,11 @@ def play(game_id):
     if not current_user.user_id in this_game.user_ids:
         flash("You're not in this game. You must join it first.")
         return(redirect(url_for("main.index")))
+    
+    # Update the "daily" event in the player's event log
+    this_player = Player.get_by_user_id(game_id, current_user.user_id)
+    this_player.add_event("daily")
+
     # Don't send any objects yet -- they'll be requested by the client :)
     return(render_template("play.html", allowed_categories=allowed_categories, banned_categories=banned_categories, user=current_user))
 
@@ -221,7 +226,6 @@ def get_public_games():
 
 @game.route("/api/get_play_info/<game_id>")
 @login_required
-# DON'T CACHE! IT MAKES TRANSACTIONS WEIRD
 def get_play_info(game_id):
     # This should only be called by the player themselves
     this_game = Game.get_by_game_id(game_id)
@@ -230,14 +234,15 @@ def get_play_info(game_id):
         flash("Could not find game!")
         return(jsonify({"error": True}))
     else:
-        # Removing transactions and chats from the game object
-        # To speed up data transfer I hope?
+        # Removing transactions and chats from the game object (for speed)
         this_game_props = vars(this_game)
         this_game_props.pop("transactions")
         this_game_props.pop("chats")
 
         # Getting the player's portfolio value :)
         this_player_props = vars(this_player)
+        # Adding the player's portfolio value to the player object
+        # so we don't have to calculate it on the front end
         this_player_props["today_value"] = this_player.value_history[-1]["value"]
         this_player_props["yesterday_value"] = this_player.yesterday_value
 

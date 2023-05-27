@@ -141,6 +141,9 @@ function init_chat() {
             let messages = await get_messages(GAME_OBJECT.game_id);
             render_messages(messages);
         }, 5000);
+
+        // Clear the new events notif if it's there
+        $("#chat-modal-open-button #chat-notif").remove();
     });
 
     // Stop the chat update loop when the modal is closed
@@ -153,6 +156,24 @@ function init_chat() {
         event.preventDefault();
         send_message($("#chat-modal #chat-form")[0]);
     });
+
+    // Check if there are new chats to diplay notif
+    let unchecked_events = [];
+    for (ev in GAME_OBJECT.new_events) {
+        new_event_time = new Date(Date.parse(GAME_OBJECT.new_events[ev]));
+        last_checked_time = new Date(Date.parse(THIS_PLAYER.last_checked[ev]));
+        // I probably should do a try/catch here in case the player doesn't have a last_checked
+        if (new_event_time > last_checked_time) {
+            unchecked_events.push(ev);
+        }
+    }
+
+    // Add the notif if there are new chats
+    if (unchecked_events.includes("chat")) {
+        $("#chat-modal-open-button").append(`
+            <span id="chat-notif" class="badge bg-danger rounded-pill position-absolute top-0 end-0 p-10">!</span>
+        `);
+    }
 
     // Enable the chat button
     $("#chat-modal-open-button:not(:has(#modal-container))").prop("disabled", false);

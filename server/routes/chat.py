@@ -29,7 +29,10 @@ def see_chat(game_id):
                       "message": m["message"],
                       "timestamp": m["timestamp"].strftime("%Y-%m-%d %H:%M:%S"),
                       "chat_id": m["chat_id"]} for m in chat_messages]
-    # Turn the list of dicts into a way to send to the client
+    # Update the player's last_checked dict
+    this_player = Player.get_by_user_id(this_game.game_id, current_user.user_id)
+    this_player.add_event("chat")
+    # Return the chat messages
     return(jsonify({"messages": chat_messages}))
 
 @chat.route("/api/send_chat", methods=["POST"])
@@ -42,6 +45,8 @@ def send_chat():
     if not current_user.user_id in this_game.user_ids:
         return(jsonify({"error": "You're not in this game. You must join it first."}))
     chat_id = Chat.send_chat(game_id, current_user.user_id, request.form["message"])
+    # Update the game's new_events dict
+    this_game.add_event("chat")
     return(jsonify({"chat_id": chat_id}))
 
 @chat.route("/api/delete_chat", methods=["DELETE"])
