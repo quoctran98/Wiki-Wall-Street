@@ -97,7 +97,7 @@ class User(UserMixin):
 
 class Game():
     def __init__(self, game_id, name, owner_id, user_ids, settings, players, transactions, 
-                 chats=None, public=None):
+                 chats=None, public=None, new_events=None):
         self.game_id = game_id
         self.name = name
         self.owner_id = owner_id
@@ -108,10 +108,23 @@ class Game():
         # Defaults in __init__ for backwards compatibility-ish
         self.chats = chats if chats is not None else ["chat_0"] # Default chat I guess
         self.public = public if public is not None else False
+        if new_events is None: # This makes it so we don't have to init this in game creation!
+            self.new_events = {
+                "daily": datetime.now(timezone.utc),
+                "chat": datetime.now(timezone.utc),
+            }
+        else:
+            self.new_events = new_events
+        
 
-    def update_game(self):
-        """Update the game in the MongoDB."""
-        active_games_coll.update_one({"game_id": self.game_id}, {"$set": self.__dict__})
+    def add_event(self, event_type):
+        """Add an event to the game's new_events dictionary."""
+        self.new_events[event_type] = datetime.now(timezone.utc)
+        # Update the game in the MongoDB
+        active_games_coll.update_one(
+            {"game_id": self.game_id},
+            {"$set": {"new_events": self.new_events}}
+        )
 
     def get_public_dict(self):
         """Return a dictionary with only the public information about the game."""
@@ -227,7 +240,7 @@ class Game():
         return(game_id)
     
 class Player():
-    def __init__(self, player_id, user_id, game_id, name, cash, articles, avg_price, transactions, value_history):
+    def __init__(self, player_id, user_id, game_id, name, cash, articles, avg_price, transactions, value_history, last_checked=None):
         self.player_id = player_id
         self.user_id = user_id
         self.game_id = game_id
@@ -237,6 +250,23 @@ class Player():
         self.avg_price = avg_price
         self.transactions = transactions
         self.value_history = value_history
+        if last_checked is None: # This makes it so we don't have to add it on creation too!
+            self.last_checked = {
+                # One year before epoch time so notifs appear as I roll out the feature
+                "daily": datetime(1969, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
+                "chat": datetime(1969, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
+            }
+        else:
+            self.last_checked = last_checked
+
+    def add_event(self, event_type):
+        """Add an event to the player's event history."""
+        self.last_checked[event_type] = datetime.now(timezone.utc)
+        # Update this event in the MongoDB
+        players_db[self.game_id].update_one(
+            {"player_id": self.player_id}, 
+            {"$set": {"last_checked": self.last_checked}}
+        )
 
     def get_info(self):
         """Return a dictionary with only the public information about the player."""
