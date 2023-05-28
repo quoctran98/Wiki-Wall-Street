@@ -341,11 +341,15 @@ class Player():
 
     @property
     def portfolio_value(self):
+        # For debbugging and warning purposes (shouldn't be called often)
+        print(f"⭐️ Calling portfolio_value for {self.name} in {self.game_id}!")
         value = self.cash
         for article, amount in self.articles.items():
             if amount > 0:
-                res = WikiAPI.normalized_views(article)
+                print(f"⭐️ Calling normalized_views for {article}!")
+                res = WikiAPI.normalized_views(article, end=today_wiki())
                 if res is not None:
+                    print(res[-1]["timestamp"])
                     this_price = res[-1]["views"]
                     value += this_price * amount
         return(value)

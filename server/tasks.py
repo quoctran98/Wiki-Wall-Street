@@ -5,8 +5,16 @@ This script defines the tasks that the server will run periodically.
 from datetime import datetime, timezone, timedelta
 from server.helper import today_wiki, log_update, active_games_coll, players_db
 from server.models import Player, Game
+import os
 
 def update_all_portfolio_vals():
+    # Let's debug this before it starts running
+    print("Updating all portfolio values...")
+    cache_dir = "server/temp/cache"
+    n_files = len([name for name in os.listdir(cache_dir) if os.path.isfile(os.path.join(cache_dir, name))])
+    print(f"Found {n_files} files in the cache.")
+    print(f"Current wiki time is {today_wiki().strftime('%Y-%m-%d %H:%M:%S')}.")
+
     start_time = datetime.now(timezone.utc)
     n_games = 0
     n_players = 0

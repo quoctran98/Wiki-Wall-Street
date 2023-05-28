@@ -343,7 +343,10 @@ def article_information(article, project="en.wikipedia"):
         categories = []
         for line in content.split("\n"):
             if line.startswith("[[Category:"):
-                categories.append(line.split("[[Category:")[1].split("]]")[0])
+                this_cat = line.split("[[Category:")[1].split("]]")[0]
+                if this_cat.endswith("|*"): # remove "|*" from the end if it's there
+                    this_cat = this_cat[:-2]
+                categories.append(this_cat)
                 # I love copilot!
         info_dict["categories"] = categories
 
