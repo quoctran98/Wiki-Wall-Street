@@ -29,7 +29,7 @@ def update_all_portfolio_vals():
             api, change = this_player.update_value_history()
             api_calls += api
             changed_vals += change
-            this_game_changed = True if change > 0 else False
+            this_game_changed = True if change > 0 else this_game_changed
 
         # Add an event so players get notified
         # Should happen only once per day
