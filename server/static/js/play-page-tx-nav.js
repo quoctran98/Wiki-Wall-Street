@@ -244,7 +244,14 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
     }
     
     let price_html = `${format_price(CURRENT_PRICE)} (${(PRICE_CHANGE > 0)? "📈" : "📉"} ${PRICE_CHANGE}%)`;
-    let short_desc = article_data.short_desc;
+    if (article_data.short_desc != null) {
+        short_desc = article_data.short_desc;
+    } else if (article_data.categories.length > 0) {
+        const rand_idx = Math.floor(Math.random() * article_data.categories.length);
+        short_desc = `Category: ${article_data.categories[rand_idx]}`;
+    } else {
+        short_desc = null;
+    }
 
     // Update the title and description
     document.getElementById(GRAPH_TITLE_ID).innerHTML = title_html;

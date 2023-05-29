@@ -2,8 +2,9 @@ import json
 from flask import request, Blueprint, render_template, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime, timezone
+import random
 
-from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories, clear_game_caches
+from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories, search_lists, clear_game_caches
 from server.models import Game, Player, Transaction
 
 import server.WikiAPI as WikiAPI
@@ -229,6 +230,7 @@ def get_public_games():
 @game.route("/api/get_play_info/<game_id>")
 @login_required
 def get_play_info(game_id):
+    # This is becoming a big boy of a function
     # This should only be called by the player themselves
     this_game = Game.get_by_game_id(game_id)
     this_player = Player.get_by_user_id(game_id, current_user.user_id)
@@ -248,7 +250,28 @@ def get_play_info(game_id):
         this_player_props["today_value"] = this_player.value_history[-1]["value"]
         this_player_props["yesterday_value"] = this_player.yesterday_value
 
-        return(jsonify({"game": this_game_props, "player": this_player_props}))
+        # Get random articles to initialize the game
+        if request.args.get("get_random_articles") == "true":
+            if "allowed_categories" in this_game_props["settings"]:
+                if this_game_props["settings"]["allowed_categories"] != [""]:
+                    sls_in_game = [cat for cat in this_game_props["settings"]["allowed_categories"] if cat in search_lists]
+                    if len(sls_in_game) > 0:
+                        random_sl = search_lists[sls_in_game[random.randint(0, len(sls_in_game) - 1)]]
+                        random_articles = [random_sl[random.randint(0, len(random_sl) - 1)]]
+                    else:
+                        random_articles = [x["title"] for x in WikiAPI.random_articles()]
+                else:
+                    random_articles = [x["title"] for x in WikiAPI.random_articles()]
+            else:
+                random_articles = [x["title"] for x in WikiAPI.random_articles()]
+        else:
+            random_articles = []
+
+        return(jsonify({
+            "game": this_game_props, 
+            "player": this_player_props,
+            "random_articles": random_articles
+        }))
 
 @game.route("/api/leaderboard/<game_id>")
 @login_required

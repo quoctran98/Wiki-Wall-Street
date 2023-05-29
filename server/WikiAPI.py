@@ -335,8 +335,13 @@ def article_information(article, project="en.wikipedia"):
         # Get the short description
         content = response.json()["query"]["pages"][0]["revisions"][0]["slots"]["main"]["content"]
         try: 
-            info_dict["short_desc"] = content.split("{{Short description|")[1].split("}}")[0]
-        except IndexError:
+            if "Short description|" in content:
+                info_dict["short_desc"] = content.split("{{Short description|")[1].split("}}")[0]
+            elif "short description|" in content:
+                info_dict["short_desc"] = content.split("{{short description|")[1].split("}}")[0]
+            else:
+                info_dict["short_desc"] = None
+        except:
             info_dict["short_desc"] = None
 
         # Get the categories
@@ -353,3 +358,35 @@ def article_information(article, project="en.wikipedia"):
     else:
         print(f"Error: {response.status_code}")
         return(json.loads(response.content))
+
+def random_articles(project="en.wikipedia", n=5):
+    """
+    Returns a list of random articles from the given Wikimedia project
+
+    Parameters
+    ----------
+    project : str
+        The Wikimedia project to get the random articles from (e.g. "en.wikipedia")
+    n : int
+        The number of random articles to get (defaults to 5)
+    
+    Returns
+    list
+        A list of dictionaries containing the "id", "ns" (namespace), and "title" keys
+    """
+
+    baseurl = f"https://{project}.org/w/api.php?action=query"
+    endpoint = f"&format=json&list=random&formatversion=2&rnnamespace=0&rnlimit={n}"
+    url = baseurl + endpoint
+
+    headers = requests.utils.default_headers()
+    headers.update({"User-Agent": settings.WIKI_API_USER_AGENT})
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        return(response.json()["query"]["random"])
+    else:
+        print(f"Error: {response.status_code}")
+        return(json.loads(response.content))
+    

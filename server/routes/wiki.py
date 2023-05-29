@@ -38,7 +38,7 @@ def search_article(game_id, query):
                 else:
                     unfound_search_lists = True
             if not unfound_search_lists: # If we found all the search lists, we can just return the results
-                suggestions = sorted(suggestions, key=len)
+                suggestions = sorted(suggestions, key=len)[:100]
                 cache.set(cache_key, jsonify(suggestions=suggestions))
                 return(jsonify(suggestions=suggestions))
             
@@ -102,4 +102,11 @@ def trending_articles():
             pass # article doesn't exist or something
     return(jsonify(trending=trending))
 
-    
+@wiki.route("/api/random_articles")
+# Don't cache because we want a random article every time
+# I should roll this into WikiAPI.py
+def random_articles():
+    project = request.args.get("project", default="en.wikipedia", type=str)
+    n_articles = request.args.get("n_articles", default=5, type=int)
+    random_articles = WikiAPI.random_articles(project=project, n=n_articles)
+    return(jsonify(random_articles=random_articles))
