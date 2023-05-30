@@ -135,7 +135,8 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
             break;
         default:
             citation_needed_text = "citation needed";
-            
+    }
+
     $("#main-info-div #title").html(title_html + (allowed? "" : `<sup><a href="/help"><span style="color:#c13030;">[<em>${citation_needed_text}</em>]</span></a></sup>`));
     
     // Make and set the price HTML (and global variables just in case)
