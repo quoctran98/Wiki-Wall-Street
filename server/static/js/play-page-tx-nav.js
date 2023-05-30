@@ -14,7 +14,7 @@ function loading_graph(article="Article", timespan="month") {
     let graph_div = $("#main-info-div #graph")[0] // needs to be a DOM element, not a jQuery object!
     if (graph_div.firstChild === null) {
         fake = fake_data(timespan);
-        let color = (fake.views[0] > fake.views[fake.views.length-1])? "#c13030" : "#4668ff";
+        let color = (fake.views[0] < fake.views[fake.views.length-1])? "#c13030" : "#4668ff";
         const plot_data = [{x: fake.timestamps, y: fake.views, type: "scatter", line:{color: color}}];
         const plot_layout = {margin:{t: 10},xaxis: {type: "date",},yaxis: {title: "Page Views",},};
 
@@ -134,9 +134,9 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
             citation_needed_html = `<a href="/help"><span style="color:#c13030;">[<em>not in game theme</em>]</span></a>`;
             break;
         default:
-            citation_needed_html = "";
+            citation_needed_html = `<a href="/help"><span style="color:#c13030;">[<em>citation needed</em>]</span></a>`;
     }
-    $("#main-info-div #title").html(title_html + citation_needed_html);
+    $("#main-info-div #title").html(title_html + (allowed? "" : citation_needed_html));
     
     // Make and set the price HTML (and global variables just in case)
     const views = pageviews_data.views;
@@ -238,9 +238,10 @@ async function init_tx_nav() {
             // Click the search button if enter is pressed :)
             event.preventDefault();
             $("#tx-div #search-button").click();
+            search_article() // Mainly to update the URL
         } else {
             // Update the datalist
-            search_article();
+            search_article(); // defined in play-page-inputs.js (why?)
         }
     });
 

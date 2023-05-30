@@ -81,6 +81,13 @@ async function search_article() {
         return(false);
     }
 
+    // Add the search input to the url without reloading the page
+    let new_url = window.location.href.split("?")[0];
+    new_url += `?article=${encodeURIComponent(search_input)}`;
+    if (window.location.href !== new_url) {
+        window.history.pushState({path:new_url}, "", new_url);
+    }
+
     // Update the datalist with suggestions from the server
     const search_data = await serach_res.json()
     let suggestions = search_data.suggestions;
