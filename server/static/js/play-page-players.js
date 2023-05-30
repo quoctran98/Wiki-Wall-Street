@@ -31,11 +31,25 @@ function render_players_list(game) {
     for (let i = 0; i < game.players.length; i++) {
         const is_self = game.players[i] == THIS_PLAYER.name;
         const profile_link = window.location.origin + "/profile/" + encodeURI(game.players[i]);
+
+        // Two rows, one with profile pic and name and one with buttons
         let player_html = `
         <li> 
-            ${(is_owner && !is_self) ? `<i class="bi-x-circle-fill players-kick-player" onclick="kick_player('${game.players[i]}')"></i>` : ""}
-            <i class="bi-person-plus-fill players-add-friend"></i>
-            <a href="${profile_link}">${game.players[i]}</a>
+            <div class="row">
+                <img class="inline-image" style="border:2px; border-radius:50%;" src="/static/img/default-profile.png">
+                <p></p>
+                <a href="${profile_link}">${game.players[i]}</a>
+            </div>
+
+            <div class="row>
+                <div class="col-2"></div>
+                <div class="col-10">
+                    ${(is_owner && !is_self) ? `<i class="bi-x-circle-fill players-kick-player" onclick="kick_player('${game.players[i]}')"></i>` : ""}
+                    <i class="bi-person-plus-fill players-add-friend"></i>
+                </div>
+            </div>
+
+            <hr>
         </li>
         `; // Bad! That I'm doing this with player name and not ID, but those should be unique anyway
 
