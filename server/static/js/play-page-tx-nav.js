@@ -125,18 +125,18 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
     // Add a cute little "[citation needed]" thing if the article is not allowed
     switch (ALLOWED_REASON) {
         case "banned_categories":
-            citation_needed_html = `<a href="/help"><span style="color:#c13030;">[<em>in banlist</em>]</span></a>`;
+            citation_needed_text = "in banlist";
             break;
         case "views_limit":
-            citation_needed_html = `<a href="/help"><span style="color:#c13030;">[<em>too few views</em>]</span></a>`;
+            citation_needed_text = "too few views";
             break;
         case "allowed_categories":
-            citation_needed_html = `<a href="/help"><span style="color:#c13030;">[<em>not in game theme</em>]</span></a>`;
+            citation_needed_text = "not in game theme";
             break;
         default:
-            citation_needed_html = `<a href="/help"><span style="color:#c13030;">[<em>citation needed</em>]</span></a>`;
-    }
-    $("#main-info-div #title").html(title_html + (allowed? "" : citation_needed_html));
+            citation_needed_text = "citation needed";
+            
+    $("#main-info-div #title").html(title_html + (allowed? "" : `<sup><a href="/help"><span style="color:#c13030;">[<em>${citation_needed_text}</em>]</span></a></sup>`));
     
     // Make and set the price HTML (and global variables just in case)
     const views = pageviews_data.views;

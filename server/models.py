@@ -148,6 +148,22 @@ class Game():
         """Returns a boolean and a string (reason)"""
         # Sucks that I have to make this call twice per article but it's probably fine
         article_categories = WikiAPI.article_information(article_name)["categories"]
+
+        # Check if the article is below the minimum views limit
+        # We do this first, because we want to enforce this limit no matter what
+        if "views_limit" in self.settings:
+            lowest_this_month = float(min([x["views"] for x in WikiAPI.normalized_views(article_name)]))
+            if (float(self.settings["views_limit"]) > lowest_this_month):
+                return(False, "views_limit")
+            
+        # Check if the game has any banned categories
+        # Do this second to allow banned categories to override game theme
+        if "banned_categories" in self.settings:
+            unpacked_banned = []
+            for c in self.settings["banned_categories"]:
+                unpacked_banned.extend(banned_categories[c])
+            if any([cat in unpacked_banned for cat in article_categories]) or article_name in unpacked_banned:
+                return(False, "banned_categories") # not necessarily allowed yet but definitely not allowed
         
         # Check if the game has any explicitly allowed themes
         if "allowed_categories" in self.settings:
@@ -157,20 +173,6 @@ class Game():
             if len(unpacked_allowed) > 0: # if there's an explicit list of allowed categories
                 # Check if the article is in the list of allowed categories or is the article itself is in the list
                 return(any([cat in unpacked_allowed for cat in article_categories]) or article_name in unpacked_allowed, "allowed_categories")
-
-        # Check if the game has any banned categories
-        if "banned_categories" in self.settings:
-            unpacked_banned = []
-            for c in self.settings["banned_categories"]:
-                unpacked_banned.extend(banned_categories[c])
-            if any([cat in unpacked_banned for cat in article_categories]) or article_name in unpacked_banned:
-                return(False, "banned_categories") # not necessarily allowed yet but definitely not allowed
-
-        # Check if the article is below the minimum views limit
-        if "views_limit" in self.settings:
-            lowest_this_month = float(min([x["views"] for x in WikiAPI.normalized_views(article_name)]))
-            if (float(self.settings["views_limit"]) > lowest_this_month):
-                return(False, "views_limit")
 
         return(True, "ok")
 
