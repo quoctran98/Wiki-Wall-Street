@@ -184,3 +184,34 @@ function render_game_info(game) {
 function escape_html(unsafe) {
     return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
+
+// This is just a fun one that I use twice
+function fake_data(timespan, scale=1000, end_date=new Date()) {
+    // Make fake timestamps and views
+    let n_days;
+    if (timespan == "week") {
+        n_days = 7;
+    } else if (timespan == "month") {
+        n_days = 30;
+    } else if (timespan == "year") {
+        n_days = 365;
+    } else if (timespan == "all") {
+        n_days = 365 * 5;
+    }
+
+    let timestamps = [];
+    let views = [(Math.round(Math.random() * scale) + scale)];
+    
+    for (let i = 1; i < n_days; i++) {
+        timestamps.push(new Date(end_date.getFullYear(), end_date.getMonth(), end_date.getDate() - i));
+        // Make views follow a random walk
+        let last_view = views[views.length - 1];
+        let new_view = Math.round(last_view * (1 + (Math.random() - 0.5) / 10));
+        views.push(new_view);
+    }
+
+    return({
+        "timestamps": timestamps,
+        "views": views
+    })
+}

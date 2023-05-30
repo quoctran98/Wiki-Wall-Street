@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-md-8">
         <h2>
-            Welcome<span id=game-name></span>! 
+            Welcome<span id=title-name></span>! 
         </h2>
         <h4>
             <span id="title-cash"></span>
@@ -54,56 +54,49 @@
     </div>
 
     <!-- MIDDLE COLUMN FOR GRAPH -->
-    <div class="col-md-7">
-        <h3 id="graph-title"></h3>
-        <h5 id="graph-price"></h5>
-        <h5 id="graph-desc">&nbsp;</h5>
+    <div class="col-md-7" id="main-info-div">
+        <h3 id="title"></h3>
+        <h5 id="price"></h5>
+        <h5 id="description">&nbsp;</h5>
         <hr>
-        <div class="row">
-            <button id="graph-week-button" onclick="graph_time('week')">Weekly</button>
-            <button id="graph-month-button" onclick="graph_time('month')">Monthly</button>
-            <button id="graph-year-button" onclick="graph_time('year')">Yearly</button>
-            <button id="graph-all-button" onclick="graph_time('all')">All</button>
+        <div class="row" id="timespan-selectors">
+            <button class="btn-timespan" id="week" onclick="graph_time('week')">Weekly</button>
+            <button class="btn-timespan" id="month" onclick="graph_time('month')">Monthly</button>
+            <button class="btn-timespan" id="year" onclick="graph_time('year')">Yearly</button>
+            <button class="btn-timespan" id="all" onclick="graph_time('all')">All</button>
         </div>
-        <div id="transaction-graph">
-            <img class="loading-image" src="{{url_for('static', filename='img/loading.gif')}}" alt="Loading...">
-        </div>
+        <div id="graph"></div>
     </div>
 
     <!-- RIGHT/TOP COLUMN FOR SEARCH AND TX INFO -->
-    <div class="col-md-3">
-
+    <div class="col-md-3" id="tx-div">
         <h3>SEARCH!</h3>
         <input list="search-datalist" id="search-input" placeholder="">
         <datalist id="search-datalist"></datalist>
         <button onclick="load_article()"" id="search-button">Search</button>
-
     <hr>
-
-        <h3>BUY!</h3>
-        <button id="buy-1-button" onclick="new_tx(1,'buy')" disabled="true">Buy 1</button> <br>
-        <button id="buy-5-button" onclick="new_tx(5,'buy')" disabled="true">Buy 5</button> <br>
-        <div class="input-group" style="display:flex;">
-            <span class="input-group-text">Buy</span>
-            <input type="number" id="custom-buy-input" min="1" value="10" style="flex:1;"></input>
-            <button id="buy-custom-button" onclick="new_tx(document.getElementById('custom-buy-input').value,'buy')" disabled="true">Buy</button>
+        <div id="buy-div">
+            <h3>BUY!</h3>
+            <button class="btn-buy" id="buy-1" onclick="new_tx(1,'buy')" disabled="true">Buy 1</button> <br>
+            <button class="btn-buy" id="buy-5" onclick="new_tx(5,'buy')" disabled="true">Buy 5</button> <br>
+            <div class="input-group" style="display:flex;">
+                <span class="input-group-text">Buy</span>
+                <input type="number" id="custom-buy-amt" min="1" value="10" style="flex:1;"></input>
+                <button class="btn-buy" id="buy-custom" onclick="new_tx($('#custom-buy-amt').val(),'buy')" disabled="true">Buy</button>
+            </div>
         </div>
-        
     <hr>
-
-    <div id="sell-div">
-        <h3>SELL!</h3>
-        <p><span id="article-info"></span></p>
-        <button id="sell-1-button" onclick="new_tx(1,'sell')" disabled="true">Sell 1</button> <br>
-        <div class="input-group" style="display:flex;">
-            <span class="input-group-text">Sell</span>
-            <input type="number" id="custom-sell-input" min="1" value="10"></input>
-            <button id="sell-custom-button" onclick="new_tx(document.getElementById('custom-sell-input').value,'sell')" disabled="true">Sell</button>
+        <div id="sell-div">
+            <h3>SELL!</h3>
+            <p><span id="article-info"></span></p>
+            <button class="btn-sell" id="sell-1" onclick="new_tx(1,'sell')" disabled="true">Sell 1</button> <br>
+            <div class="input-group" style="display:flex;">
+                <span class="input-group-text">Sell</span>
+                <input type="number" id="custom-sell-amt" min="1" value="10"></input>
+                <button class="btn-sell" id="sell-custom" onclick="new_tx($('#custom-sell-amt').val(),'sell')" disabled="true">Sell</button>
+            </div>
         </div>
     </div>
-
-    </div>
-
 </div>
 
 </div>
