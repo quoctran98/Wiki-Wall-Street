@@ -98,7 +98,7 @@ def projectviews(project="en.wikipedia", start=today_wiki()-timedelta(days=30), 
         print(f"Error: {response.status_code}")
         return(json.loads(response.content)) 
 
-def top_articles(project="en.wikipedia", date=today_wiki()-timedelta(days=1), timespan="day",
+def top_articles(project="en.wikipedia.org", date=today_wiki()-timedelta(days=1), timespan="day",
                  access="all-access", agent="user"):
     """
     Python wrapper for the Wikimedia Pageviews API (https://wikimedia.org/api/rest_v1/)
@@ -108,6 +108,7 @@ def top_articles(project="en.wikipedia", date=today_wiki()-timedelta(days=1), ti
     ----------
     project : str
         The Wikimedia project to get the top articles for (e.g. "en.wikipedia")
+        (maybe I need the .org here?)
     date : datetime.date
         The date to get the top articles for (defaults to yesterday)
         If timespan is "month", this is the month to get the top articles for
@@ -297,6 +298,9 @@ def normalized_views(article,
                 pageviews_list[i]["views"] *= norm_factor
 
         return(pageviews_list)
+    else:
+        print(f"WARNING: {article} does not exist")
+        return(False)
 
 def article_information(article, project="en.wikipedia"):
     """

@@ -1,4 +1,5 @@
 import requests
+import random
 from flask import Flask, request, jsonify, Blueprint, render_template
 from flask_login import login_required, current_user
 from pymongo import MongoClient
@@ -81,13 +82,24 @@ def article_description(article):
     return(jsonify(title=info["title"], pageid=info["pageid"], short_desc=info["short_desc"], categories=info["categories"]))
 
 @wiki.route("/api/trending_articles")
-@cache.cached(timeout=86400) # Should only change once a day (will be cleared when the stuff updates)
+@cache.cached(timeout=86400)
+# Definitely cache! It's a lot of API calls :(
+# Let's cache parts of this rather than the whole thing :)
 def trending_articles():
-    articles = WikiAPI.top_articles()["articles"][:100]
+
+    articles = WikiAPI.top_articles()["articles"][:50]
+    # Choose a random 100, weighted by the number of views
+    # views_range = (min([x["views"] for x in articles]), max([x["views"] for x in articles]))
+    # articles = [x for x in articles if random.randint(views_range[0], views_range[1]) <= x["views"] * 10]
+    # print(f"⭐️ {len(articles)} articles chosen for trending")
+    # random.shuffle(articles)
+    # articles = articles[:50]
+
     trending = []
     for a in articles:
-        name = a["article"]
-        if name in ["Main_Page", "Special:Search"]:
+        # Remove underscores and replace with spaces
+        name = a["article"].replace("_", " ")
+        if name in ["Main Page", "Special:Search"]:
             continue
         try:
             # Again shouldn't need to use today_wiki() here, but it'll make sure the frontend is consistent :)
@@ -98,7 +110,8 @@ def trending_articles():
                 "today_views": normalized_views[-1]["views"],
                 "data": normalized_views
             })
-        except:
+        except Exception as e:
+            print(f"⭐️ {name} failed to get views with error {e}")
             pass # article doesn't exist or something
     return(jsonify(trending=trending))
 

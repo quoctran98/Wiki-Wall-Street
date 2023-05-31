@@ -47,7 +47,7 @@ function generate_trending_card(article, index) {
     <a href="#" onclick="load_into_search('${article.article}','week');return(false);">
         <div class="card trending-card">
             <div id="${graph_div_id}" style="width: 100%; height: 3em;"></div>
-            <h5 class="card-title">${article.article}</h5>
+            <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${article.article}</h5>
             <p class="card-text">${format_price(article.today_views, imprecise=true)}</p>
             <p class="card-text">(${(weekly_change > 0)? "📈" : "📉"} ${weekly_change}%)</p>
         </div>
@@ -99,12 +99,13 @@ async function init_trending() {
         return(false);
     }
     trending_res = await trending_res.json()
-    const trending = trending_res.trending
+    let trending = trending_res.trending
 
     // Remove loading card
     document.getElementById(TRENDING_DECK).innerHTML = "";
 
     // Make cards for each trending article
+    trending = shuffle(trending);
     for (let i = 0; i < trending.length; i++) {
         const article = trending[i];
         const new_card = generate_trending_card(article, i);

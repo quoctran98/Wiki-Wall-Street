@@ -143,7 +143,7 @@ function render_players_list(game, players) {
         const profile_link = window.location.origin + "/profile/" + encodeURIComponent(player.name);
 
         let time_joined = new Date(Date.parse(player.time_joined))
-        time_joined.setDate(time_joined.getDate() + 1);
+        // add a day for approxiamte time (because of today_wiki)
         time_joined = time_joined.toLocaleDateString(undefined,{month: "short", day: "numeric"});
         const is_new = (new Date() - new Date(Date.parse(player.time_joined)) < 5 * 24 * 60 * 60 * 1000)
 
