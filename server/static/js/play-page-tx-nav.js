@@ -166,11 +166,27 @@ async function load_article (article_name=null) {
 
     // Get the article name from the search bar if it's not passed as an argument
     if (article_name == null) {
-        // Make the first item of the datalist the actual search term if it doesn't match! 
+
+        // If nothing in the datalist, use the search bar
         if ($("#tx-div #search-datalist").children().length == 0) {
             article_name = $("#tx-div #search-input").val();
-        } else {
+
+        // If there is something in the datalist find one that matches the search bar
+        } else if ($("#tx-div #search-datalist").children().length > 0) {
+
+            // Set it to the first one by default just in case we don't find a match
             article_name = $("#tx-div #search-datalist").children()[0].value;
+            for (let i = 0; i < $("#tx-div #search-datalist").children().length; i++) {
+                let search_input = $("#tx-div #search-input").val();
+                let this_option = $("#tx-div #search-datalist").children()[i].value;
+
+                if (search_input.toLowerCase() == this_option.toLowerCase()) {
+                    article_name = $("#tx-div #search-datalist").children()[i].value;
+                    break;
+                }
+            }
+            
+            // Fill the search bar with the article name (in case of capitalization differences)
             $("#tx-div #search-input").val(article_name);
         }
         // Set the global variable (this should be its own function)
