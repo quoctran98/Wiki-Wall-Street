@@ -215,3 +215,20 @@ function fake_data(timespan, scale=1000, end_date=new Date()) {
         "views": views
     })
 }
+
+// Returns the suffix for a number (e.g. 1st, 2nd, 3rd, 4th, etc.)
+function get_rank_suffix(rank) {
+    if (rank === 11 || rank === 12 || rank === 13) {
+        return("th");
+    }
+    const last_num = rank % 10;
+    if (last_num === 1) {
+        return("st");
+    } else if (last_num === 2) {
+        return("nd");
+    } else if (last_num === 3) {
+        return("rd");
+    } else {
+        return("th");
+    }
+}

@@ -121,7 +121,7 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
 
     // Make and set the title HTML
     const wikipedia_url = `http://en.wikipedia.org/wiki?curid=${article_data.pageid}`;
-    let title_html = `<a href="${wikipedia_url}" target="_blank" rel="noopener noreferrer">${article_data.title}</a>:`
+    let title_html = `<a href="${wikipedia_url}" target="_blank" rel="noopener noreferrer">${article_data.title}</a>`
     // Add a cute little "[citation needed]" thing if the article is not allowed
     switch (ALLOWED_REASON) {
         case "banned_categories":
@@ -137,7 +137,7 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
             citation_needed_text = "citation needed";
     }
 
-    $("#main-info-div #title").html(title_html + (allowed? "" : `<sup><a href="/help"><span style="color:#c13030;">[<em>${citation_needed_text}</em>]</span></a></sup>`));
+    $("#main-info-div #title").html(title_html + (allowed? "" : `<sup><span style="color:#c13030;">[<em>${citation_needed_text}</em>]<a href="/help" style="color:#c13030;">[<em>?</em>]</a></span></sup>`));
     
     // Make and set the price HTML (and global variables just in case)
     const views = pageviews_data.views;

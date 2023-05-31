@@ -288,6 +288,7 @@ class Player():
             "value": self.value_history[-1]["value"],
             "yesterday_value": self.yesterday_value,
             "last_week_value": self.last_week_value,
+            "time_joined": self.value_history[0]["timestamp"],
         }
 
         # Some games don't have these visibility (ugh!), so check if they exist first

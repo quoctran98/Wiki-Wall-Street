@@ -63,6 +63,10 @@ fetch(`/api/get_play_info/${GAME_ID}?get_random_articles=${CURRENT_ARTICLE === u
         CURRENT_ARTICLE = data["random_articles"][0];
     }
 
+    if (THIS_PLAYER.name == "Dan") {
+        CURRENT_ARTICLE = "Minecraft";
+    }
+
     // Initialize different parts of the page with functions from other scripts (run all of these asyncronously)
     // These mainly do stuff like define functions and bind event listeners
     init_settings(); // defined in play-page-settings.js
@@ -71,7 +75,7 @@ fetch(`/api/get_play_info/${GAME_ID}?get_random_articles=${CURRENT_ARTICLE === u
     init_portfolio(); // defined in play-page-portfolio.js
     init_trending(); // defined in play-page-trending.js
     init_chat(); // defined in play-page-chat.js
-    init_players(); // defined in play-page-players.js
+    // init_players(); // defined in play-page-players.js (rolled into init_leaderboard)
 
     // There's nothing in play-page-inputs.js to run :)
     // It just defines onclick functions for the buttons

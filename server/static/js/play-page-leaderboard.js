@@ -1,6 +1,8 @@
 /* 
     This script has the functions to load in the leaderboard at the top of the play page 
     And also to load in the player information modal
+
+    I rolled in the old /static/js/play-page-leaderboard.js and /static/js/play-page-players.js
 */
 
 // Leaderboard banner and elements
@@ -21,23 +23,6 @@ function loading_leaderboard() {
     `;
     for (let i = 0; i < 10; i++) {
         document.getElementById(LEADERBOARD_BANNER).insertAdjacentHTML("beforeend", leaderboard_loading_card);
-    }
-}
-
-// Returns the suffix for a number (e.g. 1st, 2nd, 3rd, 4th, etc.)
-function get_rank_suffix(rank) {
-    if (rank === 11 || rank === 12 || rank === 13) {
-        return("th");
-    }
-    const last_num = rank % 10;
-    if (last_num === 1) {
-        return("st");
-    } else if (last_num === 2) {
-        return("nd");
-    } else if (last_num === 3) {
-        return("rd");
-    } else {
-        return("th");
     }
 }
 
@@ -124,6 +109,132 @@ function leaderboard_card (player) {
     return(card_html);
 }
 
+function copy_link(div_id) {
+    const text = document.getElementById(div_id);
+    text.select(); 
+    text.setSelectionRange(0, 99999); // For mobile devices
+    navigator.clipboard.writeText(text.value);
+}
+
+async function kick_player(player_name) {
+    $("#players-modal #players-list").css("color", "gray");
+    $("#players-modal #players-list").css("pointer-events", "none");
+
+    // Close this modal and open the confirm modal
+    $("#players-modal").modal("hide");
+    $("#kick-confirm-modal").modal("show");
+
+    // Fill out the confirm modal info
+    $("#kick-confirm-modal #kick-confirm-form #game-id").val(GAME_OBJECT.game_id);
+    $("#kick-confirm-modal #kick-confirm-form #player-name").val(player_name);
+}
+
+function render_players_list(game, players) {
+    const is_owner = game.owner_id == THIS_PLAYER.user_id;
+    const players_list = $("#players-modal #players-list")[0];
+    players_list.innerHTML = "";
+
+    // Add the players to the list
+    // Iterate through game.players, so it's in order of joined?
+    for (let i = 0; i < game.players.length; i++) {
+        player = players.find(p => p.name === game.players[i]);
+
+        const is_self = player.name == THIS_PLAYER.name;
+        const profile_link = window.location.origin + "/profile/" + encodeURIComponent(player.name);
+
+        let time_joined = new Date(Date.parse(player.time_joined))
+        time_joined.setDate(time_joined.getDate() + 1);
+        time_joined = time_joined.toLocaleDateString(undefined,{month: "short", day: "numeric"});
+        const is_new = (new Date() - new Date(Date.parse(player.time_joined)) < 5 * 24 * 60 * 60 * 1000)
+
+
+        // Make the HTML for the player row and add it to the list
+        let player_html = `
+        <div class="player-modal-row" id="player-${player.name}">
+            <div class="row" style="margin: -1em;">
+                <img class="inline-image" src="/static/img/default-profile.png"></img>
+                <ins><a href="${profile_link}">${player.name}</a></ins>
+                <p>&nbsp;</p>(
+                <a href="#" onclick="show_player_info_modal('${player.player_id}'); $('#players-modal').modal('hide');">
+                    ${format_value(players[i].value, imprecise=true)}
+                </a>)
+                ${(is_new)? `<p>&nbsp;</p><span style="color:#c13030;">New!</span>` : ""}
+            </div>
+            <div class="row" style="margin: -1em;">
+                <p>Joined ${time_joined}</p> 
+                <p>&nbsp;</p>
+                ${(is_owner && !is_self) ? `<i class="bi-x-circle-fill players-kick-player" onclick="kick_player('${player.name}')"></i><p>&nbsp;</p>` : ""}
+                <i class="bi-person-plus-fill players-add-friend"></i>
+            </div>
+            <br>
+        </div>
+
+        `;
+        
+        players_list.innerHTML += player_html;
+    }
+}
+
+// Should be called after we get leaderbard data from the server :)
+// Copy and pasted from /play-page-players.js (no longer called)
+// We need ALL_PLAYERS to be defined!
+async function init_players_mdoal() {
+    // Fill out the modal title
+    $("#players-modal .modal-title").html(`Players in <ins>${GAME_OBJECT.name}</ins>`);
+
+    // Add event listener when the players modal is open
+    $("#players-modal").on("show.bs.modal", function() {
+
+        // Add an invite link that copies to clipboard
+        const invite_link = window.location.origin + "/invite/" + GAME_OBJECT.game_id;
+        $("#players-modal #invite-link").val(invite_link);
+
+        // Render the players list
+        render_players_list(GAME_OBJECT, ALL_PLAYERS);
+
+    });
+
+    // Add event listener to leave game button
+    $("#players-modal #leave-game-button").on("click", function() {
+        // Fill out the confirm modal info
+        $("#leave-confirm-modal #leave-confirm-form #game-id").val(GAME_OBJECT.game_id);
+        // Hide this modal and open the confirm modal
+        $("#players-modal").modal("hide");
+        $("#leave-confirm-modal").modal("show");
+    });
+
+    // Check if there are new players to diplay notif
+    // Sucks that I do this mutliple times, but who cares -- it's nothing
+    let unchecked_events = [];
+    for (ev in GAME_OBJECT.new_events) {
+        new_event_time = new Date(Date.parse(GAME_OBJECT.new_events[ev]));
+        if (ev in THIS_PLAYER.last_checked) {
+            last_checked_time = new Date(Date.parse(THIS_PLAYER.last_checked[ev]));
+        } else {
+            last_checked_time = new Date(0);
+        }
+        if (new_event_time > last_checked_time) {
+            unchecked_events.push(ev);
+        }
+    }
+
+    // Add the notif if there are new players
+    if (unchecked_events.includes("player")) {
+        $("#players-modal-open-button").append(`
+            <span id="players-notif" class="badge bg-danger rounded-pill position-absolute top-0 end-0 p-10">!</span>
+        `);
+    }
+
+    // Add event listener to the player modal to remove the notif
+    $("#players-modal").on("show.bs.modal", function() {
+        $("#players-notif").remove();
+        fetch("/api/check_event/" + GAME_OBJECT.game_id + "/player", {method: "POST"});
+    });
+
+    // Enable the players button (make sure there's no ID collision)
+    $("#players-modal-open-button:not(:has(#modal-container))").prop("disabled", false);
+}
+
 // Load the leaderboard onto the page -- called by play-page-main.js
 async function init_leaderboard() {
 
@@ -147,4 +258,7 @@ async function init_leaderboard() {
         const card = leaderboard_card(player);
         document.getElementById(LEADERBOARD_BANNER).insertAdjacentHTML("beforeend", card);
     }
+
+    // Call the init_players_modal function now that we have ALL_PLAYERS
+    init_players_mdoal();
 } 

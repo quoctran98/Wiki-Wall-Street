@@ -11,30 +11,18 @@
         </button>
     </div>
 
-    <!-- MODAL BODY -->
-    <div class="modal-body modal-scroll">
-        
-        <div class="row">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-
-                <div class="input-group" style="display:flex;">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Invite Link</span>
-                    </div>
-                    <input type="text" id="invite-link" readonly="true" style="flex:1">
-                    <button class="btn btn-primary" id="send-button" onclick="copy_link('invite-link');"><i class="bi-clipboard"></i></button>
-                </div>
-
-                <hr>
-                
-                <ul id="players-list" class="no-bullets">
-                </ul>
-
+    <div class="modal-body">
+        <div class="input-group" style="display:flex;">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Invite Link</span>
             </div>
-            <div class="col-md-1"></div>
+            <input type="text" id="invite-link" readonly="true" style="flex:1">
+            <button class="btn btn-primary" id="send-button" onclick="copy_link('invite-link');"><i class="bi-clipboard"></i></button>
         </div>
+    </div>
 
+    <!-- MODAL BODY -->
+    <div class="modal-body modal-scroll" id="players-list">
     </div>
     
     <!-- MODAL FOOTER -->
