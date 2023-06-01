@@ -8,7 +8,7 @@ from server.helper import settings, active_users_coll, active_games_coll, old_ga
 from server import WikiAPI
 
 class User(UserMixin):
-    def __init__(self, name, email, password, signup_time, joined_games, old_games=[], user_id=None):
+    def __init__(self, name, email, password, signup_time, joined_games, old_games=[], reset_token=None, user_id=None):
         # We're ignoring MongoDB's document _id field and using our own UUID
         self.name = name
         self.email = email
@@ -16,6 +16,7 @@ class User(UserMixin):
         self.signup_time = signup_time
         self.joined_games = joined_games
         self.old_games = old_games # This is for backwards compatibility :)
+        self.reset_token = reset_token
         self.user_id = uuid.uuid4().hex if user_id is None else str(user_id)
         # We're going to avoid touching MongoDB document _id fields entirely
 
@@ -33,9 +34,9 @@ class User(UserMixin):
     def check_password(self, password):
         return(check_password_hash(self.password, password))
     
-    def update_user(self):
-        """Update the user's information in MongoDB"""
-        active_users_coll.update_one({"user_id": self.user_id}, {"$set": self.__dict__})
+    # def update_user(self):
+    #     """Update the user's information in MongoDB"""
+    #     active_users_coll.update_one({"user_id": self.user_id}, {"$set": self.__dict__})
 
     def get_profile(self):
         """Get the user's profile information from (public information)"""
@@ -45,14 +46,15 @@ class User(UserMixin):
             "joined_games": self.joined_games,
         })
     
+    def set_reset_token(self, reset_token):
+        """Set the user's reset token to a new reset token"""
+        self.reset_token = reset_token
+        active_users_coll.update_one({"user_id": self.user_id}, {"$set": {"reset_token": self.reset_token}})
+    
     def set_password(self, new_password):
         """Set the user's password to a new password"""
         self.password = generate_password_hash(new_password)
-        self.update_user()
-
-    def send_reset_email(self):
-        """Send a password reset email to the user"""
-        pass
+        active_users_coll.update_one({"user_id": self.user_id}, {"$set": {"password": self.password}})
 
     @classmethod
     def get_by_email(cls, email):
@@ -76,6 +78,14 @@ class User(UserMixin):
         data = active_users_coll.find_one({"user_id": user_id}) 
         if data is not None:
             data.pop('_id', None) # Remove the MongoDB _id field
+            return cls(**data)
+    
+    # This method is only used by the reset password route in admin.py
+    @classmethod
+    def get_by_reset_token(cls, reset_token):
+        data = active_users_coll.find_one({"reset_token": reset_token})
+        if data is not None:
+            data.pop('_id', None)
             return cls(**data)
 
     @classmethod

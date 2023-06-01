@@ -107,6 +107,12 @@
         next_url = decodeURIComponent(next_url);
         document.getElementById("next").value = next_url;
     }
+
+    // Disable the form elements on submit
+    $("form").submit(function() {
+        $("input").prop("readonly", true);
+        $("button").prop("disabled", true);
+    });
 </script>
 
 {% endblock %}

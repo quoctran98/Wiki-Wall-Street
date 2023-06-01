@@ -11,26 +11,37 @@ from flask_login import LoginManager
 from datetime import datetime, timezone
 import pytz
 
-from server.helper import settings, cache_config, cache, scheduler, active_games_coll, players_db, today_wiki, log_update
+from server.helper import settings, cache_config, mail, cache, scheduler, active_games_coll, players_db, today_wiki, log_update
 from server.models import User, Player
 from server.tasks import update_all_portfolio_vals
 
 def create_app():
+
+    # Set up Flask app
     app = Flask(__name__)
     app.config["SECRET_KEY"] = settings.FLASK_SECRET_KEY
 
+    # Set up login manager
     login_manager = LoginManager()
     login_manager.login_view = "auth.login"
     login_manager.init_app(app)
-
     @login_manager.user_loader
     def load_user(user_id):
         return(User.get_by_user_id(user_id))
     
-    # Set up cache
+    # Set up email (object defined in helper.py)
+    app.config["MAIL_SERVER"] = settings.MAIL_SERVER
+    app.config["MAIL_PORT"] = settings.MAIL_PORT
+    app.config["MAIL_USERNAME"] = settings.MAIL_USERNAME
+    app.config["MAIL_PASSWORD"] = settings.MAIL_PASSWORD
+    app.config["MAIL_USE_TLS"] = settings.MAIL_USE_TLS
+    app.config["MAIL_USE_SSL"] = settings.MAIL_USE_SSL
+    mail.init_app(app)
+    
+    # Set up cache (object defined in helper.py)
     cache.init_app(app, config=cache_config)
 
-    # Set up scheduler
+    # Set up scheduler (object defined in helper.py)
     scheduler.init_app(app)
     scheduler.start()
     

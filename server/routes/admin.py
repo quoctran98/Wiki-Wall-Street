@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
+from flask_mail import Message
 import json
+import uuid
 
-from server.helper import settings, cache
+from server.helper import settings, mail, cache, OUTGOING_EMAILS
 from server.models import Player, Game, User
 
 admin = Blueprint("admin", __name__)
@@ -31,15 +33,68 @@ def change_password():
     flash("Password changed successfully")
     return(redirect(url_for("admin.account")))
 
-@admin.route("/api/forgot_password", methods=["POST"])
+# @admin.route("/api/change_email", methods=["POST"])
+# @login_required
+# def change_email():
+#     new_email = request.form.get("new_email")
+
+@admin.route("/forgot_password")
 def forgot_password():
+    return(render_template("forgot-password.html"))
+
+@admin.route("/api/forgot_password", methods=["POST"])
+def forgot_password_post():
     email = request.form.get("email")
     user = User.get_by_email(email)
     if not user:
         flash("Email does not exist")
         return(redirect(url_for("auth.login")))
-    user.send_reset_email()
+    
+    # Generate a reset token and add it to the user's document
+    reset_token = str(uuid.uuid4())
+    user.set_reset_token(reset_token)
+    reset_link = f"{settings.SERVER_URL}/reset_password?token={reset_token}"
+
+    # Send the reset email
+    msg = Message(subject="Reset your Wiki Wall Street password", 
+                  sender=OUTGOING_EMAILS["default"], 
+                  recipients=[email])
+    msg.html = render_template("emails/reset-password.html", user=user, reset_link=reset_link)
+    mail.send(msg)
+
     flash("Reset email sent")
+    return(redirect(url_for("auth.login")))
+
+@admin.route("/reset_password")
+def reset_password():
+    token = request.args.get("token")
+    user = User.get_by_reset_token(token)
+    if not user:
+        flash("Invalid reset token")
+        return(redirect(url_for("auth.login")))
+    return(render_template("reset-password.html", token=token))
+
+@admin.route("/api/reset_password", methods=["POST"])
+def reset_password_post():
+    # Check if the reset token is valid
+    token = request.form.get("token")
+    user = User.get_by_reset_token(token)
+    print(user)
+    if not user:
+        flash("Invalid reset token")
+        return(redirect(url_for("admin.reset_password", token=token)))
+    
+    # Check if the new password matches the confirm password
+    new_password = request.form.get("new_password")
+    confirm_password = request.form.get("confirmation")
+    if new_password != confirm_password:
+        flash("New password does not match confirm password")
+        return(redirect(url_for("auth.reset_password", token=token)))
+
+    # Change the password and remove the reset token
+    user.set_password(new_password)
+    user.set_reset_token(None)
+    flash("Password changed successfully")
     return(redirect(url_for("auth.login")))
 
 @admin.route("/api/leave_game", methods=["POST"])

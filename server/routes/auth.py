@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user, current_user
+from flask_mail import Message
 from pymongo import MongoClient
 
-from server.helper import settings, username_is_valid
+from server.helper import settings, mail, OUTGOING_EMAILS, username_is_valid
 from server.models import User
 
 auth = Blueprint("auth", __name__)
@@ -67,40 +68,18 @@ def signup_post():
     # I cannot believe that this works -- this whole thing is so cobbled together
     next_url = request.form.get("next")
 
-    if User.singup(email, name, password):
+    if User.singup(email, name, password): # Returns True if successful :)
+        # Send a confirmation email :)
+        msg = Message(subject="Welcome to Wiki Wall Street!", 
+                      sender=OUTGOING_EMAILS["default"],
+                      recipients=[email])
+        msg.html = render_template("emails/welcome.html", name=name, server_url=settings.SERVER_URL)
+        mail.send(msg)
+        # Redirect to login page
         return(redirect(url_for("auth.login", next=next_url)))
     else:
         flash("Email address already exists")
         return(redirect(url_for("auth.signup")))
-
-@auth.route("/forgot")
-def forgot():
-    return(render_template("forgot.html"))
-
-@auth.route("/forgot", methods=["POST"])
-def forgot_post():
-    email = request.form.get("email")
-
-@auth.route("/reset")
-def reset():
-    return(render_template("reset.html"))
-
-@auth.route("/reset", methods=["POST"])
-def reset_post():
-    email = request.form.get("email")
-    password = request.form.get("password")
-
-@auth.route("/change_password")
-@login_required
-def change_password():
-    return(render_template("change_password.html"))
-
-@auth.route("/change_password", methods=["POST"])
-@login_required
-def change_password_post():
-    old_password = request.form.get("old_password")
-    new_password = request.form.get("new_password")
-    return(redirect(url_for("main.index")))
 
 @auth.route("/logout")
 @login_required

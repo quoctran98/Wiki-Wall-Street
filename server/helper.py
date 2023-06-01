@@ -1,6 +1,7 @@
 from pydantic import BaseSettings
 from pymongo import MongoClient
 from flask_caching import Cache
+from flask_mail import Mail
 from flask_apscheduler import APScheduler
 from datetime import datetime, timezone, timedelta
 import fnmatch
@@ -12,6 +13,7 @@ from flask import request
 
 # Load settings from .env file
 class Settings(BaseSettings):
+    SERVER_URL:str
     FLASK_SECRET_KEY:str
     ENVIRONMENT:str
 
@@ -26,12 +28,12 @@ class Settings(BaseSettings):
     EN_WIKI_AVERAGE_DAILY_PROJECT_VIEWS:float
     UPDATE_HOUR_UTC:int
     
-    # MAIL_SERVER:str
-    # MAIL_PORT:int
-    # MAIL_USERNAME:str
-    # MAIL_PASSWORD:str
-    # MAIL_USE_TLS:bool
-    # MAIL_USE_SSL:bool
+    MAIL_SERVER:str
+    MAIL_PORT:int
+    MAIL_USERNAME:str
+    MAIL_PASSWORD:str
+    MAIL_USE_TLS:bool
+    MAIL_USE_SSL:bool
 
     class Config:
         env_file = ".env"
@@ -63,7 +65,13 @@ players_db = client[settings.PLAYERS_DB_NAME]
 # Not collections! Each game has its own collection in the chats database
 chats_db = client[settings.CHATS_DB_NAME]
 
-# Cache for later use
+# Mail for initializating in __init__.py
+OUTGOING_EMAILS = {
+    "default": "yes-reply@wiki-wall-street.com"
+}
+mail = Mail()
+
+# Cache for initializing in __init__.py
 cache_config = {
     "CACHE_DEBUG": 1,
     "CACHE_DEFAULT_TIMEOUT": 84600, # 24 hours (most things are updated daily)
@@ -73,7 +81,7 @@ cache_config = {
 }
 cache = Cache()
 
-# Scheduler for later use
+# Scheduler for initializing in __init__.py
 scheduler = APScheduler()
 
 # Unpack article categories from .txt files in ./categories
