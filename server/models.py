@@ -170,8 +170,8 @@ class Game():
             unpacked_allowed = [] # unpack the game's allowed categories
             for c in self.settings["allowed_categories"]:
                 unpacked_allowed.extend(allowed_categories[c])
-                # And the search list
-                unpacked_allowed.extend(search_lists[c])
+                if c in search_lists:
+                    unpacked_allowed.extend(search_lists[c])
             if len(unpacked_allowed) > 0: # if there's an explicit list of allowed categories
                 # Check if the article is in the list of allowed categories or is the article itself is in the list
                 return(any([cat in unpacked_allowed for cat in article_categories]) or article_name in unpacked_allowed, "allowed_categories")

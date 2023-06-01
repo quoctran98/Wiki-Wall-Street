@@ -12,20 +12,26 @@ from flask import request
 
 # Load settings from .env file
 class Settings(BaseSettings):
+    FLASK_SECRET_KEY:str
+    ENVIRONMENT:str
+
     MONGODB_CONNECTION_STRING:str
     USERS_DB_NAME:str
     GAMES_DB_NAME:str
     PLAYERS_DB_NAME:str
     TRANSACTIONS_DB_NAME:str
     CHATS_DB_NAME:str
-    
-    UPDATE_HOUR_UTC:int
-    WIKI_API_USER_AGENT:str
-    FLASK_SECRET_KEY:str
-    
-    EN_WIKI_AVERAGE_DAILY_PROJECT_VIEWS:float
 
-    ENVIRONMENT:str
+    WIKI_API_USER_AGENT:str
+    EN_WIKI_AVERAGE_DAILY_PROJECT_VIEWS:float
+    UPDATE_HOUR_UTC:int
+    
+    MAIL_SERVER:str
+    MAIL_PORT:int
+    MAIL_USERNAME:str
+    MAIL_PASSWORD:str
+    MAIL_USE_TLS:bool
+    MAIL_USE_SSL:bool
 
     class Config:
         env_file = ".env"
@@ -83,7 +89,7 @@ for filename in os.listdir("./server/categories/banned"):
             banned_categories[filename[:-4]] = f.read().splitlines()
 
 # For allowed categories with explicit search lists :)
-search_lists = {}
+search_lists = {"": []}
 for filename in os.listdir("./server/categories/search_lists"):
     if filename.endswith(".txt"):
         with open("server/categories/search_lists/" + filename, "r") as f:
