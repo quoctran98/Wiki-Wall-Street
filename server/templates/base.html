@@ -22,21 +22,32 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}"" />
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png')}}" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
 
     <!-- Main Script (for global functions) -->
     <script src="{{ url_for('static', filename='js/main.js')}}"></script>
     
-    <!-- Add custom OpenGraph content -->
+    <!-- Add custom OpenGraph (and Twitter) content -->
     {% if custom_og %}
         <meta property="og:title" content="{{ custom_og['title'] }}" />
+        <meta name="twitter:title" content="{{ custom_og['title'] }}" />
     {% else %}
         <meta property="og:title" content="Wiki Wall Street" />
+        <meta name="twitter:title" content="Wiki Wall Street" />
     {% endif %}
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@quoctran98" />
+
     <meta property="og:description" content="The stock market game but for Wikipedia articles! Join a game and predict trends in article popularity!" />
+    <meta name="twitter:description" content="The stock market game but for Wikipedia articles! Join a game and predict trends in article popularity!" />
+
     <meta property="og:type" content="website" />
     <meta property="og:url" content="http://wiki-wall-street.com" />
+
     <meta property="og:image:url" content="{{ url_for('static', filename='img/favicon.png') }}" />
+    <meta name="twitter:image" content="{{ url_for('static', filename='img/favicon.png') }}" />
+
 
     <title>Wiki Wall Street 📖📈</title>
 
