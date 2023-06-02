@@ -1,0 +1,14 @@
+Hi {{name}},
+
+Welcome to Wiki Wall Street!
+
+Things are still kind of rough, so I'd love to know about any feedback you have or any bugs you find! You can open an issue on GitHub (https://github.com/quoctran98/Wiki-Wall-Street) or contact me on Twitter (https://twitter.com/quoctran98) -- also please donate to the Wikimedia Foundation (https://wikimediafoundation.org/support/) if you can (I feel bad for using their API so much).
+
+You can get started by and creating or joining a game! If you're lost at all, take a look at the help page for more information!
+
+Love,
+Quoc
+
+P.S. Feel free to join the New Game game -- it's the one with the most players and it's public!
+https://wiki-wall-street.com/invite/game_e0f0963707154fae93a8809483b810b0
+        

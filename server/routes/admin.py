@@ -48,7 +48,7 @@ def forgot_password_post():
     user = User.get_by_email(email)
     if not user:
         flash("Email does not exist", "alert-danger")
-        return(redirect(url_for("auth.login")))
+        return(redirect(url_for("admin.forgot_password")))
     
     # Generate a reset token and add it to the user's document
     reset_token = str(uuid.uuid4())
@@ -59,10 +59,11 @@ def forgot_password_post():
     msg = Message(subject="Reset your Wiki Wall Street password", 
                   sender=OUTGOING_EMAILS["default"], 
                   recipients=[email])
+    msg.text = render_template("emails/reset-password.txt", user=user, reset_link=reset_link)
     msg.html = render_template("emails/reset-password.html", user=user, reset_link=reset_link)
     mail.send(msg)
 
-    flash("An email with a reset link has been sent to your email", "alert-primary")
+    flash("An email with a reset link has been sent to your email address", "alert-primary")
     return(redirect(url_for("auth.login")))
 
 @admin.route("/reset_password")

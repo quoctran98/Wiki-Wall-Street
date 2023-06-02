@@ -73,6 +73,7 @@ def signup_post():
         msg = Message(subject="Welcome to Wiki Wall Street!", 
                       sender=OUTGOING_EMAILS["default"],
                       recipients=[email])
+        msg.text = render_template("emails/welcome.txt", name=name, server_url=settings.SERVER_URL)
         msg.html = render_template("emails/welcome.html", name=name, server_url=settings.SERVER_URL)
         mail.send(msg)
         # Redirect to login page
