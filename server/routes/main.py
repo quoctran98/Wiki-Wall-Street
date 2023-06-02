@@ -22,6 +22,12 @@ def index():
 def help():
     return(render_template("help.html"))
 
+@main.route("/categories")
+def categories():
+    return(render_template("categories.html",
+                            allowed_categories=allowed_categories.keys(), 
+                            banned_categories=banned_categories.keys()))
+
 # Fallback "/invite" route for legacy links
 @main.route("/invite")
 def invite_legacy():
@@ -41,7 +47,7 @@ def profile(name):
     name = name.replace("%20", " ")
     user = User.get_by_name(name)
     if user is None:
-        flash("User not found")
+        flash("User not found", "alert-danger")
         return(render_template("index.html",
                                  allowed_categories=allowed_categories.keys(), 
                                  banned_categories=banned_categories.keys()))

@@ -107,35 +107,16 @@
     <hr>
 
     <!-- FLASH MESSAGES -->
-    <!-- {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for m in messages %}
-        {% if category is defined %}
-        <div class="container has-text-centered">
-            <div class="alert {{ category }}" role="alert">
-                {{ m }}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="container has-text-centered">
+                <div class="alert {{ category }}" role="alert">
+                    {{ message }}
+                </div>
             </div>
-        </div>
-        {% else %}
-        <div class="container has-text-centered">
-            <div class="alert alert-danger" role="alert">
-                {{ m }}
-            </div>
-        </div>
+            {% endfor %}
         {% endif %}
-    {% endfor %}
-    {% endif %}
-    {% endwith %} -->
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    {% for m in messages %}
-    <div class="container has-text-centered">
-        <div class="alert alert-danger" role="alert">
-            {{ m }}
-        </div>
-    </div>
-    {% endfor %}
-    {% endif %}
     {% endwith %}
 
     </div>
@@ -149,20 +130,22 @@
 </body>
 
 <footer>
+    <br>
+    <hr>
     <div class="row gets-blurred">
         <div class="col-md-12">
             <p class="text-center" style="font-size:medium;">
+                <a href="https://wikimediafoundation.org/support/"><img class="inline-image" src="{{ url_for('static', filename='img/Wikimedia-logo.png')}}"></img> Donate to the Wikimedia Foundation!</a>
                 <br>
-                Code at 
-                <a href="https://github.com/quoctran98/Wiki-Wall-Street"><img class="inline-image" src="{{ url_for('static', filename='img/GitHub-Mark-32px.png')}}"></img> quoctran98/Wiki-Wall-Street</a>
+                <a href="https://github.com/quoctran98/Wiki-Wall-Street"><img class="inline-image" src="{{ url_for('static', filename='img/GitHub-Mark-32px.png')}}"></img> Github</a>
+                <a href="https://twitter.com/quoctran98"><img class="inline-image" src="{{ url_for('static', filename='img/Twitter-Icon.png')}}"></img> Twitter</a>
+                <a href="https://ko-fi.com/quoctran98"><img class="inline-image" src="{{ url_for('static', filename='img/Ko-fi-logo.png')}}"></img> Ko-fi</a>
                 <br>
-                Follow me on Twitter 
-                <a href="https://twitter.com/quoctran98"><img class="inline-image" src="{{ url_for('static', filename='img/Twitter-Icon.png')}}"></img> quoctran98</a>
+                QUO© 2023
                 - 
-                Buy me a Coffee
-                <a href="https://ko-fi.com/quoctran98"><img class="inline-image" src="{{ url_for('static', filename='img/Ko-fi-logo.png')}}"></img> ko-fi.com/quoctran98</a>
-                <br>
-                QUO© 2023 - <a href="https://github.com/quoctran98/Wiki-Wall-Street/issues">Report Issues</a>
+                <a href="https://github.com/quoctran98/Wiki-Wall-Street/issues">Report Issues</a>
+                -
+                <a href="mailto:hello@wiki-wall-street.com">Contact Us</a>
             </p>
         </div>
     </div>

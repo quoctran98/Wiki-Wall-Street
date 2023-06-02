@@ -28,10 +28,10 @@ def play_legacy():
 def play(game_id):
     this_game = Game.get_by_game_id(game_id)
     if this_game is None:
-        flash("Game not found.")
+        flash("Game not found", "alert-danger")
         return(redirect(url_for("main.index")))
     if not current_user.user_id in this_game.user_ids:
-        flash("You're not in this game. You must join it first.")
+        flash("You're not in this game -- you must join it first", "alert-danger")
         return(redirect(url_for("main.index")))
     
     # Update the "daily" event in the player's event log
@@ -70,7 +70,7 @@ def create_game():
         no_allowed = all([x == "" for x in game_settings["allowed_categories"]])
         no_banned = all([x == "" for x in game_settings["banned_categories"]])
         if not (no_allowed or no_banned):
-            flash("You can't have both a theme AND banned categories.")
+            flash("You can't have both a theme AND banned categories", "alert-danger")
             return(redirect(url_for("main.index")))
 
     new_game_id = Game.create_game(request.form["game_name"], # don't want to sanitize this for now :)
@@ -84,7 +84,7 @@ def create_game():
     if game:
         return(redirect(url_for("game.play", game_id=new_game_id)))
     else:
-        flash("Could not create game.")
+        flash("Could not create game", "alert-danger")
         return(redirect(url_for("main.index")))
     
 @game.route("/api/change_settings", methods=["POST"])
@@ -94,7 +94,7 @@ def change_settings():
     game_id = request.form["game_id"]
     this_game = Game.get_by_game_id(game_id)
     if this_game.owner_id != current_user.user_id:
-        flash("You can't change the settings of this game.")
+        flash("You can't change the settings of this game", "alert-danger")
         return(redirect(url_for("game.play", game_id=game_id)))
     else:
 
@@ -116,13 +116,13 @@ def change_settings():
             no_allowed = all([x == "" for x in new_game_settings["allowed_categories"]])
             no_banned = all([x == "" for x in new_game_settings["banned_categories"]])
             if not (no_allowed or no_banned):
-                flash("You can't have both a theme AND banned categories.")
+                flash("You can't have both a theme AND banned categories", "alert-danger")
                 return(redirect(url_for("game.play", game_id=game_id)))
 
         this_game.change_settings(new_game_settings)
         # Clear the caches for this game
         clear_game_caches(game_id)
-        flash("Settings changed.")
+        flash(f"Settings changed for {this_game.name}", "alert-primary")
         return(redirect(url_for("game.play", game_id=game_id)))
     
 @game.route("/api/join_game", methods=["POST"])
@@ -134,7 +134,7 @@ def join_game():
         this_game.add_event("player")
         return(redirect(url_for("game.play", game_id=request.form["game_id"])))
     else:
-        flash("Could not join game.")
+        flash("Could not join game", "alert-danger")
         return(redirect(url_for("main.index")))
 
 @game.route("/api/new_transaction", methods=["POST"])
@@ -165,7 +165,7 @@ def new_transaction():
     # Make sure the article is allowed to be bought
     # I guess that you should be allowed to sell anything just in case it dips after you buy it
     if not this_game.allowed_article(tx_data["article"]) and tx_data["quantity"] > 0:
-        flash("You can't buy this article.")
+        flash("You can't buy this article", "alert-warning")
         return(jsonify({"success": False}))
     
     bad_article_chars = [".", "'"]
@@ -173,7 +173,7 @@ def new_transaction():
     # Single quotes (') break the front end :( -- I should have only dealt with article IDs
     for char in bad_article_chars:
         if char in tx_data["article"]:
-            flash("You can't buy/sell this article. It has a weird character in it that might break the game. I'm not smart enough to fix it without rewriting a lot of code.")
+            flash("You can't buy/sell this article. It has a weird character in it that might break the game. I'm not smart enough to fix it without rewriting a lot of code.", "alert-warning")
             return(jsonify({"success": False}))
 
     # Transaction method will verify that user can make this transaction
@@ -184,7 +184,7 @@ def new_transaction():
                                          int(tx_data["quantity"]))
     
     if new_tx == False:
-        flash("You can't make this transaction.")
+        flash("You can't make this transaction", "alert-danger")
         return(jsonify({"success": False}))
     else:
         return(jsonify({"success": True}))
@@ -235,7 +235,7 @@ def get_play_info(game_id):
     this_game = Game.get_by_game_id(game_id)
     this_player = Player.get_by_user_id(game_id, current_user.user_id)
     if this_game is None or this_player is None:
-        flash("Could not find game!")
+        flash(f"Could not find game id {game_id}", "alert-danger")
         return(jsonify({"error": True}))
     else:
         # Removing transactions and chats from the game object (for speed)
@@ -289,7 +289,7 @@ def leaderboard(game_id):
 def get_invite_info(game_id):
     this_game = Game.get_by_game_id(game_id)
     if this_game is None:
-        flash("Could not find game!")
+        flash(f"Could not find game id {game_id}", "alert-danger")
         return(jsonify({"error": True}))
     else:
         return(jsonify({"game": vars(this_game)}))

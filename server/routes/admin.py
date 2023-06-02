@@ -20,17 +20,17 @@ def change_password():
     # Check if the old password is correct
     old_password = request.form.get("old_password")
     if not current_user.check_password(old_password):
-        flash("Old password is incorrect")
+        flash("Old password is incorrect", "alert-danger")
         return(redirect(url_for("admin.account")))
     # Check if the new password matches the confirm password
     new_password = request.form.get("new_password")
     confirm_password = request.form.get("confirmation")
     if new_password != confirm_password:
-        flash("New password does not match confirm password")
+        flash("New password does not match confirm password", "alert-danger")
         return(redirect(url_for("admin.account")))
     # Change the password
     current_user.set_password(new_password)
-    flash("Password changed successfully")
+    flash("Password changed successfully", "alert-primary")
     return(redirect(url_for("admin.account")))
 
 # @admin.route("/api/change_email", methods=["POST"])
@@ -47,7 +47,7 @@ def forgot_password_post():
     email = request.form.get("email")
     user = User.get_by_email(email)
     if not user:
-        flash("Email does not exist")
+        flash("Email does not exist", "alert-danger")
         return(redirect(url_for("auth.login")))
     
     # Generate a reset token and add it to the user's document
@@ -62,7 +62,7 @@ def forgot_password_post():
     msg.html = render_template("emails/reset-password.html", user=user, reset_link=reset_link)
     mail.send(msg)
 
-    flash("Reset email sent")
+    flash("An email with a reset link has been sent to your email", "alert-primary")
     return(redirect(url_for("auth.login")))
 
 @admin.route("/reset_password")
@@ -70,9 +70,9 @@ def reset_password():
     token = request.args.get("token")
     user = User.get_by_reset_token(token)
     if not user:
-        flash("Invalid reset token")
+        flash("Invalid reset token -- please check your reset link", "alert-danger")
         return(redirect(url_for("auth.login")))
-    return(render_template("reset-password.html", token=token))
+    return(render_template("reset-password.html", token=token, name=user.name))
 
 @admin.route("/api/reset_password", methods=["POST"])
 def reset_password_post():
@@ -81,20 +81,20 @@ def reset_password_post():
     user = User.get_by_reset_token(token)
     print(user)
     if not user:
-        flash("Invalid reset token")
+        flash("Invalid reset token -- please check your reset link", "alert-danger")
         return(redirect(url_for("admin.reset_password", token=token)))
     
     # Check if the new password matches the confirm password
     new_password = request.form.get("new_password")
     confirm_password = request.form.get("confirmation")
     if new_password != confirm_password:
-        flash("New password does not match confirm password")
+        flash("Passwords do not match", "alert-danger")
         return(redirect(url_for("auth.reset_password", token=token)))
 
     # Change the password and remove the reset token
     user.set_password(new_password)
     user.set_reset_token(None)
-    flash("Password changed successfully")
+    flash("Password changed successfully", "alert-primary")
     return(redirect(url_for("auth.login")))
 
 @admin.route("/api/leave_game", methods=["POST"])
@@ -105,13 +105,13 @@ def leave_game():
     game =  Game.get_by_game_id(game_id)
     player = Player.get_by_user_id(game_id, current_user.user_id)
     if not player or not game:
-        flash("You are not in this game or the game does not exist")
+        flash("You are not in this game or the game does not exist", "alert-danger")
         return(redirect(url_for("main.index")))
     if game.owner_id == current_user.user_id:
-        flash("You are the owner of this game. Please delete the game instead")
+        flash("You are the owner of this game. Please delete the game instead", "alert-warning")
         return(redirect(url_for("game.play", game_id=game_id)))
     player.leave_game()
-    flash("You have left the game")
+    flash("You have left the game", "alert-primary")
     return(redirect(url_for("main.index")))
 
 @admin.route("/api/kick_player", methods=["POST"])
@@ -123,13 +123,13 @@ def kick_player():
     game =  Game.get_by_game_id(game_id)
     player = Player.get_by_player_name(game_id, player_name)
     if not player or not game:
-        flash("Player or game does not exist (or there are duplicate names)")
+        flash("Player or game does not exist", "alert-danger")
         return(redirect(url_for("game.play", game_id=game_id)))
     if game.owner_id != current_user.user_id:
-        flash("Only the owner of the game can kick players")
+        flash("Only the owner of the game can kick players", "alert-warning")
         return(redirect(url_for("game.play", game_id=game_id)))
     player.leave_game()
-    flash(f"Player '{player_name}' has been kicked from the game")
+    flash(f"Player '{player_name}' has been kicked from the game", "alert-primary")
     return(redirect(url_for("game.play", game_id=game_id)))
 
 @admin.route("/api/delete_game", methods=["POST"])
@@ -138,11 +138,11 @@ def delete_game():
     game_id = request.form.get("game_id")
     game =  Game.get_by_game_id(game_id)
     if not game:
-        flash("Game does not exist")
+        flash("Game does not exist", "alert-danger")
         return(redirect(url_for("main.index")))
     if game.owner_id != current_user.user_id:
-        flash("You are not the owner of this game")
+        flash("You are not the owner of this game", "alert-danger")
         return(redirect(url_for("game.play", game_id=game_id)))
     game.delete_game()
-    flash("Game deleted")
+    flash(f"{game.name} has been deleted", "alert-primary")
     return(redirect(url_for("main.index")))

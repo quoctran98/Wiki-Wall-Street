@@ -25,10 +25,10 @@ def login_post():
     next_url = request.form.get("next")
 
     if user is None:
-        flash("Email address isn't signed up")
+        flash("This email address isn't signed up!", "alert-danger")
         return(redirect(url_for("auth.login")))
     if not user.check_password(password):
-        flash("Password is incorrect")
+        flash("Your password is incorrect", "alert-danger")
         return(redirect(url_for("auth.login")))
 
     # Redundant but let's play it safe
@@ -39,7 +39,7 @@ def login_post():
         else:
             return(redirect(url_for("main.index")))
     else:
-        flash("Please check your login details and try again.")
+        flash("Please check your login details and try again", "alert-danger")
         return(redirect(url_for("auth.login")))
 
 @auth.route("/signup")
@@ -54,14 +54,14 @@ def signup_post():
 
     # Make sure username is valid and hasn't been taken
     if not username_is_valid(name):
-        flash("Please enter a valid username (only letters, numbers, -, and _)")
+        flash("Please enter a valid username (only letters, numbers, -, and _)", "alert-warning")
         return(redirect(url_for("auth.signup")))
     if User.get_by_name(name) is not None:
-        flash("Username already taken, please choose another (sorry this isn't handled better)")
+        flash("Username already taken, please choose another (sorry this isn't handled better)", "alert-warning")
         return(redirect(url_for("auth.signup")))
     # Make sure the passowrds match
     if request.form.get("password") != request.form.get("confirmation"):
-        flash("Passwords do not match")
+        flash("Passwords do not match", "alert-danger")
         return(redirect(url_for("auth.signup")))
 
     # This is added by the JS on the frontend
@@ -78,7 +78,7 @@ def signup_post():
         # Redirect to login page
         return(redirect(url_for("auth.login", next=next_url)))
     else:
-        flash("Email address already exists")
+        flash("This email address already exists -- please log in instead", "alert-danger")
         return(redirect(url_for("auth.signup")))
 
 @auth.route("/logout")

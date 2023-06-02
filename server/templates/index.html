@@ -12,31 +12,52 @@
 </div>
 
 <!-- GAME EXPLANATION -->
-<h2>What is this game?</h2>
+<div class="alert alert-secondary"">
+  <a data-toggle="collapse" href="#game-explainer" style="color: inherit; text-decoration: inherit;">
+    <h2>What is this game?</h2>
+  </a>
+</div>
 
-<p>
-  I keep calling this <b>"the stock market game but for Wikipedia articles"</b>
-  but it turns out that not a lot of people know what 
-  <a href="https://www.marketwatch.com/games" target="_blank" rel="noopener noreferrer">the stock market game</a> is
-  -- it's a game where you have fake money that you can use to buy and sell fake stocks,
-  which track the value of real stocks. I played it in twelfth grade for a week as the only part of
-  my "economics unit" in my history class, which is why I'm bad with money 
-  and spending like <s>$15</s> $25 a month to host this thing.
-</p>
-<p>
-  Here, you have fake money to <b>buy and sell Wikipedia article "stocks"</b>
-  -- the price of the articles are the number of <b>page views</b> that the article gets that day.
-  If you're able to <b>predict trends in the popularity</b> of Wikipedia articles, you'll make more (fake) money!  
-</p>
-<p>
-  Create or join a game with your friends! Click <a href="{{ url_for('main.help') }}">here</a> for more information!
-</p>
-<p>
-  Oh also, <b>Wikipedia only updates their pageviews data once a day.</b>
-  I <i>think</i> that I've made it so that all games update at the same time, but I'm not sure.
-  All the daily pageviews and portfolio values should upate at <b>7:00 AM UTC</b> (12:00 AM PDT)
-  based on the previous day's pageviews.
-</p>
+<div id="game-explainer" class="collapse show">
+  <p>
+    I keep calling this <b>"the stock market game but for Wikipedia articles"</b>
+    but it turns out that not a lot of people know what 
+    <a href="https://www.marketwatch.com/games" target="_blank" rel="noopener noreferrer">the stock market game</a> is
+    -- it's a game where you have fake money that you can use to buy and sell fake stocks,
+    which track the value of real stocks. I played it in twelfth grade for a week as the only part of
+    my "economics unit" in my history class, which is why I'm bad with money 
+    and spending like <s>$15</s> $25 a month to host this thing.
+  </p>
+  <p>
+    Here, you have fake money to <b>buy and sell Wikipedia article "stocks"</b>
+    -- the price of the articles are the number of <b>page views</b> that the article gets that day.
+    If you're able to <b>predict trends in the popularity</b> of Wikipedia articles, you'll make more (fake) money!  
+  </p>
+  <p>
+    Create or join a game with your friends! Click <a href="{{ url_for('main.help') }}">here</a> for more information!
+  </p>
+  <p>
+    Oh also, <b>Wikipedia only updates their pageviews data once a day.</b>
+    I <i>think</i> that I've made it so that all games update at the same time, but I'm not sure.
+    All the daily pageviews and portfolio values should upate at <b>7:00 AM UTC</b> (12:00 AM PDT)
+    based on the previous day's pageviews.
+  </p>
+</div>
+
+<!-- HOW TO PLAY -->
+<!-- GAME EXPLANATION -->
+<div class="alert alert-secondary"">
+  <a data-toggle="collapse" href="#how-to-play" style="color: inherit; text-decoration: inherit;">
+    <h2>How do I play?</h2>
+  </a>
+</div>
+
+<div id="how-to-play" class="collapse hide">
+  {% include "how-to-play.html" %}
+  <br>
+</div>
+
+<br>
 
 <!-- SHOW EITHER LOGIN/SIGNUP BUTTONS OR THE GAME TABLE -->
 {% if not current_user.is_authenticated %}

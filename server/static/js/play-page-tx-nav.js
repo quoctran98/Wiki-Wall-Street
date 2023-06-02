@@ -137,7 +137,7 @@ function update_article_info(article_data=ARTICLE_DATA_OBJECT, pageviews_data=PA
             citation_needed_text = "citation needed";
     }
 
-    $("#main-info-div #title").html(title_html + (allowed? "" : `<sup><span style="color:#c13030;">[<em>${citation_needed_text}</em>]<a href="/help" style="color:#c13030;">[<em>?</em>]</a></span></sup>`));
+    $("#main-info-div #title").html(title_html + (allowed? "" : `<sup><span style="color:#c13030;">[<em>${citation_needed_text}</em>]<a href="/categories" style="color:#c13030;">[<em>?</em>]</a></span></sup>`));
     
     // Make and set the price HTML (and global variables just in case)
     const views = pageviews_data.views;

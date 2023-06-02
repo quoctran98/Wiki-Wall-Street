@@ -145,8 +145,8 @@ async function populate_public_games() {
         action_cell.innerHTML = `
         <button class="btn btn-success"
             data-toggle="modal" data-target="#join-game-modal"
-            onclick="preload_join_game('${this_game.game_id}')"
-        <i class="bi-person-plus"></i> Join</button>`;
+            onclick="preload_join_game('${this_game.game_id}')">
+         <i class="bi-person-plus"></i> Join</button>`;
     }
 }
 
