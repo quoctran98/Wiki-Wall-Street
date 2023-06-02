@@ -137,7 +137,12 @@ function render_players_list(game, players) {
     // Add the players to the list
     // Iterate through game.players, so it's in order of joined?
     for (let i = 0; i < game.players.length; i++) {
-        player = players.find(p => p.name === game.players[i]);
+        const player = players.find(p => p.name === game.players[i]);
+        // Get rank of player -- sort ALL_PLAYERS by value (should already be sorted but just in case)
+        ALL_PLAYERS.sort((a, b) => b.value - a.value);
+        // get index of player in ALL_PLAYERS (search by player_id)
+        let rank = ALL_PLAYERS.indexOf(ALL_PLAYERS.find(p => p.player_id === player.player_id)) + 1;
+        rank = rank + get_rank_suffix(rank);
 
         const is_self = player.name == THIS_PLAYER.name;
         const profile_link = window.location.origin + "/profile/" + encodeURIComponent(player.name);
@@ -154,10 +159,10 @@ function render_players_list(game, players) {
             <div class="row" style="margin: -1em;">
                 <img class="inline-image" src="/static/img/default-profile.png"></img>
                 <ins><a href="${profile_link}">${player.name}</a></ins>
-                <p>&nbsp;</p>(
+                <p>&nbsp;</p> is in&nbsp;<ins>${rank} place</ins>&nbsp;with&nbsp;
                 <a href="#" onclick="show_player_info_modal('${player.player_id}'); $('#players-modal').modal('hide');">
-                    ${format_value(players[i].value, imprecise=true)}
-                </a>)
+                    ${format_value(player.value, imprecise=true)}
+                </a>
                 ${(is_new)? `<p>&nbsp;</p><span style="color:#c13030;">New!</span>` : ""}
             </div>
             <div class="row" style="margin: -1em;">
@@ -180,7 +185,12 @@ function render_players_list(game, players) {
 // We need ALL_PLAYERS to be defined!
 async function init_players_mdoal() {
     // Fill out the modal title
-    $("#players-modal .modal-title").html(`Players in <ins>${GAME_OBJECT.name}</ins>`);
+    $("#players-modal .modal-title").html(`
+        There ${(GAME_OBJECT.players.length == 1)? "is" : "are"}
+        <ins>${GAME_OBJECT.players.length}</ins>
+        ${(GAME_OBJECT.players.length == 1)? "player" : "players"} 
+        in <ins>${GAME_OBJECT.name}</ins>
+    `);
 
     // Add event listener when the players modal is open
     $("#players-modal").on("show.bs.modal", function() {

@@ -20,7 +20,7 @@ function format_price(p, imprecise=false, include_icon=true) {
     // If the price can be imprecise, use k, M, B, T, etc.
     string = "";
     if (include_icon) {
-        string += "<i class='bi-cash-coin'></i> ";
+        string += "<i class='bi-cash-coin'></i>&nbsp;";
     }
 
     if (imprecise) {
@@ -48,7 +48,7 @@ function format_value(p, imprecise=false, include_icon=true) {
     // If the value can be imprecise, use k, M, B, T, etc.
     string = "";
     if (include_icon) {
-        string += "<i class='bi-piggy-bank-fill'></i> ";
+        string += "<i class='bi-piggy-bank-fill'></i>&nbsp;";
     }
 
     if (imprecise) {

@@ -206,7 +206,7 @@ class Game():
         """Delete the game from the MongoDB."""
 
         # Add the game to the old games collection
-        old_games_coll.insert_one({vars(self)})
+        old_games_coll.insert_one(active_games_coll.find_one({"game_id": self.game_id}))
 
         # Remove the game from the users' joined_games lists
         for user_id in self.user_ids:

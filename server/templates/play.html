@@ -9,11 +9,11 @@
         <h2>
             Welcome<span id=title-name></span>! 
         </h2>
-        <h4>
+        <h5>
             <span id="title-cash"></span>
             <span id="title-rank">Loading <img class="inline-image" src="{{url_for('static', filename='img/loading.gif')}}"></span>
             <!-- rank loads after cash, usually (always?) so put the loading message there  -->
-        </h4>
+        </h5>
     </div>
     <div class="col-md-4">
         <button class="btn btn-primary float-right" style="margin:0.1rem;" data-toggle="modal" data-target="#settings-modal" id="settings-modal-open-button" disabled="true"><i class="bi-gear-fill"></i></button>
@@ -118,7 +118,6 @@
 <script src="{{url_for('static', filename='js/play-page-leaderboard.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-trending.js')}}"></script>
 <script src="{{url_for('static', filename='js/play-page-chat.js')}}"></script>
-<!-- <script src="{{url_for('static', filename='js/play-page-players.js')}}"></script> -->
 
 <!-- THIS IS THE MAIN JS FILE FOR THE PLAY PAGE -->
 <script src="{{url_for('static', filename='js/play-page-main.js')}}"></script>

@@ -44,7 +44,15 @@ async function init_portfolio(game=GAME_OBJECT , player=THIS_PLAYER) {
     
     // Load cash into the HTML
     // This information comes form api/get_play_info called on the main page load
-    let cash_html = `You have <ins>${format_price(player["cash"])}</ins> in cash.`;
+    let daily_change = Math.round(100 * (player["today_value"] - player["yesterday_value"]) / player["yesterday_value"]);
+    let cash_html = `
+        Hi, <ins>${THIS_PLAYER.name}</ins>!
+        Your portfolio is worth 
+        <a href="#" onclick="show_player_info_modal('${THIS_PLAYER.player_id}');return(false);">
+            <ins>${format_value(player["today_value"])}</ins> 
+        </a>
+        (${(daily_change > 0)? "📈" : "📉"} ${daily_change}%)
+        and you have <ins>${format_price(player["cash"])}</ins> in cash.`;
     document.getElementById(PORTFOLIO_CASH_ID).innerHTML = cash_html;
 
     // Remove loading card
