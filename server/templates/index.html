@@ -4,57 +4,36 @@
 
 <div class="gets-blurred">
 
-<div class="alert alert-info" role="alert">
-  Hi! I've added the ability to create <b>themed games</b> and games with <b>article banlists</b>!
-  I still have to generate these lists somewhat manually, but let me know if you have any suggestions (or can help out)!
-  You can find these lists <a href="https://github.com/quoctran98/Wiki-Wall-Street/tree/master/server/categories">here</a>
-  for now :) 
+<div class="alert alert-success" role="alert">
+  Hi, thanks for playing my game! Things are still kind of rough, 
+  so I'd love to know about any feedback you have or any bugs you find!
+  You can open an issue on <a href="https://github.com/quoctran98/Wiki-Wall-Street" target="_blank" rel="noopener noreferrer">GitHub</a> or
+  contact me on <a href="https://twitter.com/quoctran98" target="_blank" rel="noopener noreferrer">Twitter</a> --
+  also please donate to the <a href="https://wikimediafoundation.org/support/" target="_blank" rel="noopener noreferrer">Wikimedia Foundation</a>!
+  (I feel bad for using their API so much)
+  - Quoc 
 </div>
 
 <!-- GAME EXPLANATION -->
-<div class="alert alert-secondary"">
+<div class="alert alert-info" style="color: black;">
   <a data-toggle="collapse" href="#game-explainer" style="color: inherit; text-decoration: inherit;">
     <h2>What is this game?</h2>
   </a>
-</div>
 
-<div id="game-explainer" class="collapse show">
-  <p>
-    I keep calling this <b>"the stock market game but for Wikipedia articles"</b>
-    but it turns out that not a lot of people know what 
-    <a href="https://www.marketwatch.com/games" target="_blank" rel="noopener noreferrer">the stock market game</a> is
-    -- it's a game where you have fake money that you can use to buy and sell fake stocks,
-    which track the value of real stocks. I played it in twelfth grade for a week as the only part of
-    my "economics unit" in my history class, which is why I'm bad with money 
-    and spending like <s>$15</s> $25 a month to host this thing.
-  </p>
-  <p>
-    Here, you have fake money to <b>buy and sell Wikipedia article "stocks"</b>
-    -- the price of the articles are the number of <b>page views</b> that the article gets that day.
-    If you're able to <b>predict trends in the popularity</b> of Wikipedia articles, you'll make more (fake) money!  
-  </p>
-  <p>
-    Create or join a game with your friends! Click <a href="{{ url_for('main.help') }}">here</a> for more information!
-  </p>
-  <p>
-    Oh also, <b>Wikipedia only updates their pageviews data once a day.</b>
-    I <i>think</i> that I've made it so that all games update at the same time, but I'm not sure.
-    All the daily pageviews and portfolio values should upate at <b>7:00 AM UTC</b> (12:00 AM PDT)
-    based on the previous day's pageviews.
-  </p>
+  <div id="game-explainer" class="collapse show inner-collapse">
+    {% include "info/what-is-this-game.html" %}
+  </div>
 </div>
 
 <!-- HOW TO PLAY -->
-<!-- GAME EXPLANATION -->
-<div class="alert alert-secondary"">
+<div class="alert alert-info" style="color: black;">
   <a data-toggle="collapse" href="#how-to-play" style="color: inherit; text-decoration: inherit;">
     <h2>How do I play?</h2>
   </a>
-</div>
-
-<div id="how-to-play" class="collapse hide">
-  {% include "how-to-play.html" %}
-  <br>
+  <div id="how-to-play" class="collapse hide inner-collapse">
+    {% include "info/how-do-i-play.html" %}
+    <br>
+  </div>
 </div>
 
 <br>

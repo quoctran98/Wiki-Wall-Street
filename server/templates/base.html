@@ -70,9 +70,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.help') }}">How To Play</a>
-                    </li>
+                    </li> -->
                     {% if not current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
@@ -135,17 +135,17 @@
     <div class="row gets-blurred">
         <div class="col-md-12">
             <p class="text-center" style="font-size:medium;">
-                <a href="https://wikimediafoundation.org/support/"><img class="inline-image" src="{{ url_for('static', filename='img/Wikimedia-logo.png')}}"></img> Donate to the Wikimedia Foundation!</a>
+                <a href="https://wikimediafoundation.org/support/" target="_blank" rel="noopener noreferrer"><img class="inline-image" src="{{ url_for('static', filename='img/Wikimedia-logo.png')}}"></img> Donate to the Wikimedia Foundation!</a>
                 <br>
-                <a href="https://github.com/quoctran98/Wiki-Wall-Street"><img class="inline-image" src="{{ url_for('static', filename='img/GitHub-Mark-32px.png')}}"></img> Github</a>
-                <a href="https://twitter.com/quoctran98"><img class="inline-image" src="{{ url_for('static', filename='img/Twitter-Icon.png')}}"></img> Twitter</a>
-                <a href="https://ko-fi.com/quoctran98"><img class="inline-image" src="{{ url_for('static', filename='img/Ko-fi-logo.png')}}"></img> Ko-fi</a>
+                <a href="https://github.com/quoctran98/Wiki-Wall-Street" target="_blank" rel="noopener noreferrer"><img class="inline-image" src="{{ url_for('static', filename='img/GitHub-Mark-32px.png')}}"></img> Github</a>
+                <a href="https://twitter.com/quoctran98" target="_blank" rel="noopener noreferrer"><img class="inline-image" src="{{ url_for('static', filename='img/Twitter-Icon.png')}}"></img> Twitter</a>
+                <a href="https://ko-fi.com/quoctran98" target="_blank" rel="noopener noreferrer"><img class="inline-image" src="{{ url_for('static', filename='img/Ko-fi-logo.png')}}"></img> Ko-fi</a>
                 <br>
                 QUO© 2023
                 - 
-                <a href="https://github.com/quoctran98/Wiki-Wall-Street/issues">Report Issues</a>
+                <a href="https://github.com/quoctran98/Wiki-Wall-Street/issues" target="_blank" rel="noopener noreferrer">Report Issues</a>
                 -
-                <a href="mailto:hello@wiki-wall-street.com">Contact Us</a>
+                <a href="#" target="_blank" rel="noopener noreferrer">Contact Me</a>
             </p>
         </div>
     </div>
