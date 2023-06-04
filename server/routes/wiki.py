@@ -55,7 +55,8 @@ def search_article(game_id, query):
     return(jsonify(suggestions=suggestions))
 
 @wiki.route("/api/article_price/<article>/<timespan>")
-@cache.cached(timeout=86400) # Should only change once a day (will be cleared when the stuff updates)
+# @cache.cached(timeout=86400) # Should only change once a day (will be cleared when the stuff updates)
+# Ugh!
 def article_price(article, timespan):
     # Shouldn't actually need to use today_wiki() here, but it'll make sure the frontend is consistent :)
     if timespan == "week":

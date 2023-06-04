@@ -142,19 +142,6 @@ def username_is_valid(username):
             return(False)
     return(True)
 
-# This is to log the update portfolio function -- workaround for now until I move the whole thing
-def log_update(end_time, elapsed_time, n_games, n_players, api_calls, changed_vals, timestamp):
-    log_out = f"Updated value history for {n_players} players in {n_games} games at {timestamp} (quantized Wiki time), taking {elapsed_time.total_seconds()} seconds ⏰"
-    log_out += f"\nMade {api_calls} API calls and changed {changed_vals} values 📈"
-    print(log_out)
-    # Save this to an output log file
-    filename = f"./server/logs/portfolio_updates/{end_time.strftime('%Y%m%d-%H%M%S')}.txt"
-    try:
-        with open(filename, "w") as f:
-            f.write(log_out)
-    except:
-        print("Couldn't write to log file!")
-
 # Call this function to clear all the caches for a game
 # If settings are changed or whatever, delete all caches for a game
 GAME_PATHS_CACHED = ["search_article", "allowed_article"]
@@ -163,14 +150,3 @@ def clear_game_caches(game_id, paths=GAME_PATHS_CACHED):
     # Filesystem caches store the hash of the key in the filename
     # There's no way to retrieve the keys from the cache unless I write a function to do it
     cache.clear()
-    # # We have to first get all the keys in the cache
-    # cache_keys = []
-    # for f in cache.cache._list_dir():
-    #     print(f)
-    #     cache_keys += os.path.split(f)[-1]
-    # # Now we can delete all the keys that match the pattern
-    # for path in paths:
-    #     pattern = f"{path}:{game_id}:*"
-    #     for k in cache_keys:
-    #         if fnmatch.fnmatch(k, pattern):
-    #             cache.delete(k)

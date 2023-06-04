@@ -91,6 +91,10 @@ function init_settings(game=GAME_OBJECT) {
         allowed_options.prop("disabled", false);
         banned_options.prop("disabled", false);
 
+        // Enable the public game checkbox
+        $("#settings-modal #public-game-label").css("color", "black");
+        $("#settings-modal #public-game").prop("disabled", false);
+
         // Enable the delete game button
         $("#settings-modal #delete-game-button").prop("disabled", false);
 

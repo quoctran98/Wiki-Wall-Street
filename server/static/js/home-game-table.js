@@ -141,7 +141,10 @@ async function populate_public_games() {
         `;
 
         name_cell.innerHTML = this_game.name;
-        players_cell.innerHTML = format_players_list(this_game.players);
+        players_cell.innerHTML = `
+            (${this_game.players.length})
+            ${format_players_list(this_game.players)}
+        `;
         action_cell.innerHTML = `
         <button class="btn btn-success"
             data-toggle="modal" data-target="#join-game-modal"

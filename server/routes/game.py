@@ -100,6 +100,7 @@ def change_settings():
 
         # I have to for checkboxes since they don't get sent if they're not checked
         new_game_settings = {
+            "views_limit": int(request.form["views_limit"]) if "views_limit" in request.form else this_game.settings["views_limit"],
             "show_cash": True if "show_cash" in request.form else False,
             "show_articles": True if "show_articles" in request.form else False,
             "show_number": True if "show_number" in request.form else False,
@@ -118,12 +119,20 @@ def change_settings():
             if not (no_allowed or no_banned):
                 flash("You can't have both a theme AND banned categories", "alert-danger")
                 return(redirect(url_for("game.play", game_id=game_id)))
+            
+        # There are settings outside of the settings object (like public status)
+        other_settings = { # These aren't allowed to be changed usually?
+            "public": True if "public_game" in request.form else False,
+        }
 
-        this_game.change_settings(new_game_settings)
-        # Clear the caches for this game
-        clear_game_caches(game_id)
-        flash(f"Settings changed for {this_game.name}", "alert-primary")
-        return(redirect(url_for("game.play", game_id=game_id)))
+        res = this_game.change_settings(new_game_settings, other_settings)
+        if not res:
+            flash("Could not change settings", "alert-danger")
+            return(redirect(url_for("game.play", game_id=game_id)))
+        else:
+            clear_game_caches(game_id)
+            flash(f"Settings changed for {this_game.name}", "alert-primary")
+            return(redirect(url_for("game.play", game_id=game_id)))
     
 @game.route("/api/join_game", methods=["POST"])
 @login_required

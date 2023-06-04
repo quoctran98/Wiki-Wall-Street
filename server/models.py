@@ -188,7 +188,7 @@ class Game():
 
         return(True, "ok")
 
-    def change_settings(self, new_settings):
+    def change_settings(self, new_settings, other_settings=None):
         """Change the settings of the game."""
         updated_settings = self.settings
         # Add/change settings that are in the new settings
@@ -199,8 +199,14 @@ class Game():
         active_games_coll.update_one({"game_id": self.game_id}, {"$set": {"settings": updated_settings}})
         # Update the current game object
         self.settings = updated_settings
+
+        # There are "settings" outside of the settings dictionary
+        if other_settings:
+            if "public" in other_settings:
+                self.public = other_settings["public"]
+                active_games_coll.update_one({"game_id": self.game_id}, {"$set": {"public": self.public}})
         
-        # I would love to clear all the caches related to this game here but I don't know how
+        return(True)
 
     def delete_game(self):
         """Delete the game from the MongoDB."""

@@ -11,7 +11,7 @@ from flask_login import LoginManager
 from datetime import datetime, timezone
 import pytz
 
-from server.helper import settings, cache_config, mail, cache, scheduler, active_games_coll, players_db, today_wiki, log_update
+from server.helper import settings, cache_config, mail, cache, scheduler, active_games_coll, players_db, today_wiki
 from server.models import User, Player
 from server.tasks import update_all_portfolio_vals
 
