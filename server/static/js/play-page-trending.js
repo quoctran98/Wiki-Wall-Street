@@ -78,7 +78,6 @@ function add_graph(graph_div_id, article) {
     let plot_data = [{x: timestamps, y: views, type: "line", marker:{color: color}}];
     let plot_layout = {
         autosize: true,
-        // height: 70,
         margin:{t: 0, b: 0, l: 0, r: 1},
         xaxis: {type: "date",},
         yaxis: {title: "",}

@@ -106,7 +106,7 @@ function update_graph(pageviews_data=PAGEVIEWS_DATA_OBJECT, timespan="month") {
     const plot_layout = {
         margin:{t: 10},
         xaxis: {type: "date",},
-        yaxis: {title: "Normalized Page Views",},};
+        yaxis: {title: "Page Views",},};
     // Plotly needs a DOM element, not a jQuery object! (Is this true? Copilot wrote this...)
     let graph_div = $("#main-info-div #graph")[0];
     graph_div.innerHTML = "";

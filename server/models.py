@@ -298,9 +298,11 @@ class Player():
             "game_id": self.game_id,
             "name": self.name,
             "value": self.value_history[-1]["value"],
+            # Just so I don't have to do the calculation on the front end
             "yesterday_value": self.yesterday_value,
             "last_week_value": self.last_week_value,
             "time_joined": self.value_history[0]["timestamp"],
+            "value_history": self.value_history,
         }
 
         # Some games don't have these visibility (ugh!), so check if they exist first

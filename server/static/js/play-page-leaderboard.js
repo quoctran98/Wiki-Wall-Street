@@ -53,17 +53,15 @@ function show_player_info_modal(player_id) {
         ${this_player.cash? "and <ins>" + format_price(this_player.cash) + "</ins> in cash" : ""}!
 
         <br>
-        <br>
 
         Their portfolio has gone <ins>${(yesterday_change > 0)? "up" : "down"} by ${Math.abs(yesterday_change)}%</ins> in the last day
         and <ins>${(last_week_change > 0)? "up" : "down"} by ${Math.abs(last_week_change)}%</ins> in the last week.
-        
-        ${this_player.articles? `<hr> Here are the articles they own:` : ""}
     `);
 
     // Set the articles if they exist
     if (this_player.articles) {
-        let articles_html = "<ul>";
+        $("#leaderboard-modal #articles-list-title").html("<hr><h6>Here are the articles they own:</h6>");
+        let articles_html = `<ul>`;
         let articles = this_player.articles;
         for (let article_name in articles) {
             // Check if the value is a number -- will be boolean if amount is hidden
@@ -79,9 +77,28 @@ function show_player_info_modal(player_id) {
                 articles_html += `<li>${clickable_article_name} (${maybe_number})</li>`;
             }
         }
-        articles_html += "</ul></div>";
+        articles_html += "</ul>";
         $("#leaderboard-modal #articles-list").html(articles_html);
     }
+
+    // Graph the portfolio value
+    let values = [];
+    let timestamps = [];
+    for (let i = 0; i < this_player.value_history.length; i++) {
+        values.push(this_player.value_history[i].value);
+        timestamps.push(new Date(Date.parse(this_player.value_history[i].timestamp)));
+    }
+    // Plot with Plotly
+    let color = (values[0] > values[values.length-1])? "#c13030" : "#4668ff";
+    let plot_data = [{x: timestamps, y: values, type: "line", line:{color: color}}];
+    let plot_layout = {
+        autosize: true,
+        margin:{t: 3, b: 20, l: 40, r: 3},
+        xaxis: {type: "date",},
+        yaxis: {title: "", range: [0, Math.max(...values) * 1.1]},
+    };
+    let graph_div = $("#leaderboard-modal #portfolio-graph")[0];
+    Plotly.newPlot(graph_div, plot_data, plot_layout, {staticPlot: true, responsive: true});
     
     // Show the modal!
     $("#leaderboard-modal").modal("show");
