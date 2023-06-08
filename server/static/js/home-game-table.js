@@ -58,15 +58,17 @@ async function add_game_row (game_id, joined_games_table, total_games) {
 
     let icon_html = `<i class="bi-joystick"></i>`;
     let button_class = "btn-primary";
-    if (unchecked_events.includes("daily")) {
-        icon_html = `<i class="bi-exclamation-circle"></i>`;
-        button_class = "btn-info";
-    } else if (unchecked_events.includes("chat")) {
+
+    //  Chats and players override dailies :)
+    if (unchecked_events.includes("chat")) {
         icon_html = `<i class="bi-chat-dots"></i>`;
         button_class = "btn-success";
     } else if (unchecked_events.includes("player")) {
         icon_html = `<i class="bi-person-circle"></i>`;
         button_class = "btn-success";
+    } else if (unchecked_events.includes("daily")) {
+        icon_html = `<i class="bi-exclamation-circle"></i>`;
+        button_class = "btn-info";
     }
 
     button_html = `
