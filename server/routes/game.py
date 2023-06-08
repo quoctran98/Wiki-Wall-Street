@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from datetime import datetime, timezone
 import random
 
-from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories, search_lists, clear_game_caches
+from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories, search_lists, clear_game_caches, today_wiki
 from server.models import Game, Player, Transaction
 
 import server.WikiAPI as WikiAPI
@@ -155,15 +155,15 @@ def new_transaction():
 
     # Verifying that transaction details are correct
     # Make sure the price is right (I didn't multiply by quantity before, but it didn't break??)
-    real_price = WikiAPI.normalized_views(tx_data["article"])[-1]["views"] * float(tx_data["quantity"])
+    real_price = WikiAPI.normalized_views(tx_data["article"], end=today_wiki())[-1]["views"] * float(tx_data["quantity"])
     if abs(abs(real_price) - abs(float(tx_data["price"]))) > 1: # Just because of rounding errors (I should fix it)
         
         # This happens a lot -- let's see why?
         bug_message = f"PRICING BUG! YOUR TRANSACTION DIDN'T GO THROUGH! I'M TRYING TO SOLVE IT! PLEASE SEND QUOC A SCREENSHOT OF THIS MESSAGE!"
-        real_price_now = WikiAPI.normalized_views(tx_data["article"])[-1]["views"]
-        real_time_now = WikiAPI.normalized_views(tx_data["article"])[-1]["timestamp"]
-        real_price_before = WikiAPI.normalized_views(tx_data["article"])[-2]["views"]
-        real_time_before = WikiAPI.normalized_views(tx_data["article"])[-2]["timestamp"]
+        real_price_now = WikiAPI.normalized_views(tx_data["article"], end=today_wiki())[-1]["views"]
+        real_time_now = WikiAPI.normalized_views(tx_data["article"], end=today_wiki())[-1]["timestamp"]
+        real_price_before = WikiAPI.normalized_views(tx_data["article"], end=today_wiki())[-2]["views"]
+        real_time_before = WikiAPI.normalized_views(tx_data["article"], end=today_wiki())[-2]["timestamp"]
         bug_message += f"\n\n  SENT | time-ish: {datetime.now(timezone.utc)} | price: {tx_data['price']}"
         bug_message += f"\n\n REAL NOW | time: {real_time_now} | price: {real_price_now}"
         bug_message += f"\n\n REAL -1 | time: {real_time_before} | price: {real_price_before}"

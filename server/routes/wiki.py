@@ -70,7 +70,7 @@ def article_price(article, timespan):
         start = date(2007, 12, 1)
     else:
         start = today_wiki() - timedelta(days=30) # default to month
-    normalized_views = WikiAPI.normalized_views(article, start=start)
+    normalized_views = WikiAPI.normalized_views(article, start=start, end=today_wiki())
     # Return in a format to graph in JavaScript
     timestamps = [x["timestamp"] for x in normalized_views]
     views = [x["views"] for x in normalized_views]
@@ -104,7 +104,7 @@ def trending_articles():
             continue
         try:
             # Again shouldn't need to use today_wiki() here, but it'll make sure the frontend is consistent :)
-            normalized_views = WikiAPI.normalized_views(name, start= today_wiki() - timedelta(days=7))
+            normalized_views = WikiAPI.normalized_views(name, start= today_wiki() - timedelta(days=7), end=today_wiki())
             trending.append({
                 "article": name,
                 "last_week_views": normalized_views[0]["views"],

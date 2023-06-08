@@ -162,7 +162,7 @@ class Game():
         # Check if the article is below the minimum views limit
         # We do this first, because we want to enforce this limit no matter what
         if "views_limit" in self.settings:
-            lowest_this_month = float(min([x["views"] for x in WikiAPI.normalized_views(article_name)]))
+            lowest_this_month = float(min([x["views"] for x in WikiAPI.normalized_views(article_name, end=today_wiki())]))
             if (float(self.settings["views_limit"]) > lowest_this_month):
                 return(False, "views_limit")
             
