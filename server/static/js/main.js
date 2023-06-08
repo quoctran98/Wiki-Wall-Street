@@ -23,18 +23,18 @@ function format_price(p, imprecise=false, include_icon=true) {
         string += "<i class='bi-cash-coin'></i>&nbsp;";
     }
 
-    if (imprecise) {
-        if (p < 1000) {
-            return(string + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
-        } else if (p < 1000000) {
-            return(string + (p / 1000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "k")
-        } else if (p < 1000000000) {
-            return(string + (p / 1000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "M")
-        } else if (p < 1000000000000) {
-            return(string + (p / 1000000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "B")
+    if (imprecise && p >= 1000) {
+        const units = ["k", "M", "B", "T", "Qd", "Qt", "Sx", "Sp", "Oc", "No", "Dc"];
+        let unit = 0;
+        while (p >= 1000) {
+            p /= 1000;
+            unit++;
         }
+        return(string + p.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + units[unit - 1])
+        
+    } else {
+        return(string + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
     }
-    return(string + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
 }
 
 function format_value(p, imprecise=false, include_icon=true) {
@@ -51,18 +51,18 @@ function format_value(p, imprecise=false, include_icon=true) {
         string += "<i class='bi-piggy-bank-fill'></i>&nbsp;";
     }
 
-    if (imprecise) {
-        if (p < 1000) {
-            return(string + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
-        } else if (p < 1000000) {
-            return(string + (p / 1000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "k")
-        } else if (p < 1000000000) {
-            return(string + (p / 1000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "M")
-        } else if (p < 1000000000000) {
-            return(string + (p / 1000000000).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "B")
+    if (imprecise && p >= 1000) {
+        const units = ["k", "M", "B", "T", "Qd", "Qt", "Sx", "Sp", "Oc", "No", "Dc"];
+        let unit = 0;
+        while (p >= 1000) {
+            p /= 1000;
+            unit++;
         }
+        return(string + p.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + units[unit - 1])
+        
+    } else {
+        return(string + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
     }
-    return(string + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
     
 }
 
