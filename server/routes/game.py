@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from datetime import datetime, timezone
 import random
 
-from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories, search_lists, clear_game_caches, today_wiki
+from server.helper import settings, cache, active_games_coll, allowed_categories, banned_categories, search_lists, clear_game_caches, today_wiki, log_error
 from server.models import Game, Player, Transaction
 
 import server.WikiAPI as WikiAPI
@@ -168,8 +168,12 @@ def new_transaction():
         bug_message += f"\n\n REAL NOW | time: {real_time_now} | price: {real_price_now}"
         bug_message += f"\n\n REAL -1 | time: {real_time_before} | price: {real_price_before}"
         bug_message += f"\n\n DIFFERENCE | {abs(abs(real_price) - abs(float(tx_data['price'])))}"
-        flash(bug_message)
-        return(jsonify({"success": False}))
+        
+        # Let's just log it for now but let the transaction go through
+        log_error(error_msg=bug_message)
+
+        # flash(bug_message)
+        # return(jsonify({"success": False}))
     
     # Make sure the article is allowed to be bought
     # I guess that you should be allowed to sell anything just in case it dips after you buy it

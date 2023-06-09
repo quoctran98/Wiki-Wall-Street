@@ -150,3 +150,15 @@ def clear_game_caches(game_id, paths=GAME_PATHS_CACHED):
     # Filesystem caches store the hash of the key in the filename
     # There's no way to retrieve the keys from the cache unless I write a function to do it
     cache.clear()
+
+
+# This is to log server errors
+def log_error(path="./server/logs/errors", error_msg):
+    # Save this to an output log file
+    time = datetime.now(timezone.utc)
+    filename = f"{path}/{time.strftime('%Y%m%d-%H%M%S')}.txt"
+    try:
+        with open(filename, "w") as f:
+            f.write(error_msg)
+    except:
+        print("Couldn't write to log file!")
