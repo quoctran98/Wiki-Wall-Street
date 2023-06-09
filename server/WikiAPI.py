@@ -4,7 +4,7 @@ from datetime import date, timedelta
 
 from server.helper import settings, today_wiki
 
-def pageviews(article, start=today_wiki()-timedelta(days=30), end=today_wiki(),
+def pageviews(article, start=None, end=None,
               project="en.wikipedia", access="all-access", agent="user", granularity="daily"):
     """
     Python wrapper for the Wikimedia Pageviews API (https://wikimedia.org/api/rest_v1/)
@@ -33,6 +33,12 @@ def pageviews(article, start=today_wiki()-timedelta(days=30), end=today_wiki(),
         A list of dictionaries containing the pageviews for each day/month from start to end
         The dictionaries contain the following keys: "project", "article", "granularity", "timestamp", "access", "agent", "views"
     """
+
+    # We have to do this because we shouldn't set default values from function calls!
+    if start is None:
+        start = today_wiki()-timedelta(days=30)
+    if end is None:
+        end = today_wiki()
     
     start=start.strftime("%Y%m%d")
     end=end.strftime("%Y%m%d")
@@ -52,7 +58,7 @@ def pageviews(article, start=today_wiki()-timedelta(days=30), end=today_wiki(),
         print(f"Error: {response.status_code}")
         return(json.loads(response.content)) 
 
-def projectviews(project="en.wikipedia", start=today_wiki()-timedelta(days=30), end=today_wiki(),
+def projectviews(project="en.wikipedia", start=None, end=None,
                 access="all-access", agent="user", granularity="daily"):
     """
     Python wrapper for the Wikimedia Pageviews API (https://wikimedia.org/api/rest_v1/)
@@ -79,6 +85,12 @@ def projectviews(project="en.wikipedia", start=today_wiki()-timedelta(days=30), 
         A list of dictionaries containing the total pageviews for each hour/day/month
         The dictionaries contain the following keys: "project", "access", "agent", "granularity", "timestamp", "views"
     """
+
+    # We have to do this because we shouldn't set default values from function calls!
+    if start is None:
+        start = today_wiki()-timedelta(days=30)
+    if end is None:
+        end = today_wiki()
     
     start=start.strftime("%Y%m%d")
     end=end.strftime("%Y%m%d")
@@ -98,7 +110,7 @@ def projectviews(project="en.wikipedia", start=today_wiki()-timedelta(days=30), 
         print(f"Error: {response.status_code}")
         return(json.loads(response.content)) 
 
-def top_articles(project="en.wikipedia.org", date=today_wiki()-timedelta(days=1), timespan="day",
+def top_articles(project="en.wikipedia.org", date=None, timespan="day",
                  access="all-access", agent="user"):
     """
     Python wrapper for the Wikimedia Pageviews API (https://wikimedia.org/api/rest_v1/)
@@ -125,6 +137,11 @@ def top_articles(project="en.wikipedia.org", date=today_wiki()-timedelta(days=1)
         A dictionary containing the GET parameters passed and a list of dictionaries containing the top articles with key "articles"
         The dictionaries in the list under "articles" contain the following keys: "article", "views", "rank"
     """
+    
+    # We have to do this because we shouldn't set default values from function calls!
+    if date is None:
+        date = today_wiki()-timedelta(days=1)
+        
     year = date.strftime("%Y")
     month = date.strftime("%m")
     if timespan == "day":
@@ -236,8 +253,8 @@ def verify_article(article_name, project="en.wikipedia", namespace=0, suggest=Fa
             return(False)
 
 def normalized_views(article,
-                     start=today_wiki()-timedelta(days=30),
-                     end=today_wiki(),
+                     start=None,
+                     end=None,
                      project="en.wikipedia",
                      access="all-access",
                      agent="user",
@@ -270,6 +287,12 @@ def normalized_views(article,
         The dictionaries contain the following keys: "project", "access", "agent", "granularity", "timestamp", "views"
         (same as the output of the pageviews function but now with normalized views)
     """
+
+    # We have to do this because we shouldn't set default values from function calls!
+    if start is None:
+        start = today_wiki()-timedelta(days=30)
+    if end is None:
+        end = today_wiki()
 
     if verify_article(article, suggest=False):
         pageviews_list = pageviews(article,
