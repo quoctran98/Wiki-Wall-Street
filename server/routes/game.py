@@ -170,7 +170,7 @@ def new_transaction():
         bug_message += f"\n\n DIFFERENCE | {abs(abs(real_price) - abs(float(tx_data['price'])))}"
         
         # Let's just log it for now but let the transaction go through
-        log_error(error_msg=bug_message)
+        log_error(bug_message)
 
         # flash(bug_message)
         # return(jsonify({"success": False}))

@@ -153,7 +153,7 @@ def clear_game_caches(game_id, paths=GAME_PATHS_CACHED):
 
 
 # This is to log server errors
-def log_error(path="./server/logs/errors", error_msg):
+def log_error(error_msg, path="./server/logs/errors"):
     # Save this to an output log file
     time = datetime.now(timezone.utc)
     filename = f"{path}/{time.strftime('%Y%m%d-%H%M%S')}.txt"
