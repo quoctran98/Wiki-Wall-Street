@@ -89,13 +89,15 @@ function show_player_info_modal(player_id) {
         timestamps.push(new Date(Date.parse(this_player.value_history[i].timestamp)));
     }
     // Plot with Plotly
+    // Make the graph logarithmic if the last value is over 100x the starting cash
+    let should_be_log = (values[values.length-1] - values[0] > values[0] * 100)? true : false;
     let color = (values[0] > values[values.length-1])? "#c13030" : "#4668ff";
     let plot_data = [{x: timestamps, y: values, type: "line", line:{color: color}}];
     let plot_layout = {
         autosize: true,
-        margin:{t: 3, b: 20, l: 40, r: 3},
+        margin:{t: 3, b: 20, l: 40, r: 5},
         xaxis: {type: "date",},
-        yaxis: {title: "", range: [0, Math.max(...values) * 1.1]},
+        yaxis: {title: "", type: (should_be_log)? "log" : "linear"},
     };
     let graph_div = $("#leaderboard-modal #portfolio-graph")[0];
     Plotly.newPlot(graph_div, plot_data, plot_layout, {staticPlot: true, responsive: true});
