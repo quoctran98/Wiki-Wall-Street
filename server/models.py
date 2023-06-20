@@ -369,13 +369,11 @@ class Player():
         value = self.cash
         for article, amount in self.articles.items():
             if amount > 0:
-                try:
-                    res = WikiAPI.normalized_views(article, end=today_wiki())
-                    if res is not None:
-                        print(res[-1]["timestamp"])
-                        this_price = res[-1]["views"]
-                        value += this_price * amount
-                except:
+                res = WikiAPI.normalized_views(article, end=today_wiki())
+                if res is not None:
+                    this_price = res[-1]["views"]
+                    value += this_price * amount
+                else:
                     print(f"⚠️ Error calling normalized_views for {article}!")
         return(value)
 

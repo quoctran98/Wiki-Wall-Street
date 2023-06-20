@@ -323,7 +323,7 @@ def normalized_views(article,
         return(pageviews_list)
     else:
         print(f"WARNING: {article} does not exist")
-        return(False)
+        return(None)
 
 def article_information(article, project="en.wikipedia"):
     """
