@@ -1,0 +1,12 @@
+.env
+**/.DS_Store
+**/__pycache__/
+**.ipynb
+NOTES.md
+**/temp/cache
+/server/logs/**
+**/img/tutorial-archive
+/branding
+get_articles.py
+environment.yml
+/admin
