@@ -32,7 +32,7 @@ class User(UserMixin):
     
     # This isn't a class method because it's called on an instance of the class
     def check_password(self, password):
-        return(check_password_hash(self.password, password))
+        return(check_password_hash(self.password, password, method="pbkdf2:sha256")
     
     # def update_user(self):
     #     """Update the user's information in MongoDB"""
@@ -96,7 +96,7 @@ class User(UserMixin):
             active_users_coll.insert_one({
                 "email": email,
                 "name": name,
-                "password": generate_password_hash(password, method="scrypt"),
+                "password": generate_password_hash(password, method="pbkdf2:sha256"),
                 # scrypt breaks on DigitalOcean?
                 "signup_time": datetime.now(timezone.utc),
                 "joined_games": [],
