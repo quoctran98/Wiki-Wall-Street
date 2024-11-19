@@ -69,13 +69,13 @@ def signup_post():
     next_url = request.form.get("next")
 
     if User.singup(email, name, password): # Returns True if successful :)
-        # Send a confirmation email :)
-        msg = Message(subject="Welcome to Wiki Wall Street!", 
-                      sender=OUTGOING_EMAILS["default"],
-                      recipients=[email])
-        msg.text = render_template("emails/welcome.txt", name=name, server_url=settings.SERVER_URL)
-        msg.html = render_template("emails/welcome.html", name=name, server_url=settings.SERVER_URL)
-        mail.send(msg)
+        # # Send a confirmation email :)
+        # msg = Message(subject="Welcome to Wiki Wall Street!", 
+        #               sender=OUTGOING_EMAILS["default"],
+        #               recipients=[email])
+        # msg.text = render_template("emails/welcome.txt", name=name, server_url=settings.SERVER_URL)
+        # msg.html = render_template("emails/welcome.html", name=name, server_url=settings.SERVER_URL)
+        # mail.send(msg)
         # Redirect to login page
         return(redirect(url_for("auth.login", next=next_url)))
     else:

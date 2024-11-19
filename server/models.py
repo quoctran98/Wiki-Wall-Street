@@ -32,7 +32,7 @@ class User(UserMixin):
     
     # This isn't a class method because it's called on an instance of the class
     def check_password(self, password):
-        return(check_password_hash(self.password, password, method="pbkdf2:sha256")
+        return(check_password_hash(self.password, password))
     
     # def update_user(self):
     #     """Update the user's information in MongoDB"""
