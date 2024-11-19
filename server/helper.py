@@ -1,4 +1,4 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from pymongo import MongoClient
 from flask_caching import Cache
 from flask_mail import Mail
