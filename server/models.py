@@ -414,7 +414,7 @@ class Player():
     @classmethod
     def get_by_player_name(cls, game_id, player_name):
         data = players_db[game_id].find({"name": player_name})
-        if data is not None and data.count() > 0:
+        if data is not None:
             data = data[0]
             data.pop("_id", None) # Remove the MongoDB _id field
             return cls(**data)
